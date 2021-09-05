@@ -15,9 +15,12 @@ class Processor:
         self.id_crit = []
         self.id_alg = []
         self.time_calc = []
-        self.vec_weightamp = []
-        self.vec_weightphi = []
-        self.vec_weight = []
+        self.vec_amp1 = []
+        self.vec_phi1 = []
+        self.vec_weight1 = []
+        self.vec_amp2 = []
+        self.vec_phi2 = []
+        self.vec_weight2 = []
         self.list_tradalg = pp.trad_alg.Trad_alg(1)
         self.list_neuroalg = pp.nn_alg.Neuro_alg(1)
         self.list_kalman = pp.kalman.Kalman(1)
@@ -47,13 +50,33 @@ class Processor:
         print(" --- Параметры модели сигнального процессора (L2) --- ")
         print("processor = ", self.get())
     def calc_out(self, out_array):
-        num_len = out_array[0].shape[0]
-        self.vec_weightamp = np.ones(shape=[num_len], dtype=complex)
-        self.vec_weightphi = np.zeros(shape=[num_len], dtype=complex)
-        self.vec_weight = self.vec_weightamp  # не корректно, ради теста!
+        len_num = out_array[0].shape[0]
+        self.vec_amp1 = np.ones(shape=[len_num], dtype=complex)
+        self.vec_phi1 = np.zeros(shape=[len_num], dtype=complex)
+        self.vec_weight1 = self.vec_amp1  # не корректно, ради теста!
     def get_out(self):
         res = []
-        res.append(self.vec_weightamp)
-        res.append(self.vec_weightphi)
-        res.append(self.vec_weight)
+        res.append(self.vec_amp1)
+        res.append(self.vec_phi1)
+        res.append(self.vec_weight1)
+        res.append(self.vec_amp2)
+        res.append(self.vec_phi2)
+        res.append(self.vec_weight2)
         return res
+    def print_out(self):
+        print("Размерности векторов ВК:")
+        print("vec_amp1.shape = ", self.vec_amp1.shape)
+        print("vec_phi1.shape = ", self.vec_phi1.shape)
+        print("vec_weight1.shape = ", self.vec_weight1.shape)
+        print("vec_amp2.shape = ", self.vec_amp2.shape)
+        print("vec_phi2.shape = ", self.vec_phi2.shape)
+        print("vec_weight2.shape = ", self.vec_weight2.shape)
+    def calc_optout(self, out_array):
+        len_time = out_array[1].shape[0]
+        len_num = out_array[1].shape[2]
+        self.vec_amp2 = np.zeros(shape=[len_time, len_num], dtype=complex)
+        self.vec_phi2 = np.zeros(shape=[len_time, len_num], dtype=complex)
+        self.vec_weight2 = np.zeros(shape=[len_time, len_num], dtype=complex)
+        # запускаем цикл по времени
+        #for i in range(len_time):
+

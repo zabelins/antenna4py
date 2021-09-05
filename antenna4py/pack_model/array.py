@@ -94,19 +94,55 @@ class Array:
         vec_amnois = out_env[4]
         vec_fbandsig = out_env[5]
         vec_fbandint = out_env[6]
-        self.vec_sig, self.matrix_sig = self.calc_corr(vec_degsig, vec_amsig, vec_fbandsig)
-        self.vec_int, self.matrix_int = self.calc_corr(vec_degint, vec_amint, vec_fbandint)
+        len_time = vec_degsig.shape[0]
+        len_sig = vec_degsig.shape[1]
+        len_int = vec_degint.shape[1]
+        self.vec_sig = np.ones(shape=[len_time, len_sig, self.N], dtype=complex)
+        self.vec_int = np.ones(shape=[len_time, len_int, self.N], dtype=complex)
+        self.matrix_sig = np.ones(shape=[len_time, self.N, self.N], dtype=complex)
+        self.matrix_int = np.ones(shape=[len_time, self.N, self.N], dtype=complex)
+        # запускаем цикл по времени
+        for i in range(len_time):
+            buf1 = self.calc_corr(vec_degsig[i], vec_amsig[i], vec_fbandsig[i])
+            buf2 = self.calc_corr(vec_degint[i], vec_amint[i], vec_fbandint[i])
+            self.vec_sig[i], self.matrix_sig[i] = buf1
+            self.vec_int[i], self.matrix_int[i] = buf2
         # упрощённые вектор и матрица для шума
-        self.vec_nois = np.ones(shape=[self.N, 1, vec_amnois.shape[0]], dtype=complex)
-        self.matrix_nois = np.ones(shape=[self.N, self.N, vec_amnois.shape[0]], dtype=complex)
+        self.vec_nois = np.ones(shape=[len_time, 1, self.N], dtype=complex)
+        self.matrix_nois = np.ones(shape=[len_time, self.N, self.N], dtype=complex)
+        # !!! ОШИБКА В МАТРИЦЕ ШУМА, ДОЛЖНА БЫТЬ ЕДИНИЧНОЙ
     def calc_corr(self, vec_deg, vec_amp, vec_fband):
-        # вычисление вектора и корреляционной матрицы для одного сигнала
-
-        # надо преобразовать вектор углов в вектор эквивалентных углов
-        for i in range(vec_deg[0].shape[0]):
-            outs = self.list_factor.get_eqsig(vec_deg[0][i], vec_amp[0][i], vec_fband[0][i], self.N)
-            print("outs = ", outs)
-
-        vec = np.ones(shape=[self.N, vec_amp.shape[1], vec_amp.shape[0]], dtype=complex)
-        matrix = np.ones(shape=[self.N, self.N, vec_amp.shape[0]], dtype=complex)
+        # вычисление вектора и корреляционной матрицы для заданного момента времени
+        len_numsig = vec_deg.shape[0]
+        vec = np.ones(shape=[len_numsig, self.N], dtype=complex)
+        matrix = np.ones(shape=[self.N, self.N], dtype=complex)
+        # запускаем цикл по номерам сигналов
+        for i in range(len_numsig):
+            ## вычисление эквивалентных углов для заданного момента времени
+            #vec_degnew = self.list_factor.get_eqsig(vec_deg[i], vec_fband[i], self.N)
+            #len_degnew = vec_degnew[0].shape[0]
+            # запускаем цикл по элементам АР
+            for j in range(self.N):
+                # вычисление номера элемента
+                num = j + 1
+                # амплитуды для заданного элемента
+                amp_sig = vec_amp[i]
+                amp_dist = self.list_factor.get_dist(self.N, num)
+                amp_rand = self.list_factor.get_randamp()
+                # фазы для заданного элемента
+                deg_rand = self.list_factor.get_randphi()
+                # амплитуды для заданного угла обзора
+                deg = math.radians(vec_deg[i])
+                amp_elem = self.list_element.get_out(deg)
+                amp = amp_sig * amp_elem * amp_dist * amp_rand
+                vec[i][j] = self.list_factor.get_out(amp, deg, num, deg_rand)
+        # вычисление корреляционной матрицы
+        for i in range(len_numsig):
+            vec0 = vec[i].T
+            # расчёт корреляционной матрицы
+            vec1 = np.conj(vec0)
+            vec2 = vec0.T
+            matrix_buf = np.outer(vec1, vec2)
+            matrix = matrix + matrix_buf
+        # осталось добавить расчёт широкополосных сигналов
         return [vec, matrix]

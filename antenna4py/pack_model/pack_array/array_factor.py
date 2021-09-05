@@ -93,8 +93,8 @@ class Factor:
             # гауссовское распределение ошибок
             res = np.random.normal(loc=0.0, scale=self.noise_phimax)
         return res
-    def get_eqsig(self, deg, amp, fband, num_all):
-        # преобразование вектора сигналов в вектор эквивалентных сигналов
+    def get_eqsig(self, deg, fband, num_all):
+        # преобразование значения сигнала в вектор эквивалентных сигналов
         f_otn = fband / self.f_cen
         # количество эквивалентных помех сигнала
         num_eqsig = 0
@@ -118,4 +118,4 @@ class Factor:
         for i in range(vec_eqdeg.shape[0]):
             if (vec_eqdeg[i] < range_show[0]) or (vec_eqdeg[i] > range_show[1]):
                 vec_eqdeg[i] = 361
-        return [vec_eqdeg, amp, f_otn]
+        return [vec_eqdeg, f_otn]
