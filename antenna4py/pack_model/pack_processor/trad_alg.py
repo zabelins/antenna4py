@@ -1,5 +1,8 @@
 # модуль модели традиционного алгоритма
 
+import math
+import numpy as np
+
 if __name__ == "__main__":
     print("Вы запустили модуль модели традиционного алгоритма (L3)")
 
@@ -21,3 +24,8 @@ class Trad_alg:
     def print_short(self):
         print(" --- Параметры модели традиционного алгоритма (L3) --- ")
         print("trad_alg = ", self.get())
+    def get_out(self, out_array, id_alg):
+        # вычисление вектора ВК заданным алгоритмом
+        len_num = out_array[1].shape[2]
+        vec_weight = np.zeros(shape=[len_num], dtype=complex)
+        return vec_weight

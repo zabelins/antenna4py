@@ -74,7 +74,6 @@ class Model_AAA:
         out_array = self.list_array.get_out()
         # вычисление векторов ВК
         self.list_proc.calc_out(out_array)
-        self.list_proc.calc_optout(out_array)
         out_weight = self.list_proc.get_out()
         # вычисление ДН и характеристик
         self.list_syntnet.calc_out(out_array, out_weight)

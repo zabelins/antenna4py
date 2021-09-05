@@ -73,6 +73,7 @@ class Env:
         print(" --- Параметры модели сигналов и помех (L2) --- ")
         print("environment = ", self.get())
     def calc_out(self, out_set):
+        # распаковка исходных данных
         vec_time, vec_var = [out_set[1], out_set[1]]
         # создаём единичный вектор без модуляции
         vec_ones = np.ones(vec_time.shape[0])

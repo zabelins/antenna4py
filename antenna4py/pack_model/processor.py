@@ -50,10 +50,14 @@ class Processor:
         print(" --- Параметры модели сигнального процессора (L2) --- ")
         print("processor = ", self.get())
     def calc_out(self, out_array):
-        len_num = out_array[0].shape[0]
-        self.vec_amp1 = np.ones(shape=[len_num], dtype=complex)
-        self.vec_phi1 = np.zeros(shape=[len_num], dtype=complex)
-        self.vec_weight1 = self.vec_amp1  # не корректно, ради теста!
+        # распаковка исходных данных
+        vec_test = out_array[0]
+        vec_sig, vec_int, vec_nois = [out_array[1], out_array[2], out_array[3]]
+        matrix_sig, matrix_int, matrix_nois = [out_array[4], out_array[5], out_array[6]]
+        # вычисление начального вектора ВК
+        self.calc_strartWk(vec_test)
+        # вычисление оптимального вектора ВК
+        self.calc_optimWk(vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois)
     def get_out(self):
         res = []
         res.append(self.vec_amp1)
@@ -71,12 +75,21 @@ class Processor:
         print("vec_amp2.shape = ", self.vec_amp2.shape)
         print("vec_phi2.shape = ", self.vec_phi2.shape)
         print("vec_weight2.shape = ", self.vec_weight2.shape)
-    def calc_optout(self, out_array):
-        len_time = out_array[1].shape[0]
-        len_num = out_array[1].shape[2]
+    def calc_strartWk(self, vec_test):
+        # вычисление начального вектора ВК
+        len_num = vec_test.shape[0]
+        self.vec_amp1 = np.ones(shape=[len_num], dtype=complex)
+        self.vec_phi1 = np.zeros(shape=[len_num], dtype=complex)
+        self.vec_weight1 = self.vec_amp1  # не корректно, ради теста!
+    def calc_optimWk(self, vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois):
+        # вычисление оптимального вектора ВК
+        len_time = vec_sig.shape[0]
+        len_num = vec_sig.shape[2]
         self.vec_amp2 = np.zeros(shape=[len_time, len_num], dtype=complex)
         self.vec_phi2 = np.zeros(shape=[len_time, len_num], dtype=complex)
         self.vec_weight2 = np.zeros(shape=[len_time, len_num], dtype=complex)
         # запускаем цикл по времени
         #for i in range(len_time):
+        #vec = self.list_tradalg.get_out(matrix_int[0], 1)
+        #print(matrix_int[0].shape)
 

@@ -39,12 +39,15 @@ class Array:
         print(" --- Параметры модели антенной решётки (L2) --- ")
         print("array = ", self.get())
     def calc_out(self, out_set, out_env):
+        # распаковка исходных данных
         vec_pattern = out_set[0]
-        vec_ampsig = out_env[2]
+        vec_degsig, vec_degint = [out_env[0], out_env[1]]
+        vec_amsig, vec_amint, vec_amnois = [out_env[2], out_env[3], out_env[4]]
+        vec_fbandsig, vec_fbandint = [out_env[5], out_env[6]]
         # вычисление входного комплексного сигнала по элементам и углам
-        self.calc_testsig(vec_pattern, vec_ampsig)
+        self.calc_testsig(vec_pattern, vec_amsig)
         # вычисление входных сигналов и помех от времени
-        self.calc_arrayout(out_env)
+        self.calc_realsig(vec_degsig, vec_degint, vec_amsig, vec_amint, vec_amnois, vec_fbandsig, vec_fbandint)
     def get_out(self):
         res = []
         res.append(self.vec_test)
@@ -86,17 +89,9 @@ class Array:
                 buf[deg_var] = self.list_factor.get_out(amp, deg, num, deg_rand)
             self.vec_test[num_var] = buf
             buf = np.zeros(shape=[len_pattern], dtype=complex)
-    def calc_arrayout(self, out_env):
-        vec_degsig = out_env[0]
-        vec_degint = out_env[1]
-        vec_amsig = out_env[2]
-        vec_amint = out_env[3]
-        vec_amnois = out_env[4]
-        vec_fbandsig = out_env[5]
-        vec_fbandint = out_env[6]
+    def calc_realsig(self, vec_degsig, vec_degint, vec_amsig, vec_amint, vec_amnois, vec_fbandsig, vec_fbandint):
         len_time = vec_degsig.shape[0]
-        len_sig = vec_degsig.shape[1]
-        len_int = vec_degint.shape[1]
+        len_sig, len_int = [vec_degsig.shape[1], vec_degint.shape[1]]
         self.vec_sig = np.ones(shape=[len_time, len_sig, self.N], dtype=complex)
         self.vec_int = np.ones(shape=[len_time, len_int, self.N], dtype=complex)
         self.matrix_sig = np.ones(shape=[len_time, self.N, self.N], dtype=complex)
@@ -114,8 +109,8 @@ class Array:
     def calc_corr(self, vec_deg, vec_amp, vec_fband):
         # вычисление вектора и корреляционной матрицы для заданного момента времени
         len_numsig = vec_deg.shape[0]
-        vec = np.ones(shape=[len_numsig, self.N], dtype=complex)
-        matrix = np.ones(shape=[self.N, self.N], dtype=complex)
+        vec = np.zeros(shape=[len_numsig, self.N], dtype=complex)
+        matrix = np.zeros(shape=[self.N, self.N], dtype=complex)
         # запускаем цикл по номерам сигналов
         for i in range(len_numsig):
             ## вычисление эквивалентных углов для заданного момента времени
