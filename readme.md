@@ -1,3 +1,3 @@
-# My antenna program 1
+# program for modeling an adaptive antenna
 
-Info about antenna4py
+Version 1.0
