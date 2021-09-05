@@ -1,3 +1,3 @@
-# program for modeling an adaptive antenna
+# Program for modeling an adaptive antenna
 
 Version 1.0
