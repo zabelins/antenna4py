@@ -33,14 +33,14 @@ class Env:
     def set(self, init):
         self.id_config = np.array(init[1])
         self.mod_sig = np.array(init[2])
-        self.mod_int = np.array(init[3])
-        self.deg_sig = np.array(init[4])
-        self.deg_int = np.array(init[5])
-        self.am_sig = np.array(init[6])
-        self.am_int = np.array(init[7])
-        self.am_nois = np.array(init[8])
-        self.fband_sig = np.array(init[9])
-        self.fband_int = np.array(init[10])
+        self.mod_int = np.array(init[6])
+        self.deg_sig = np.array(init[3])
+        self.deg_int = np.array(init[7])
+        self.am_sig = np.array(init[4])
+        self.am_int = np.array(init[8])
+        self.am_nois = np.array(init[10])
+        self.fband_sig = np.array(init[5])
+        self.fband_int = np.array(init[9])
     def get(self):
         res = []
         res.append(self.id)

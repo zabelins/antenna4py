@@ -118,4 +118,17 @@ class Factor:
         for i in range(vec_eqdeg.shape[0]):
             if (vec_eqdeg[i] < range_show[0]) or (vec_eqdeg[i] > range_show[1]):
                 vec_eqdeg[i] = 361
-        return [vec_eqdeg, f_otn]
+        return [vec_eqdeg, num_eqsig, l0_max, f_otn]
+
+    def get_eqamp(self, num_all, num_var):
+        #f_otn = fband / self.f_cen
+        #l0_max = num_all / 2;
+        #A2l = np.zeros(shape=[l0_max, self.N], dtype='float64')
+        #for k in range(l0_max):
+        #    buf0 = 1 / (l0_max+1)
+        #    buf1 = f_otn * 2 * math.pi * k * self.beta * math.pi /(2 * self.f_cen * 2 * math.pi)
+        #    A2l[k] = buf0 * sum( self.get_freqdist(buf1) * math.cos(2 * math.pi * k * l_var / (l0_max + 1)))
+        return 1.0
+
+    def get_freqdist(self, y_var):
+        return np.sin(y_var) / y_var

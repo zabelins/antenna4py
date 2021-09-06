@@ -26,13 +26,14 @@ model1.set(control1.list_set)
 #model1.print()
 
 # вывод служебной информации для графика
-res = model1.calc_out()
+out_model = model1.calc_out()
 model1.print_out()
 
 # вывод графика ДН
-x = np.array([res[0]])
-y = np.array([res[1]])
-view1.list_graph.draw_pattern(x, y, [20, 35])
+x = np.array([out_model[0], out_model[0]])
+y = np.array([out_model[1], out_model[2]])
+deg = out_model[3]
+view1.list_graph.draw_pattern(x, y, deg)
 
 # вывод графика характеристик
 #x = np.array([[0, 1, 2, 3, 4], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4]])

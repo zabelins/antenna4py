@@ -69,11 +69,12 @@ class Pattern:
         for i in range(len(x)):
             plt.plot(x[i], y[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=strleg[i])
             if mean == 1:
-                plt.hlines(np.mean(y[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
+                plt.hlines(np.mean(y[i]), vec_axis[0], vec_axis[1], color='#666666', linestyle='--', lw=0.6)
         # отображение помех
         if (len(deg_int) >= 1) and (db == 1) and (norm == 1):
             for i in range(len(deg_int)):
                 plt.arrow(deg_int[i], -2, 0, -4, color='k', width=0.5, head_width=1.3)
+                plt.vlines(deg_int[i], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
         # отображение легенды
         if legend == 1:
             plt.legend(loc='lower right')

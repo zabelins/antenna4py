@@ -35,16 +35,48 @@ class Synt_net:
     def print_short(self):
         print(" --- Параметры модели ДОС (L2) --- ")
         print("syntnet = ", self.get())
-    def calc_out(self, out_array, out_weight):
-        len_num = out_weight[2].shape[0]
-        S1_test = out_array[0].T
-        Wk_test = out_weight[2].reshape((len_num,1))
-        self.vec_inpattern = abs(np.dot(S1_test, Wk_test))
-        #print(self.vec_inpattern.shape)
-        #print(self.vec_inpattern)
-        self.vec_outpattern = []
-        self.vec_outdeph = []
-        self.vec_outatten = []
+    def calc_out(self, out_set, out_env, out_array, out_weight):
+        # распаковка исходных данных
+        vec_pattern = out_set[0]
+        deg_sig = out_env[0][0]
+        deg_int = out_env[1][0]
+        vec_test = out_array[0].T
+        vec_weight1 = out_weight[2]
+        vec_weight2 = out_weight[5]
+        # вычисление ДН
+        self.vec_inpattern = abs(np.dot(vec_test, vec_weight1))
+        self.vec_outpattern = abs(np.dot(vec_test, vec_weight2))
+        # вычисление глубины подавления помехи и ослабления сигнала
+        len_sig, len_deg = [deg_sig.shape[0], deg_int.shape[0]]
+        out_atten = np.zeros(shape=[len_sig], dtype='float64')
+        out_depth = np.zeros(shape=[len_deg], dtype='float64')
+        max_inpattern = self.vec_inpattern.max()
+        for i in range(len_sig):
+            # вычисление индексов для угла заданного сигнала
+            id_sig = np.where(vec_pattern == deg_sig[i])
+            # вычисление в дБ разности ДН по заданным углам
+            norm_inpattern = self.vec_inpattern[id_sig] / max_inpattern
+            norm_outpattern = self.vec_outpattern[id_sig] / max_inpattern
+            db_inpattern = 20 * np.log10(abs(norm_inpattern))
+            db_outpattern = 20 * np.log10(abs(norm_outpattern))
+            out_atten[i] = db_inpattern - db_outpattern
+            print(vec_pattern[id_sig])
+            print(db_inpattern)
+        for i in range(len_deg):
+            # вычисление индексов для угла заданной помехи
+            id_int = np.where(vec_pattern == deg_int[i])
+            # вычисление в дБ разности ДН по заданным углам
+            norm_inpattern = self.vec_inpattern[id_int] / max_inpattern
+            norm_outpattern = self.vec_outpattern[id_int] / max_inpattern
+            db_inpattern = 20 * np.log10(abs(norm_inpattern))
+            db_outpattern = 20 * np.log10(abs(norm_outpattern))
+            out_depth[i] = db_inpattern - db_outpattern
+            print(vec_pattern[id_int])
+        # вывод параметров
+        self.vec_outdeph = out_depth
+        self.vec_outatten = out_atten
+        print("vec_outdeph = ", self.vec_outdeph)
+        print("vec_outatten = ", self.vec_outatten)
         self.vec_outsnir = []
         self.vec_outsnr = []
         self.vec_outinr = []

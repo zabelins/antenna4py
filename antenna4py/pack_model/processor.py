@@ -56,7 +56,7 @@ class Processor:
         matrix_sig, matrix_int, matrix_nois = [out_array[4], out_array[5], out_array[6]]
         # вычисление начального вектора ВК
         self.calc_strartWk(vec_test)
-        # вычисление оптимального вектора ВК
+        # вычисление оптимальных векторов ВК
         self.calc_optimWk(vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois)
     def get_out(self):
         res = []
@@ -83,13 +83,24 @@ class Processor:
         self.vec_weight1 = self.vec_amp1  # не корректно, ради теста!
     def calc_optimWk(self, vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois):
         # вычисление оптимального вектора ВК
-        len_time = vec_sig.shape[0]
-        len_num = vec_sig.shape[2]
+        len_time, len_num = [vec_sig.shape[0], vec_sig.shape[2]]
         self.vec_amp2 = np.zeros(shape=[len_time, len_num], dtype=complex)
         self.vec_phi2 = np.zeros(shape=[len_time, len_num], dtype=complex)
         self.vec_weight2 = np.zeros(shape=[len_time, len_num], dtype=complex)
+        # формируем матрицы для обращения
+        matrix_sig = matrix_sig + matrix_nois
+        matrix_int = matrix_int + matrix_nois
         # запускаем цикл по времени
         #for i in range(len_time):
-        #vec = self.list_tradalg.get_out(matrix_int[0], 1)
-        #print(matrix_int[0].shape)
+        mu = abs(matrix_nois[0][0][0])
+        m1 = matrix_int[0]
+        v1 = vec_sig[0][0]
+        matrix = np.linalg.inv(m1)
+        vector = np.conj(v1)
+        self.vec_weight2 = mu * matrix.dot(vector)
+        #print(matrix.shape)
+        #print(vector.shape)
+        #print(matrix)
+        #print(vector)
+        #print(self.vec_weight2)
 

@@ -7,9 +7,9 @@ class Set_view:
     def __init__(self, id):
         self.id = id
         self.graph_style = 1
-        self.graph_norm = 0
+        self.graph_norm = 1
         self.graph_mean = 0
-        self.graph_db = 0
+        self.graph_db = 1
         self.graph_legend = 1
         self.graph_strleg = ["g1", "g2", "g3", "g4", "g5"]
         self.approx = 4

@@ -76,14 +76,14 @@ class Model_AAA:
         self.list_proc.calc_out(out_array)
         out_weight = self.list_proc.get_out()
         # вычисление ДН и характеристик
-        self.list_syntnet.calc_out(out_array, out_weight)
+        self.list_syntnet.calc_out(out_set, out_env, out_array, out_weight)
         out_syntnet = self.list_syntnet.get_out()
-        # подгонка формата выходного вектора
+        # формирование выходных векторов
         len_deg = out_array[0].shape[1]
-        out_set[0] = out_set[0].reshape((len_deg, 1))
-        #print(out_set[0].shape)
-        #print(out_syntnet[0].shape)
-        return [out_set[0], out_syntnet[0]]
+        var_deg = out_set[0].reshape((len_deg, 1))
+        in_pattern, out_pattern = [out_syntnet[0], out_syntnet[1]]
+        deg_int = out_env[1][1]
+        return [var_deg, in_pattern, out_pattern, deg_int]
     def print_out(self):
         # вывод информации о ходе вычислений
         self.list_settings.print_out()

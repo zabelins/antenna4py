@@ -9,53 +9,53 @@ class Par_env:
     def __init__(self, id):
         self.id = id
         self.id_config = 1
-        self.mod_sig = 1
-        self.mod_int = 1
-        self.deg_sig = [0]
-        self.deg_int = [70, 80]
-        self.am_sig = [1]
-        self.am_int = [1, 1]
-        self.am_nois = [1]
-        self.fband_sig = [0]
-        self.fband_int = [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)]
+        self.sig_mod = 1
+        self.sig_deg = [0]
+        self.sig_amp = [1]
+        self.sig_fband = [0]
+        self.int_mod = 1
+        self.int_deg = [70, 80]
+        self.int_amp = [1, 1]
+        self.int_fband = [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)] # [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)]
+        self.nois_amp = [1]
     def set(self, init):
         self.id_config = init[0]
-        self.mod_sig = init[1]
-        self.mod_int = init[2]
-        self.deg_sig = init[3]
-        self.deg_int = init[4]
-        self.am_sig = init[5]
-        self.am_int = init[6]
-        self.am_nois = init[7]
-        self.fband_sig = init[8]
-        self.fband_int = init[9]
+        self.sig_mod = init[1]
+        self.sig_deg = init[2]
+        self.sig_amp = init[3]
+        self.sig_fband = init[4]
+        self.int_mod = init[5]
+        self.int_deg = init[6]
+        self.int_amp = init[7]
+        self.int_fband = init[8]
+        self.nois_amp = init[9]
     def get(self):
         res = []
         res.append(self.id)
         res.append(self.id_config)
-        res.append(self.mod_sig)
-        res.append(self.mod_int)
-        res.append(self.deg_sig)
-        res.append(self.deg_int)
-        res.append(self.am_sig)
-        res.append(self.am_int)
-        res.append(self.am_nois)
-        res.append(self.fband_sig)
-        res.append(self.fband_int)
+        res.append(self.sig_mod)
+        res.append(self.sig_deg)
+        res.append(self.sig_amp)
+        res.append(self.sig_fband)
+        res.append(self.int_mod)
+        res.append(self.int_deg)
+        res.append(self.int_amp)
+        res.append(self.int_fband)
+        res.append(self.nois_amp)
         return res
     def print(self):
         print(" --- Значения параметров сигналов и помех (L3) --- ")
         print("id = ", self.id)
         print("id_config = ", self.id_config)
-        print("mod_sig = ", self.mod_sig)
-        print("mod_int = ", self.mod_int)
-        print("deg_sig = ", self.deg_sig)
-        print("deg_int = ", self.deg_int)
-        print("am_sig = ", self.am_sig)
-        print("am_int = ", self.am_int)
-        print("am_nois = ", self.am_nois)
-        print("fband_sig = ", self.fband_sig)
-        print("fband_int = ", self.fband_int)
+        print("sig_mod = ", self.sig_mod)
+        print("sig_deg = ", self.sig_deg)
+        print("sig_amp = ", self.sig_amp)
+        print("sig_fband = ", self.sig_fband)
+        print("int_mod = ", self.int_mod)
+        print("int_deg = ", self.int_deg)
+        print("int_amp = ", self.int_amp)
+        print("int_fband = ", self.int_fband)
+        print("fband_int = ", self.nois_amp)
     def print_short(self):
         print(" --- Значения параметров сигналов и помех (L3) --- ")
         print("parameters_env = ", self.get())
