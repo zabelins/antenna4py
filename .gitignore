@@ -1,2 +1,3 @@
 /antenna4py/__pycache__
-/antenna4py/pack_model/pack_processor/nn_alg
+antenna4py/pack_model/pack_processor/nn_alg.py
+antenna4py/pack_model/train_nn.py
