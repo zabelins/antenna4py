@@ -4,6 +4,8 @@ if __name__ == "__main__":
     print("Вы запустили модуль настроек вывода информации (L3)")
 
 class Set_view:
+    """Класс настроек вывода информации для пользователя"""
+
     def __init__(self, id):
         self.id = id
         self.graph_style = 1
@@ -14,6 +16,7 @@ class Set_view:
         self.graph_strleg = ["g1", "g2", "g3", "g4", "g5"]
         self.approx = 4
         self.animation = 1
+
     def set(self, init):
         self.graph_style = init[0]
         self.graph_norm = init[1]
@@ -23,6 +26,7 @@ class Set_view:
         self.graph_strleg = init[5]
         self.approx = init[6]
         self.animation = init[7]
+
     def get(self):
         res = []
         res.append(self.id)
@@ -35,6 +39,7 @@ class Set_view:
         res.append(self.approx)
         res.append(self.animation)
         return res
+
     def print(self):
         print(" --- Значения настроек вывода информации (L3) --- ")
         print("id = ", self.id)
@@ -46,6 +51,7 @@ class Set_view:
         print("graph_strleg = ", self.graph_strleg)
         print("approx = ", self.approx)
         print("animation = ", self.animation)
+
     def print_short(self):
         print(" --- Значения настроек вывода информации (L3) --- ")
         print("settings_view = ", self.get())

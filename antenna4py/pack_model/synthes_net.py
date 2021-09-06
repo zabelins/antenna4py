@@ -6,6 +6,8 @@ if __name__ == "__main__":
     print("Вы запустили модуль модели ДОС (L2)")
 
 class Synt_net:
+    """Класс моделирования схемы диаграммообразования"""
+
     def __init__(self, id):
         self.id = id
         self.control_phistep = []
@@ -18,23 +20,28 @@ class Synt_net:
         self.vec_outsnr = []
         self.vec_outinr = []
         self.vec_outsignal = []
+
     def set(self, init):
         self.control_phistep = init[6]
         self.control_ampstep = init[7]
+
     def get(self):
         res = []
         res.append(self.id)
         res.append(self.control_phistep)
         res.append(self.control_ampstep)
         return res
+
     def print(self):
         print(" --- Параметры модели ДОС (L2) --- ")
         print("id = ", self.id)
         print("control_phistep = ", self.control_phistep)
         print("control_ampstep = ", self.control_ampstep)
+
     def print_short(self):
         print(" --- Параметры модели ДОС (L2) --- ")
         print("syntnet = ", self.get())
+
     def calc_out(self, out_set, out_env, out_array, out_weight):
         # распаковка исходных данных
         vec_pattern = out_set[0]
@@ -81,6 +88,7 @@ class Synt_net:
         self.vec_outsnr = []
         self.vec_outinr = []
         self.vec_outsignal = []
+
     def get_out(self):
         res = []
         res.append(self.vec_inpattern)

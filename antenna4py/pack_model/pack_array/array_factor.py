@@ -9,7 +9,9 @@ if __name__ == "__main__":
     print("Вы запустили модуль модели множителя АР (L3)")
 
 class Factor:
+    """Класс моделирования множителя антенной решётки"""
     con_c = 3 * math.pow(10, 8)
+
     def __init__(self, id):
         self.id = id
         self.beta = []
@@ -20,6 +22,7 @@ class Factor:
         self.noize_ampdist = []
         self.id_dist = []
         self.id_effect = []
+
     def set(self, init):
         self.beta = np.array(init[2])
         self.f_cen = np.array(init[3])
@@ -29,6 +32,7 @@ class Factor:
         self.noize_ampdist = np.array(init[7])
         self.id_dist = np.array(init[8])
         self.id_effect = np.array(init[10])
+
     def get(self):
         res = []
         res.append(self.id)
@@ -41,6 +45,7 @@ class Factor:
         res.append(self.id_dist)
         res.append(self.id_effect)
         return res
+
     def print(self):
         print(" --- Параметры модели множителя АР (L3) --- ")
         print("id = ", self.id)
@@ -52,9 +57,11 @@ class Factor:
         print("noize_ampdist = ", self.noize_ampdist)
         print("id_dist = ", self.id_dist)
         print("id_effect = ", self.id_effect)
+
     def print_short(self):
         print(" --- Параметры модели множителя АР (L3) --- ")
         print("array_factor = ", self.get())
+
     def get_out(self, amp, deg, num, rand):
         # комплексный сигнал для заданного элемента антенной решётки
         lambda_cen = self.con_c / self.f_cen
@@ -62,6 +69,7 @@ class Factor:
         fun_u = 2 * math.pi * step_array / lambda_cen * math.sin(deg) #float64
         fun_sig = amp * cmath.exp(1j * fun_u * (num - 1)) * cmath.exp(1j * rand)
         return fun_sig
+
     def get_dist(self, num_all, num_var):
         # АФР для заданного элемента антенной решётки
         res = []
@@ -76,6 +84,7 @@ class Factor:
             # нужно использовать Chebyshev()
             res = []
         return res
+
     def get_randamp(self):
         # амплитудные ошибки сигнала
         res = []
@@ -83,6 +92,7 @@ class Factor:
             # гауссовское распределение ошибок
             res = np.random.normal(loc=1.0, scale=self.noise_ampmax)
         return res
+
     def get_randphi(self):
         # фазовые ошибки сигнала
         res = []
@@ -93,6 +103,7 @@ class Factor:
             # гауссовское распределение ошибок
             res = np.random.normal(loc=0.0, scale=self.noise_phimax)
         return res
+
     def get_eqsig(self, deg, fband, num_all):
         # преобразование значения сигнала в вектор эквивалентных сигналов
         f_otn = fband / self.f_cen

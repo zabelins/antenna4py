@@ -5,6 +5,8 @@ if __name__ == "__main__":
     print("Вы запустили модуль параметров антенной решётки (L3)")
 
 class Par_array :
+    """Класс исходных параметров антенной решётки"""
+
     def __init__(self, id):
         self.id = id
         self.N = 10
@@ -17,6 +19,7 @@ class Par_array :
         self.id_dist = 1
         self.id_elem = 1
         self.id_effect = 1
+
     def set(self, init):
         self.N = init[0]
         self.beta = init[1]
@@ -28,6 +31,7 @@ class Par_array :
         self.id_dist = init[7]
         self.id_elem = init[8]
         self.id_effect = init[9]
+
     def get(self):
         res = []
         res.append(self.id)
@@ -42,6 +46,7 @@ class Par_array :
         res.append(self.id_elem)
         res.append(self.id_effect)
         return res
+
     def print(self):
         print(" --- Значения параметров антенной решётки (L3) --- ")
         print("id = ", self.id)
@@ -55,6 +60,7 @@ class Par_array :
         print("id_dist = ", self.id_dist)
         print("id_elem = ", self.id_elem)
         print("id_effect = ", self.id_effect)
+
     def print_short(self):
         print(" --- Значения параметров антенной решётки (L3) --- ")
         print("parameters_aa = ", self.get())

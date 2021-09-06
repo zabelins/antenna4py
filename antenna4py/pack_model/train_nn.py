@@ -6,6 +6,8 @@ if __name__ == "__main__":
     print("Вы запустили модуль обучения НС (L2)")
 
 class Train:
+    """Класс обучения НС"""
+
     def __init__(self, id):
         self.id = id
         self.id_nn = []
@@ -15,12 +17,14 @@ class Train:
         self.num_neurons = []
         self.matrix_learn = []
         self.matrix_test = []
+
     def set(self, init):
         self.id_nn = init[1]
         self.id_learn = init[2]
         self.num_epoch = init[3]
         self.num_layers = init[4]
         self.num_neurons = init[5]
+
     def get(self):
         res = []
         res.append(self.id)
@@ -30,6 +34,7 @@ class Train:
         res.append(self.num_layers)
         res.append(self.num_neurons)
         return res
+
     def print(self):
         print(" --- Параметры обучения НС (L2) --- ")
         print("id = ", self.id)
@@ -38,8 +43,10 @@ class Train:
         print("num_epoch = ", self.num_epoch)
         print("num_layers = ", self.num_layers)
         print("num_neurons = ", self.num_neurons)
+
     def print_short(self):
         print(" --- Параметры обучения НС (L2) --- ")
         print("train_net = ", self.get())
+
     def get_out(self):
         pass

@@ -9,6 +9,8 @@ if __name__ == "__main__":
     print("Модуль использует пакет:", pack_model.NAME)
 
 class Model_AAA:
+    """Класс динамического моделирования адаптивной антенны"""
+
     def __init__(self, id_control, id_view, id_model, mode):
         self.id_control = id_control
         self.id_view = id_view
@@ -22,6 +24,7 @@ class Model_AAA:
         self.list_train = pack_model.train_nn.Train(1)
         self.list_test = pack_model.test.Test(1)
         self.list_file = pack_model.file_io.File_IO(1)
+
     def set(self, obj_set):
         # инициализация параметров уровня L2
         self.list_settings.set(obj_set.list_setmodel.get())
@@ -38,6 +41,7 @@ class Model_AAA:
         self.list_proc.list_tradalg.set(obj_set.list_paradapt.get())
         self.list_proc.list_neuroalg.set(obj_set.list_paradapt.get())
         self.list_proc.list_kalman.set(obj_set.list_paradapt.get())
+
     def get(self):
         res = []
         res.append(self.id_control)
@@ -45,6 +49,7 @@ class Model_AAA:
         res.append(self.id_model)
         res.append(self.mode)
         return res
+
     def print(self):
         print(" --- ПАРАМЕТРЫ ДИНАМИЧЕСКОЙ МОДЕЛИ ААР (L1) --- ")
         print("id_control = ", self.id_control)
@@ -59,9 +64,11 @@ class Model_AAA:
         self.list_train.print_short()
         self.list_test.print_short()
         self.list_file.print_short()
+
     def print_short(self):
         print(" --- ПАРАМЕТРЫ ДИНАМИЧЕСКОЙ МОДЕЛИ ААР (L1) --- ")
         print("prog_model = ", self.get())
+
     def calc_out(self):
         # создание векторов изменения параметров
         self.list_settings.calc_out()
@@ -84,6 +91,7 @@ class Model_AAA:
         in_pattern, out_pattern = [out_syntnet[0], out_syntnet[1]]
         deg_int = out_env[1][1]
         return [var_deg, in_pattern, out_pattern, deg_int]
+
     def print_out(self):
         # вывод информации о ходе вычислений
         self.list_settings.print_out()

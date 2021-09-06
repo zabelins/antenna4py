@@ -6,6 +6,8 @@ if __name__ == "__main__":
     print("Вы запустили модуль параметров сигналов и помех (L3)")
 
 class Par_env:
+    """Класс исходных параметров сигнально-помеховой обстановки"""
+
     def __init__(self, id):
         self.id = id
         self.id_config = 1
@@ -18,6 +20,7 @@ class Par_env:
         self.int_amp = [1, 1]
         self.int_fband = [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)] # [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)]
         self.nois_amp = [1]
+
     def set(self, init):
         self.id_config = init[0]
         self.sig_mod = init[1]
@@ -29,6 +32,7 @@ class Par_env:
         self.int_amp = init[7]
         self.int_fband = init[8]
         self.nois_amp = init[9]
+
     def get(self):
         res = []
         res.append(self.id)
@@ -43,6 +47,7 @@ class Par_env:
         res.append(self.int_fband)
         res.append(self.nois_amp)
         return res
+
     def print(self):
         print(" --- Значения параметров сигналов и помех (L3) --- ")
         print("id = ", self.id)
@@ -56,6 +61,7 @@ class Par_env:
         print("int_amp = ", self.int_amp)
         print("int_fband = ", self.int_fband)
         print("fband_int = ", self.nois_amp)
+
     def print_short(self):
         print(" --- Значения параметров сигналов и помех (L3) --- ")
         print("parameters_env = ", self.get())

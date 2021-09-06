@@ -10,6 +10,8 @@ if __name__ == "__main__":
     print("Модуль использует пакет:", pa.NAME)
 
 class Array:
+    """Класс моделирования антенной решётки"""
+
     def __init__(self, id):
         self.id = id
         self.N = []
@@ -22,22 +24,27 @@ class Array:
         self.matrix_nois = []
         self.list_factor = pa.array_factor.Factor(1)
         self.list_element = pa.array_element.Element(1)
+
     def set(self, init):
         self.N = np.array(init[1])
+
     def get(self):
         res = []
         res.append(self.id)
         res.append(self.N)
         return res
+
     def print(self):
         print(" --- Параметры модели антенной решётки (L2) --- ")
         print("id = ", self.id)
         print("N = ", self.N)
         self.list_factor.print_short()
         self.list_element.print_short()
+
     def print_short(self):
         print(" --- Параметры модели антенной решётки (L2) --- ")
         print("array = ", self.get())
+
     def calc_out(self, out_set, out_env):
         # распаковка исходных данных
         vec_pattern = out_set[0]
@@ -48,6 +55,7 @@ class Array:
         self.calc_testsig(vec_pattern, vec_amsig)
         # вычисление входных сигналов и помех от времени
         self.calc_realsig(vec_degsig, vec_degint, vec_amsig, vec_amint, vec_amnois, vec_fbandsig, vec_fbandint)
+
     def get_out(self):
         res = []
         res.append(self.vec_test)
@@ -58,6 +66,7 @@ class Array:
         res.append(self.matrix_int)
         res.append(self.matrix_nois)
         return res
+
     def print_out(self):
         print("Размерности векторов и матриц от антенной решётки:")
         print("vec_test.shape = ", self.vec_test.shape)
@@ -67,6 +76,7 @@ class Array:
         print("matrix_sig.shape = ", self.matrix_sig.shape)
         print("matrix_int.shape = ", self.matrix_int.shape)
         print("matrix_nois.shape = ", self.matrix_nois.shape)
+
     def calc_testsig(self, vec_pattern, vec_ampsig):
         # вычисление вектора входного сигнала по элементам и углам (10x721)
         len_pattern = vec_pattern.shape[0]
@@ -89,6 +99,7 @@ class Array:
                 buf[deg_var] = self.list_factor.get_out(amp, deg, num, deg_rand)
             self.vec_test[num_var] = buf
             buf = np.zeros(shape=[len_pattern], dtype=complex)
+
     def calc_realsig(self, vec_degsig, vec_degint, vec_amsig, vec_amint, vec_amnois, vec_fbandsig, vec_fbandint):
         # вычисление векторов входных сигналов и помех от времени
         len_time = vec_degsig.shape[0]
@@ -108,6 +119,7 @@ class Array:
             # vec_nois вычисляется некорректно, должен быть рандомным
             self.vec_nois[i] = np.ones(shape=[1, self.N], dtype=complex) * vec_amnois[i]
             self.matrix_nois[i] = np.eye(self.N, dtype=complex) * math.pow(vec_amnois[i], 2)
+
     def calc_corr(self, var_deg, var_amp, var_fband):
         # вычисление вектора и корреляционной матрицы для одного момента времени
         len_deg = var_deg.shape[0]

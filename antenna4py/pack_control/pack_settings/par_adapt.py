@@ -4,6 +4,8 @@ if __name__ == "__main__":
     print("Вы запустили модуль параметров адаптации (L3)")
 
 class Par_adapt:
+    """Класс исходных параметров адаптивного алгоритма"""
+
     def __init__(self, id):
         self.id = id
         self.id_type = 1
@@ -13,6 +15,7 @@ class Par_adapt:
         self.coef_kalman = 1
         self.control_phistep = 0
         self.control_ampstep = 1
+
     def set(self, init):
         self.id_type = init[0]
         self.id_crit = init[1]
@@ -21,6 +24,7 @@ class Par_adapt:
         self.coef_kalman = init[4]
         self.control_phistep = init[5]
         self.control_ampstep = init[6]
+
     def get(self):
         res = []
         res.append(self.id)
@@ -32,6 +36,7 @@ class Par_adapt:
         res.append(self.control_phistep)
         res.append(self.control_ampstep)
         return res
+
     def print(self):
         print(" --- Значения параметров адаптации (L3) --- ")
         print("id = ", self.id)
@@ -42,6 +47,7 @@ class Par_adapt:
         print("coef_kalman = ", self.coef_kalman)
         print("control_phistep = ", self.control_phistep)
         print("control_ampstep = ", self.control_ampstep)
+
     def print_short(self):
         print(" --- Значения параметров адаптации (L3) --- ")
         print("parameters_adapt = ", self.get())

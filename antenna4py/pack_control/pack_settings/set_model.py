@@ -4,6 +4,8 @@ if __name__ == "__main__":
     print("Вы запустили модуль настроек ПО (L3)")
 
 class Set_model:
+    """Класс настроек динамического моделирования в ПО"""
+
     def __init__(self, id):
         self.id = id
         self.id_var = 1
@@ -14,6 +16,7 @@ class Set_model:
         self.var_line = [0, 5]
         self.var_step = 1
         self.save_calc = 1
+
     def set(self, init):
         self.id_var = init[0]
         self.pattern_line = init[1]
@@ -23,6 +26,7 @@ class Set_model:
         self.var_line = init[5]
         self.var_step = init[6]
         self.save_calc = init[7]
+
     def get(self):
         res = []
         res.append(self.id)
@@ -35,6 +39,7 @@ class Set_model:
         res.append(self.var_step)
         res.append(self.save_calc)
         return res
+
     def print(self):
         print(" --- Значения настроек ПО (L3) --- ")
         print("id = ", self.id)
@@ -46,6 +51,7 @@ class Set_model:
         print("var_line = ", self.var_line)
         print("var_step = ", self.var_step)
         print("save_calc = ", self.save_calc)
+
     def print_short(self):
         print(" --- Значения настроек ПО (L3) --- ")
         print("settings_sw = ", self.get())

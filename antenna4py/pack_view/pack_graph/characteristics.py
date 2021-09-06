@@ -8,6 +8,8 @@ if __name__ == "__main__":
     print("Вы запустили модуль отображения характеристик (L3)")
 
 class Characteristics:
+    """Класс вывода графика характеристик для пользователя"""
+
     def __init__(self, id):
         self.id = id
         self.str_y = "F(par)"
@@ -19,6 +21,7 @@ class Characteristics:
         self.vec_col2 = []
         self.vec_lst2 = []
         self.vec_lwd2 = []
+
     def set(self, init):
         self.approx = init[7]
         self.vec_col1 = ['#000000', '#b22222', '#00008b', '#336600', '#996600']
@@ -27,6 +30,7 @@ class Characteristics:
         self.vec_col2 = ['#000000', '#000000', '#000000', '#000000', '#000000']
         self.vec_lst2 = ['-', '--', '-.', '-', '--']
         self.vec_lwd2 = [1.0, 1.0, 1.0, 0.1, 0.1]
+
     def get(self):
         res = []
         res.append(self.id)
@@ -34,15 +38,18 @@ class Characteristics:
         res.append(self.str_x)
         res.append(self.approx)
         return res
+
     def print(self):
         print(" --- Параметры отображения характеристик (L3) --- ")
         print("id = ", self.id)
         print("str_y = ", self.str_y)
         print("str_x = ", self.str_x)
         print("approx = ", self.approx)
+
     def print_short(self):
         print(" --- Параметры отображения характеристик (L3) --- ")
         print("characteristics = ", self.get())
+
     def draw_charact(self, x, y, vec_par, str):
         style, norm, mean, db, legend, strleg = [vec_par[1], vec_par[2], vec_par[3], vec_par[4], vec_par[5], vec_par[6]]
         plt.title("Характеристики ААР")

@@ -6,6 +6,8 @@ if __name__ == "__main__":
     print("Вы запустили модуль настроек динамического моделирования (L2)")
 
 class Model:
+    """Класс расчёта диапазонов изменения параметров моделирования"""
+
     def __init__(self, id):
         self.id = id
         self.id_var = []
@@ -19,6 +21,7 @@ class Model:
         self.vec_pattern = []
         self.vec_time = []
         self.vec_var = []
+
     def set(self, init):
         self.id_var = np.array(init[1])
         self.pattern_line = np.array(init[2])
@@ -28,6 +31,7 @@ class Model:
         self.var_line = np.array(init[6])
         self.var_step = np.array(init[7])
         self.save_calc = np.array(init[8])
+
     def get(self):
         res = []
         res.append(self.id)
@@ -40,6 +44,7 @@ class Model:
         res.append(self.var_step)
         res.append(self.save_calc)
         return res
+
     def print(self):
         print(" --- Настройки динамического моделирования (L2) --- ")
         print("id = ", self.id)
@@ -51,9 +56,11 @@ class Model:
         print("var_line = ", self.var_line)
         print("var_step = ", self.var_step)
         print("save_calc = ", self.save_calc)
+
     def print_short(self):
         print(" --- Настройки динамического моделирования (L2) --- ")
         print("settings = ", self.get())
+
     def calc_out(self):
         # определяем диапазон изменения параметров
         phi_min, phi_max = [self.pattern_line[0], self.pattern_line[1] + self.pattern_step]
@@ -63,12 +70,14 @@ class Model:
         self.vec_pattern = np.arange(phi_min, phi_max, self.pattern_step)
         self.vec_time = np.arange(time_min, time_max, self.time_step)
         self.vec_var = np.arange(var_min, var_max, self.var_step)
+
     def get_out(self):
         res = []
         res.append(self.vec_pattern)
         res.append(self.vec_time)
         res.append(self.vec_var)
         return res
+
     def print_out(self):
         bool_out = (self.vec_time != []) and (self.vec_pattern != []) and (self.vec_var != [])
         if (bool_out == True):

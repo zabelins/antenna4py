@@ -9,6 +9,8 @@ if __name__ == "__main__":
     print("Модуль использует пакет:", ps.NAME)
 
 class Settings_list:
+    """Класс исходных параметров и настроек программы"""
+
     def __init__(self, id):
         self.id = id
         self.list_parenv = ps.par_env.Par_env(1)
@@ -18,10 +20,12 @@ class Settings_list:
         self.list_setnn = ps.set_nn.Set_nn(1)
         self.list_setview = ps.set_view.Set_view(1)
         self.list_settest = ps.set_test.Set_test(1)
+
     def get(self):
         res = []
         res.append(self.id)
         return res
+
     def print(self):
         print(" --- Настройки программы и модели (L2) --- ")
         print("id = ", self.id)
@@ -32,6 +36,7 @@ class Settings_list:
         self.list_setnn.print_short()
         self.list_setview.print_short()
         self.list_settest.print_short()
+
     def print_short(self):
         print(" --- Настройки программы и модели (L2) --- ")
         print("settings = ", self.get())

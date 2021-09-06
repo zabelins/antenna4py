@@ -9,6 +9,8 @@ if __name__ == "__main__":
     print("Модуль использует пакет:", pp.NAME)
 
 class Processor:
+    """Класс моделирования сигнального процессора адаптивной антенны"""
+
     def __init__(self, id):
         self.id = id
         self.id_type = []
@@ -24,10 +26,12 @@ class Processor:
         self.list_tradalg = pp.trad_alg.Trad_alg(1)
         self.list_neuroalg = pp.nn_alg.Neuro_alg(1)
         self.list_kalman = pp.kalman.Kalman(1)
+
     def set(self, init):
         self.id_type = init[1]
         self.id_crit = init[2]
         self.id_alg = init[3]
+
     def get(self):
         res = []
         res.append(self.id)
@@ -36,6 +40,7 @@ class Processor:
         res.append(self.id_alg)
         res.append(self.time_calc)
         return res
+
     def print(self):
         print(" --- Параметры модели сигнального процессора (L2) --- ")
         print("id = ", self.id)
@@ -46,9 +51,11 @@ class Processor:
         self.list_tradalg.print_short()
         self.list_neuroalg.print_short()
         self.list_kalman.print_short()
+
     def print_short(self):
         print(" --- Параметры модели сигнального процессора (L2) --- ")
         print("processor = ", self.get())
+
     def calc_out(self, out_array):
         # распаковка исходных данных
         vec_test = out_array[0]
@@ -58,6 +65,7 @@ class Processor:
         self.calc_strartWk(vec_test)
         # вычисление оптимальных векторов ВК
         self.calc_optimWk(vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois)
+
     def get_out(self):
         res = []
         res.append(self.vec_amp1)
@@ -67,6 +75,7 @@ class Processor:
         res.append(self.vec_phi2)
         res.append(self.vec_weight2)
         return res
+
     def print_out(self):
         print("Размерности векторов ВК:")
         print("vec_amp1.shape = ", self.vec_amp1.shape)
@@ -75,12 +84,14 @@ class Processor:
         print("vec_amp2.shape = ", self.vec_amp2.shape)
         print("vec_phi2.shape = ", self.vec_phi2.shape)
         print("vec_weight2.shape = ", self.vec_weight2.shape)
+
     def calc_strartWk(self, vec_test):
         # вычисление начального вектора ВК
         len_num = vec_test.shape[0]
         self.vec_amp1 = np.ones(shape=[len_num], dtype=complex)
         self.vec_phi1 = np.zeros(shape=[len_num], dtype=complex)
         self.vec_weight1 = self.vec_amp1  # не корректно, ради теста!
+
     def calc_optimWk(self, vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois):
         # вычисление оптимального вектора ВК
         len_time, len_num = [vec_sig.shape[0], vec_sig.shape[2]]

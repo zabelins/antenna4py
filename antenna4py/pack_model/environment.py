@@ -10,6 +10,8 @@ if __name__ == "__main__":
     print("Модуль использует пакет:", pe.NAME)
 
 class Env:
+    """Класс моделирования сигнально-помеховой обстановки"""
+
     def __init__(self, id):
         self.id = id
         self.id_config = []
@@ -30,6 +32,7 @@ class Env:
         self.vec_fbandsig = []
         self.vec_fbandint = []
         self.list_gen = pe.signal_generator.Generator(1)
+
     def set(self, init):
         self.id_config = np.array(init[1])
         self.mod_sig = np.array(init[2])
@@ -41,6 +44,7 @@ class Env:
         self.am_nois = np.array(init[10])
         self.fband_sig = np.array(init[5])
         self.fband_int = np.array(init[9])
+
     def get(self):
         res = []
         res.append(self.id)
@@ -55,6 +59,7 @@ class Env:
         res.append(self.fband_sig)
         res.append(self.fband_int)
         return res
+
     def print(self):
         print(" --- Параметры модели сигналов и помех (L2) --- ")
         print("id = ", self.id)
@@ -69,9 +74,11 @@ class Env:
         print("fband_sig = ", self.fband_sig)
         print("fband_int = ", self.fband_int)
         self.list_gen.print_short()
+
     def print_short(self):
         print(" --- Параметры модели сигналов и помех (L2) --- ")
         print("environment = ", self.get())
+
     def calc_out(self, out_set):
         # распаковка исходных данных
         vec_time, vec_var = [out_set[1], out_set[1]]
@@ -89,6 +96,7 @@ class Env:
         # нужно добавить разные типы амплитудных модуляций
         # нужно добавить разные типы частотных модуляций
         # нужно придумать также зависимость от параметра
+
     def get_out(self):
         res = []
         res.append(self.vec_degsig)
@@ -99,6 +107,7 @@ class Env:
         res.append(self.vec_fbandsig)
         res.append(self.vec_fbandint)
         return res
+
     def print_out(self):
         print("Размерности векторов сигналов и помех от времени:")
         print("vec_degsig.shape = ", self.vec_degsig.shape)

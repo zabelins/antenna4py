@@ -7,6 +7,8 @@ if __name__ == "__main__":
     print("Вы запустили модуль отображения ДН (L3)")
 
 class Pattern:
+    """Класс вывода графика диаграммы направленности антенны"""
+
     def __init__(self, id):
         self.id = id
         self.str_y = "F(Θ)"
@@ -17,6 +19,7 @@ class Pattern:
         self.vec_col2 = []
         self.vec_lst2 = []
         self.vec_lwd2 = []
+
     def set(self, init):
         self.vec_col1 = ['#000000', '#b22222', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
@@ -24,20 +27,24 @@ class Pattern:
         self.vec_col2 = ['#000000', '#000000', '#000000', '#000000', '#000000']
         self.vec_lst2 = ['-', '--', '-.', '--', '-.']
         self.vec_lwd2 = [1.0, 1.0, 1.0, 1.0, 1.0]
+
     def get(self):
         res = []
         res.append(self.id)
         res.append(self.str_y)
         res.append(self.str_x)
         return res
+
     def print(self):
         print(" --- Параметры отображения ДН (L3) --- ")
         print("id = ", self.id)
         print("str_y = ", self.str_y)
         print("str_x = ", self.str_x)
+
     def print_short(self):
         print(" --- Параметры отображения ДН (L3) --- ")
         print("pattern = ", self.get())
+
     def draw_pattern(self, x, y, vec_par, deg_int):
         style, norm, mean, db, legend, strleg = [vec_par[1], vec_par[2], vec_par[3], vec_par[4], vec_par[5], vec_par[6]]
         plt.title("Диаграмма направленности ААР")

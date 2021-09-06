@@ -9,6 +9,8 @@ if __name__ == "__main__":
     print("Модуль использует пакет:", pack_control.NAME)
 
 class Control:
+    """Класс загрузки исходных данных и управления программой"""
+
     def __init__(self, id_control, id_view, id_model, mode):
         self.id_control = id_control
         self.id_view = id_view
@@ -16,6 +18,7 @@ class Control:
         self.mode = mode
         self.list_set = pack_control.settings.Settings_list(1)
         self.list_file = file_io.File_IO(1)
+
     def get(self):
         res = []
         res.append(self.id_control)
@@ -23,6 +26,7 @@ class Control:
         res.append(self.id_model)
         res.append(self.mode)
         return res
+
     def print(self):
         print(" --- ПАРАМЕТРЫ МОДУЛЯ УПРАВЛЕНИЯ (L1) --- ")
         print("id_control = ", self.id_control)
@@ -31,6 +35,7 @@ class Control:
         print("mode = ", self.mode)
         self.list_set.print_short()
         self.list_file.print_short()
+
     def print_short(self):
         print(" --- ПАРАМЕТРЫ МОДУЛЯ УПРАВЛЕНИЯ (L1) --- ")
         print("prog_control = ", self.get())
