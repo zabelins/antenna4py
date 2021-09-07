@@ -102,20 +102,38 @@ class Factor:
             res = np.random.normal(loc=0.0, scale=self.noise_phimax)
         return res
 
+    def get_eqvec(self, len_time, len_sig, vec_deg, vec_fband, num_all):
+        # вычисление временного вектора эквивалентных углов сигнала
+        vec_eqdegsig = []
+        len_eqsig, sumlen_eqsig = np.zeros([len_time, len_sig]), np.zeros([len_time])
+        l0_maxsig, f_otnsig = np.zeros([len_time, len_sig]), np.zeros([len_time, len_sig])
+        for i in range(len_time):
+            buf_eqdeg = []
+            for j in range(len_sig):
+                # вычисление углов эквивалентных сигналов
+                buf = self.get_eqsig(vec_deg[i][j], vec_fband[i][j], num_all)
+                buf_eqdeg.append(buf[0])
+                len_eqsig[i][j] = buf[1]
+                l0_maxsig[i][j] = buf[2]
+                f_otnsig[i][j] = buf[3]
+                sumlen_eqsig[i] = sumlen_eqsig[i] + len_eqsig[i][j]
+            vec_eqdegsig.append(buf_eqdeg)
+        return [vec_eqdegsig, len_eqsig, sumlen_eqsig, l0_maxsig, f_otnsig]
+
     def get_eqsig(self, deg, fband, num_all):
-        # преобразование значения сигнала в вектор эквивалентных сигналов
+        # вычисление моментального вектора эквивалентных углов сигнала
         f_otn = fband / self.f_cen
         # количество эквивалентных помех сигнала
-        num_eqsig = 0
+        len_eqsig = 0
         buf1 = num_all * fband * 2 * math.pi**2 * self.beta
         buf2 = buf1 * math.sin(math.radians(deg) / (4 * self.f_cen * math.pi))
         l0_max = abs(round(buf2))
-        num_eqsig = num_eqsig + l0_max * 2 + 1
+        len_eqsig = len_eqsig + l0_max * 2 + 1
         # новый вектор углов сигнала
-        vec_eqdeg = np.zeros(shape=[int(num_eqsig)])
+        vec_eqdeg = np.zeros(shape=[int(len_eqsig)])
         # заполняем вектор помех: [real_sig, -L, +L, -2L, +2L...]
         l = 0
-        for i in range(int(num_eqsig)):
+        for i in range(int(len_eqsig)):
             if (i == 0):
                 vec_eqdeg[i] = deg
             if (i % 2 != 0):
@@ -127,7 +145,7 @@ class Factor:
         for i in range(vec_eqdeg.shape[0]):
             if (vec_eqdeg[i] < range_show[0]) or (vec_eqdeg[i] > range_show[1]):
                 vec_eqdeg[i] = 361
-        return [vec_eqdeg, num_eqsig, l0_max, f_otn]
+        return [vec_eqdeg, len_eqsig, l0_max, f_otn]
 
     def get_eqamp(self, num_all, num_var):
         #f_otn = fband / self.f_cen
