@@ -1,5 +1,3 @@
-# модуль модели традиционного алгоритма
-
 import math
 import numpy as np
 

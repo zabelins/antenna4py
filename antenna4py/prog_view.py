@@ -1,5 +1,3 @@
-# модуль вывода информации
-
 import pack_view
 from pack_view import *
 import numpy as np

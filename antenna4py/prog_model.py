@@ -1,5 +1,3 @@
-# модуль динамической модели ААР
-
 import pack_model
 from pack_model import *
 import numpy as np

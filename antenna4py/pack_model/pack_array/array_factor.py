@@ -1,5 +1,3 @@
-# модуль модели множителя АР
-
 import math
 import cmath
 import numpy as np

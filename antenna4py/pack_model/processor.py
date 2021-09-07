@@ -1,5 +1,3 @@
-# модуль моделирования сигнального процессора
-
 import pack_model.pack_processor as pp
 from pack_model.pack_processor import *
 import numpy as np

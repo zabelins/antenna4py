@@ -1,5 +1,3 @@
-# модуль отображения характеристик
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pack_calc.calc_list as cl

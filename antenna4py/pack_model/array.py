@@ -1,4 +1,3 @@
-# модуль модели антенной решётки
 import math
 
 import pack_model.pack_array as pa

@@ -1,5 +1,3 @@
-# модуль модели элемента АР
-
 import math
 import numpy as np
 

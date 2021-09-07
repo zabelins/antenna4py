@@ -1,5 +1,3 @@
-# модуль отображения ДН
-
 import matplotlib.pyplot as plt
 import numpy as np
 

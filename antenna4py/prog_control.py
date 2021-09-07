@@ -1,5 +1,3 @@
-# модуль управления программой
-
 import pack_control
 from pack_control import *
 import numpy as np

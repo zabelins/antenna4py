@@ -1,5 +1,3 @@
-# модуль настроек ПО, ААР и НС
-
 import pack_control.pack_settings as ps
 from pack_control.pack_settings import *
 import numpy as np
@@ -9,7 +7,7 @@ if __name__ == "__main__":
     print("Модуль использует пакет:", ps.NAME)
 
 class Settings_list:
-    """Класс исходных параметров и настроек программы"""
+    """Класс исходных параметров и настроек программы, динамической модели и НС"""
 
     def __init__(self, id):
         self.id = id

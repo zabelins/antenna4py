@@ -1,5 +1,3 @@
-# модуль вывода графика
-
 import pack_view.pack_graph as pg
 from pack_view.pack_graph import *
 import numpy as np
