@@ -1,5 +1,3 @@
-# главный скрипт запуска программы моделирования ААР
-
 import prog_control
 import prog_model
 import prog_view

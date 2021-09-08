@@ -147,15 +147,25 @@ class Factor:
                 vec_eqdeg[i] = 361
         return [vec_eqdeg, len_eqsig, l0_max, f_otn]
 
-    def get_eqamp(self, num_all, num_var):
-        #f_otn = fband / self.f_cen
-        #l0_max = num_all / 2;
-        #A2l = np.zeros(shape=[l0_max, self.N], dtype='float64')
-        #for k in range(l0_max):
-        #    buf0 = 1 / (l0_max+1)
-        #    buf1 = f_otn * 2 * math.pi * k * self.beta * math.pi /(2 * self.f_cen * 2 * math.pi)
-        #    A2l[k] = buf0 * sum( self.get_freqdist(buf1) * math.cos(2 * math.pi * k * l_var / (l0_max + 1)))
-        return 1.0
+    def get_eqamp(self, num_all, l0_max, l_var, f_otn):
+        # вычисление множителя дискретного разложения Фурье для эквивалентных сигналов
+        l0_maxreal = round(num_all / 2)
+        coef_fourier = 0.0
+        if (int(l0_max) != 0):
+            for k in range(int(l0_maxreal)+1):
+                arg_func1 = (f_otn * k * self.beta * math.pi) / 2
+                arg_func2 = (2 * math.pi * k * l_var) / (l0_maxreal + 1)
+                buf = (1 / (l0_maxreal+1)) * self.get_freqdist(arg_func1) * math.cos(arg_func2)
+                coef_fourier = coef_fourier + buf
+        else:
+            coef_fourier = 1.0
+        return coef_fourier
 
-    def get_freqdist(self, y_var):
-        return np.sin(y_var) / y_var
+    def get_freqdist(self, x_var):
+        # форма распределения частот входного сигнала
+        if (x_var != 0.0):
+            # соответствует прямоугольному импульсу
+            res = np.sin(x_var) / x_var
+        else:
+            res = 1.0
+        return res

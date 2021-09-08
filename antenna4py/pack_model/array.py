@@ -100,8 +100,7 @@ class Array:
             buf = np.zeros(shape=[len_pattern], dtype=complex)
 
     def calc_realsig(self, vec_degsig, vec_degint, vec_ampsig, vec_ampint, vec_ampnois, vec_fbandsig, vec_fbandint):
-        # вычисление векторов входных сигналов и помех в зависимости от времени
-        # значения сигналов для углов прихода сигналов
+        # вычисление векторов входных сигналов и помех в зависимости от времени для заданных углов прихода
         len_time, len_sig, len_int = [vec_degsig.shape[0], vec_degsig.shape[1], vec_degint.shape[1]]
         # расчёт вектора и параметров эквивалентных сигналов
         buf = self.list_factor.get_eqvec(len_time, len_sig, vec_degsig, vec_fbandsig, self.N)
@@ -109,32 +108,39 @@ class Array:
         # расчёт вектора и параметров эквивалентных помех
         buf = self.list_factor.get_eqvec(len_time, len_int, vec_degint, vec_fbandint, self.N)
         vec_eqdegint, len_eqint, sumlen_eqint, l0_maxint, f_otnint = buf
-        # расчёт размерности для векторов входных сигналов и помех на АР
-        len_newsig, len_newint = int(sumlen_eqsig.max()), int(sumlen_eqint.max())
         # инициализируем размеры векторов и матриц
-        self.vec_sig = np.zeros(shape=[len_time, len_newsig, self.N], dtype=complex)
-        self.vec_int = np.zeros(shape=[len_time, len_newint, self.N], dtype=complex)
+        self.vec_sig = np.zeros(shape=[len_time, int(sumlen_eqsig.max()), self.N], dtype=complex)
+        self.vec_int = np.zeros(shape=[len_time, int(sumlen_eqint.max()), self.N], dtype=complex)
         self.vec_nois = np.zeros(shape=[len_time, 1, self.N], dtype=complex)
         self.matrix_sig = np.zeros(shape=[len_time, self.N, self.N], dtype=complex)
         self.matrix_int = np.zeros(shape=[len_time, self.N, self.N], dtype=complex)
         self.matrix_nois = np.zeros(shape=[len_time, self.N, self.N], dtype=complex)
+        vec_coefsig = np.zeros(shape=[len_time, int(sumlen_eqsig.max())])
+        vec_coefint = np.zeros(shape=[len_time, int(sumlen_eqint.max())])
         # запускаем цикл по времени
         for i in range(len_time):
-            self.vec_sig[i] = self.calc_vector(vec_degsig[i], vec_ampsig[i], vec_eqdegsig[i], len_eqsig[i], sumlen_eqsig[i])
-            self.vec_int[i] = self.calc_vector(vec_degint[i], vec_ampint[i], vec_eqdegint[i], len_eqint[i], sumlen_eqint[i])
-            self.matrix_sig[i] = self.calc_matrix(self.vec_sig[i], vec_degsig[i], vec_eqdegsig[i], len_eqsig[i], sumlen_eqsig[i])
-            self.matrix_int[i] = self.calc_matrix(self.vec_int[i], vec_degint[i], vec_eqdegint[i], len_eqint[i], sumlen_eqint[i])
-            # vec_nois вычисляется некорректно, должен быть рандомным
+            # вычисление векторов сигналов и помех
+            self.vec_sig[i] = self.calc_vector(vec_ampsig[i], vec_eqdegsig[i], len_eqsig[i], sumlen_eqsig[i])
+            self.vec_int[i] = self.calc_vector(vec_ampint[i], vec_eqdegint[i], len_eqint[i], sumlen_eqint[i])
+            # вычисление матриц сигналов и помех
+            self.matrix_sig[i], vec_coefsig[i] = self.calc_matrix(self.vec_sig[i], l0_maxsig[i], f_otnsig[i], sumlen_eqsig[i])
+            self.matrix_int[i], vec_coefint[i] = self.calc_matrix(self.vec_int[i], l0_maxint[i], f_otnint[i], sumlen_eqint[i])
+            # коррекция амплитуд векторов сигналов и помех
+            self.vec_sig[i] = self.edit_vector(self.vec_sig[i], vec_coefsig[i], sumlen_eqsig[i])
+            self.vec_int[i] = self.edit_vector(self.vec_int[i], vec_coefint[i], sumlen_eqint[i])
+            # вычисление вектора и матрицы для шума (!!! vec_nois должен быть рандомным !!!)
             self.vec_nois[i] = np.ones(shape=[1, self.N], dtype=complex) * vec_ampnois[i]
             self.matrix_nois[i] = np.eye(self.N, dtype=complex) * math.pow(vec_ampnois[i], 2)
+        #print("vec_sig = ", self.vec_sig[0])
+        #print("vec_int = ", self.vec_int[0])
 
-    def calc_vector(self, var_deg, var_amp, var_eqdeg, len_eqsig, sumlen_eqsig):
+    def calc_vector(self, var_amp, var_eqdeg, len_eqsig, sumlen_eqsig):
         # вычисление вектора сигнала для одного момента времени
-        len_deg = var_deg.shape[0]
+        len_sig = var_amp.shape[0]
         vec = np.zeros(shape=[int(sumlen_eqsig), self.N], dtype=complex)
-        flag = 0
+        index = 0
         # запускаем цикл по реальным сигналам
-        for i in range(len_deg):
+        for i in range(len_sig):
             # запускаем цикл по эквивалентным сигналам
             for j in range(int(len_eqsig[i])):
                 vec_buf = np.zeros(shape=[self.N], dtype=complex)
@@ -144,7 +150,6 @@ class Array:
                         # вычисление номера элемента
                         num = k + 1
                         # амплитуды для заданного элемента
-                        #amp_sig = var_amp[i] * self.list_factor.get_eqamp(self.N, num)
                         amp_sig = var_amp[i]
                         amp_dist = self.list_factor.get_dist(self.N, num)
                         amp_rand = self.list_factor.get_randamp()
@@ -157,23 +162,49 @@ class Array:
                         vec_buf[k] = vec_buf[k] + self.list_factor.get_out(amp, deg, num, deg_rand)
                     else:
                         vec_buf[k] = vec_buf[k]
-                vec[flag] = vec_buf
-                flag = flag + 1
+                vec[index] = vec_buf
+                index = index + 1
         #print(vec)
         return vec
 
-    def calc_matrix(self, vec, var_deg, var_eqdeg, len_eqsig, sumlen_eqsig):
-        # вычисление вектора и корреляционной матрицы для одного момента времени
-        #len_deg = var_deg.shape[0]
-        # вычисление корреляционной матрицы
+    def calc_matrix(self, vec, l0_max, f_otn, sumlen_eqsig):
+        # вычисление корреляционной матрицы для одного момента времени
         matrix = np.zeros(shape=[self.N, self.N], dtype=complex)
+        vec_coef = np.zeros(shape=[int(sumlen_eqsig)])
+        len_realsig = l0_max.shape[0]
+        index = 0
         # запускаем цикл по реальным сигналам
-        for i in range(int(sumlen_eqsig)):
-            # расчёт корреляционной матрицы
-            vec0 = vec[i].T
-            vec1 = np.conj(vec0)
-            vec2 = vec0.T
-            matrix_buf = np.outer(vec1, vec2)
-            matrix = matrix + matrix_buf
-        # осталось добавить расчёт широкополосных сигналов
-        return matrix
+        for i in range(len_realsig):
+            # запускаем цикл по эквивалентным парам
+            for j in range(int(l0_max[i])+1):
+                # вычисление коэффициена дискретного разложения Фурье
+                coef_fourier = self.list_factor.get_eqamp(self.N, l0_max[i], j, f_otn[i])
+                if (j == 0):
+                    # расчёт корреляционной матрицы реального сигнала
+                    var_vec = vec[index].T
+                    matrix_buf = coef_fourier * np.outer(np.conj(var_vec), var_vec.T)
+                    # суммирование матриц
+                    matrix = matrix + matrix_buf
+                    vec_coef[index] = coef_fourier
+                    index = index + 1
+                else:
+                    # расчёт корреляционной матрицы эквивалентных пар сигналов
+                    var_vec0 = vec[index].T
+                    var_vec1 = vec[index+1].T
+                    matrix0_buf = np.outer(np.conj(var_vec0), var_vec0.T)
+                    matrix1_buf = np.outer(np.conj(var_vec1), var_vec1.T)
+                    matrix_buf = (coef_fourier / 2) * (matrix0_buf + matrix1_buf)
+                    # суммирование матриц
+                    matrix = matrix + matrix_buf
+                    vec_coef[index] = coef_fourier / 2
+                    vec_coef[index+1] = coef_fourier / 2
+                    index = index + 2
+        #print(matrix)
+        #print(vec_coef)
+        return [matrix, vec_coef]
+
+    def edit_vector(self, var_sig, var_coefsig, sumlen_eq):
+        # умножение векторов на коэффициенты Фурье
+        for i in range(int(sumlen_eq)):
+            var_sig[i] = var_sig[i] * math.sqrt(var_coefsig[i])
+        return var_sig

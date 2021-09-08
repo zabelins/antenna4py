@@ -65,8 +65,6 @@ class Synt_net:
             db_inpattern = 20 * np.log10(abs(norm_inpattern))
             db_outpattern = 20 * np.log10(abs(norm_outpattern))
             out_atten[i] = db_inpattern - db_outpattern
-            print(vec_pattern[id_sig])
-            print(db_inpattern)
         for i in range(len_deg):
             # вычисление индексов для угла заданной помехи
             id_int = np.where(vec_pattern == deg_int[i])
@@ -76,10 +74,9 @@ class Synt_net:
             db_inpattern = 20 * np.log10(abs(norm_inpattern))
             db_outpattern = 20 * np.log10(abs(norm_outpattern))
             out_depth[i] = db_inpattern - db_outpattern
-            print(vec_pattern[id_int])
         # вывод параметров
-        self.vec_outdeph = out_depth
-        self.vec_outatten = out_atten
+        self.vec_outdeph = -out_depth
+        self.vec_outatten = -out_atten
         print("vec_outdeph = ", self.vec_outdeph)
         print("vec_outatten = ", self.vec_outatten)
         self.vec_outsnir = []
