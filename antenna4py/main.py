@@ -25,18 +25,26 @@ model1.set(control1.list_set)
 
 # вывод служебной информации для графика
 out_model = model1.calc_out()
-model1.print_out()
+#model1.print_out()
+
+# распаковка данных
+out_syntnet = out_model[0]
+vec_pattern, vec_time = out_model[1], out_model[2]
+vec_degsig, vec_degint = out_model[3], out_model[4]
+vec_eqdegsig, vec_eqdegint = out_model[5], out_model[6]
 
 # вывод графика ДН
-x = np.array([out_model[0], out_model[0]])
-y = np.array([out_model[1], out_model[2]])
-deg = out_model[3]
-view1.list_graph.draw_pattern(x, y, deg)
+time = 1
+x = np.array([vec_pattern, vec_pattern])
+y = np.array([out_syntnet[0][time], out_syntnet[1][time]])
+view1.list_graph.draw_pattern(x, y, vec_degint[time])
 
 # вывод графика характеристик
-#x = np.array([[0, 1, 2, 3, 4], [0, 1, 2, 3, 4], [0, 1, 2, 3, 4]])
-#y = np.array([[1, 2, 2, 2, 3], [2, 1, 0, 1, 0], [3, 4, 2, 1, 1]])
-#view1.list_graph.draw_charact(x, y, ['s1','s2'])
+depth = out_syntnet[2].T
+atten = out_syntnet[3].T
+x = np.array([vec_time, vec_time, vec_time])
+y = np.array([atten[0], depth[0], depth[1]])
+view1.list_graph.draw_charact(x, y, ['dp','time'])
 
 
 #model1.list_proc.get_out(10)

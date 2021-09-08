@@ -67,12 +67,12 @@ class Characteristics:
         else:
             vec_col, vec_lst, vec_lwd = [self.vec_col2, self.vec_lst2, self.vec_lwd2]
         # нормировка и единицы измерения графика
-        max_y = np.amax(y)
-        for i in range(len(x)):
-            if norm == 1:
-                y[i] = y[i] / max_y
-            if db == 1:
-                y[i] = 20 * np.log10(abs(y[i]))
+        #max_y = np.amax(y)
+        #for i in range(len(x)):
+        #    if norm == 1:
+        #        y[i] = y[i] / max_y
+        #    if db == 1:
+        #        y[i] = 20 * np.log10(abs(y[i]))
         max_y = np.amax(y)
         # границы отрисовки графика
         if db == 1:

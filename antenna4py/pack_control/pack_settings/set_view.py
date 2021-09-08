@@ -12,7 +12,7 @@ class Set_view:
         self.graph_db = 1
         self.graph_legend = 1
         self.graph_strleg = ["g1", "g2", "g3", "g4", "g5"]
-        self.approx = 4
+        self.approx = 0
         self.animation = 1
 
     def set(self, init):

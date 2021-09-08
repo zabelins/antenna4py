@@ -84,11 +84,10 @@ class Model_AAA:
         self.list_syntnet.calc_out(out_set, out_env, out_array, out_weight)
         out_syntnet = self.list_syntnet.get_out()
         # формирование выходных векторов
-        len_deg = out_array[0].shape[1]
-        var_deg = out_set[0].reshape((len_deg, 1))
-        in_pattern, out_pattern = [out_syntnet[0], out_syntnet[1]]
-        deg_int = out_env[1][1]
-        return [var_deg, in_pattern, out_pattern, deg_int]
+        vec_pattern, vec_time = out_set[0], out_set[1]
+        vec_degsig, vec_degint = out_env[0], out_env[1]
+        vec_eqdegsig, vec_eqdegint = out_array[7], out_array[8]
+        return [out_syntnet, vec_pattern, vec_time, vec_degsig, vec_degint, vec_eqdegsig, vec_eqdegint]
 
     def print_out(self):
         # вывод информации о ходе вычислений
@@ -96,3 +95,4 @@ class Model_AAA:
         self.list_env.print_out()
         self.list_array.print_out()
         self.list_proc.print_out()
+        self.list_syntnet.print_out()

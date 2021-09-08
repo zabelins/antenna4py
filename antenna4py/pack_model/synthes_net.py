@@ -42,43 +42,33 @@ class Synt_net:
 
     def calc_out(self, out_set, out_env, out_array, out_weight):
         # распаковка исходных данных
-        vec_pattern = out_set[0]
-        deg_sig = out_env[0][0]
-        deg_int = out_env[1][0]
+        vec_pattern, vec_time = out_set[0], out_set[1]
         vec_test = out_array[0].T
-        vec_weight1 = out_weight[2]
-        vec_weight2 = out_weight[5]
-        # вычисление ДН
-        self.vec_inpattern = abs(np.dot(vec_test, vec_weight1))
-        self.vec_outpattern = abs(np.dot(vec_test, vec_weight2))
-        # вычисление глубины подавления помехи и ослабления сигнала
-        len_sig, len_deg = [deg_sig.shape[0], deg_int.shape[0]]
-        out_atten = np.zeros(shape=[len_sig], dtype='float64')
-        out_depth = np.zeros(shape=[len_deg], dtype='float64')
-        max_inpattern = self.vec_inpattern.max()
-        for i in range(len_sig):
-            # вычисление индексов для угла заданного сигнала
-            id_sig = np.where(vec_pattern == deg_sig[i])
-            # вычисление в дБ разности ДН по заданным углам
-            norm_inpattern = self.vec_inpattern[id_sig] / max_inpattern
-            norm_outpattern = self.vec_outpattern[id_sig] / max_inpattern
-            db_inpattern = 20 * np.log10(abs(norm_inpattern))
-            db_outpattern = 20 * np.log10(abs(norm_outpattern))
-            out_atten[i] = db_inpattern - db_outpattern
-        for i in range(len_deg):
-            # вычисление индексов для угла заданной помехи
-            id_int = np.where(vec_pattern == deg_int[i])
-            # вычисление в дБ разности ДН по заданным углам
-            norm_inpattern = self.vec_inpattern[id_int] / max_inpattern
-            norm_outpattern = self.vec_outpattern[id_int] / max_inpattern
-            db_inpattern = 20 * np.log10(abs(norm_inpattern))
-            db_outpattern = 20 * np.log10(abs(norm_outpattern))
-            out_depth[i] = db_inpattern - db_outpattern
-        # вывод параметров
-        self.vec_outdeph = -out_depth
-        self.vec_outatten = -out_atten
-        print("vec_outdeph = ", self.vec_outdeph)
-        print("vec_outatten = ", self.vec_outatten)
+        vec_degsig, vec_degint = out_env[0], out_env[1]
+        vec_eqdegsig, vec_eqdegint = out_array[7], out_array[8]
+        vec_weight1, vec_weight2 = out_weight[2], out_weight[5]
+        print("vec_time = ", vec_time)
+        print("vec_degint = ", vec_degint)
+        print("vec_eqdegint = ", vec_eqdegint)
+        # инициализируем размеры векторов
+        len_time, len_pattern = vec_time.shape[0], vec_pattern.shape[0]
+        len_sig, len_int = vec_degsig.shape[1], vec_degint.shape[1]
+        self.vec_inpattern = np.zeros(shape=[len_time, len_pattern])
+        self.vec_outpattern = np.zeros(shape=[len_time, len_pattern])
+        self.vec_outatten = np.zeros(shape=[len_time, len_sig])
+        self.vec_outdeph = np.zeros(shape=[len_time, len_int])
+        # запускаем цикл по времени
+        for i in range(len_time):
+            # вычисление ДН
+            self.vec_inpattern[i] = abs(np.dot(vec_test, vec_weight1))
+            self.vec_outpattern[i] = abs(np.dot(vec_test, vec_weight2[i]))
+            # вычисление глубины подавления помехи и ослабления сигнала
+            self.vec_outatten[i] = self.calc_difference(vec_pattern, vec_degsig[i], i)
+            self.vec_outdeph[i] = self.calc_difference(vec_pattern, vec_degint[i], i)
+            # вывод информации
+            print("vec_outdeph = ", self.vec_outdeph[i])
+            print("vec_outatten = ", self.vec_outatten[i])
+
         self.vec_outsnir = []
         self.vec_outsnr = []
         self.vec_outinr = []
@@ -95,3 +85,30 @@ class Synt_net:
         res.append(self.vec_outinr)
         res.append(self.vec_outsignal)
         return res
+
+    def print_out(self):
+        print("Размерности векторов ДОС:")
+        print("vec_inpattern.shape = ", self.vec_inpattern.shape)
+        print("vec_outpattern.shape = ", self.vec_outpattern.shape)
+        print("vec_outdeph.shape = ", self.vec_outdeph.shape)
+        print("vec_outatten.shape = ", self.vec_outatten.shape)
+        #print("vec_outsnir.shape = ", self.vec_outsnir.shape)
+        #print("vec_outsnr.shape = ", self.vec_outsnr.shape)
+        #print("vec_outinr.shape = ", self.vec_outinr.shape)
+        #print("vec_outsignal.shape = ", self.vec_outsignal.shape)
+
+    def calc_difference(self, vec_pattern, vec_deg, index):
+        # вычисление разности искодной и оптимальной ДН по заданным углам
+        len_sig = vec_deg.shape[0]
+        out_diff = np.zeros(shape=[len_sig], dtype='float64')
+        max_inpattern = self.vec_inpattern[index].max()
+        for i in range(len_sig):
+            # вычисление индексов для угла заданного сигнала
+            id_sig = np.where(vec_pattern == vec_deg[i])
+            # вычисление в дБ разности ДН по заданным углам
+            norm_inpattern = self.vec_inpattern[index][id_sig] / max_inpattern
+            norm_outpattern = self.vec_outpattern[index][id_sig] / max_inpattern
+            db_inpattern = 20 * np.log10(abs(norm_inpattern))
+            db_outpattern = 20 * np.log10(abs(norm_outpattern))
+            out_diff[i] = db_outpattern - db_inpattern
+        return out_diff

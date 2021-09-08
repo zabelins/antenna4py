@@ -100,16 +100,10 @@ class Processor:
         matrix_sig = matrix_sig + matrix_nois
         matrix_int = matrix_int + matrix_nois
         # запускаем цикл по времени
-        #for i in range(len_time):
-        mu = abs(matrix_nois[0][0][0])
-        m1 = matrix_int[0]
-        v1 = vec_sig[0][0]
-        matrix = np.linalg.inv(m1)
-        vector = np.conj(v1)
-        self.vec_weight2 = mu * matrix.dot(vector)
-        #print(matrix.shape)
-        #print(vector.shape)
-        #print(matrix)
-        #print(vector)
+        for i in range(len_time):
+            mu = abs(matrix_nois[i][0][0])
+            matrix = np.linalg.inv(matrix_int[i])
+            vector = np.conj(vec_sig[i][0])
+            self.vec_weight2[i] = mu * matrix.dot(vector)
         #print(self.vec_weight2)
 

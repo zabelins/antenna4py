@@ -21,6 +21,8 @@ class Array:
         self.matrix_sig = []
         self.matrix_int = []
         self.matrix_nois = []
+        self.vec_eqdegsig = []
+        self.vec_eqdegint = []
         self.list_factor = pa.array_factor.Factor(1)
         self.list_element = pa.array_element.Element(1)
 
@@ -64,6 +66,8 @@ class Array:
         res.append(self.matrix_sig)
         res.append(self.matrix_int)
         res.append(self.matrix_nois)
+        res.append(self.vec_eqdegsig)
+        res.append(self.vec_eqdegint)
         return res
 
     def print_out(self):
@@ -75,6 +79,8 @@ class Array:
         print("matrix_sig.shape = ", self.matrix_sig.shape)
         print("matrix_int.shape = ", self.matrix_int.shape)
         print("matrix_nois.shape = ", self.matrix_nois.shape)
+        print("vec_eqdegsig.shape = ", len(self.vec_eqdegsig))
+        print("vec_eqdegint.shape = ", len(self.vec_eqdegint))
 
     def calc_testsig(self, vec_pattern, vec_ampsig):
         # вычисление вектора входного сигнала по всем углам для построения ДН (10x721)
@@ -104,10 +110,10 @@ class Array:
         len_time, len_sig, len_int = [vec_degsig.shape[0], vec_degsig.shape[1], vec_degint.shape[1]]
         # расчёт вектора и параметров эквивалентных сигналов
         buf = self.list_factor.get_eqvec(len_time, len_sig, vec_degsig, vec_fbandsig, self.N)
-        vec_eqdegsig, len_eqsig, sumlen_eqsig, l0_maxsig, f_otnsig = buf
+        self.vec_eqdegsig, len_eqsig, sumlen_eqsig, l0_maxsig, f_otnsig = buf
         # расчёт вектора и параметров эквивалентных помех
         buf = self.list_factor.get_eqvec(len_time, len_int, vec_degint, vec_fbandint, self.N)
-        vec_eqdegint, len_eqint, sumlen_eqint, l0_maxint, f_otnint = buf
+        self.vec_eqdegint, len_eqint, sumlen_eqint, l0_maxint, f_otnint = buf
         # инициализируем размеры векторов и матриц
         self.vec_sig = np.zeros(shape=[len_time, int(sumlen_eqsig.max()), self.N], dtype=complex)
         self.vec_int = np.zeros(shape=[len_time, int(sumlen_eqint.max()), self.N], dtype=complex)
@@ -120,8 +126,8 @@ class Array:
         # запускаем цикл по времени
         for i in range(len_time):
             # вычисление векторов сигналов и помех
-            self.vec_sig[i] = self.calc_vector(vec_ampsig[i], vec_eqdegsig[i], len_eqsig[i], sumlen_eqsig[i])
-            self.vec_int[i] = self.calc_vector(vec_ampint[i], vec_eqdegint[i], len_eqint[i], sumlen_eqint[i])
+            self.vec_sig[i] = self.calc_vector(vec_ampsig[i], self.vec_eqdegsig[i], len_eqsig[i], sumlen_eqsig[i])
+            self.vec_int[i] = self.calc_vector(vec_ampint[i], self.vec_eqdegint[i], len_eqint[i], sumlen_eqint[i])
             # вычисление матриц сигналов и помех
             self.matrix_sig[i], vec_coefsig[i] = self.calc_matrix(self.vec_sig[i], l0_maxsig[i], f_otnsig[i], sumlen_eqsig[i])
             self.matrix_int[i], vec_coefint[i] = self.calc_matrix(self.vec_int[i], l0_maxint[i], f_otnint[i], sumlen_eqint[i])
