@@ -18,6 +18,12 @@ class Set_view:
         self.charact_db = 1
         self.charact_legend = 1
         self.charact_strleg = ["c1", "c2", "c3", "c4", "c5"]
+        self.timefreq_style = 1
+        self.timefreq_norm = 1
+        self.timefreq_mean = 0
+        self.timefreq_db = 1
+        self.timefreq_legend = 1
+        self.timefreq_strleg = ["tf1", "tf2", "tf3", "tf4", "tf5"]
         self.approx = 0
         self.animation = 1
 
@@ -34,8 +40,14 @@ class Set_view:
         self.charact_db = init[9]
         self.charact_legend = init[10]
         self.charact_strleg = init[11]
-        self.approx = init[12]
-        self.animation = init[13]
+        self.timefreq_style = init[12]
+        self.timefreq_norm = init[13]
+        self.timefreq_mean = init[14]
+        self.timefreq_db = init[15]
+        self.timefreq_legend = init[16]
+        self.timefreq_strleg = init[17]
+        self.approx = init[18]
+        self.animation = init[19]
     def get(self):
         res = []
         res.append(self.id)
@@ -51,6 +63,12 @@ class Set_view:
         res.append(self.charact_db)
         res.append(self.charact_legend)
         res.append(self.charact_strleg)
+        res.append(self.timefreq_style)
+        res.append(self.timefreq_norm)
+        res.append(self.timefreq_mean)
+        res.append(self.timefreq_db)
+        res.append(self.timefreq_legend)
+        res.append(self.timefreq_strleg)
         res.append(self.approx)
         res.append(self.animation)
         return res
@@ -70,6 +88,12 @@ class Set_view:
         print("charact_db = ", self.charact_db)
         print("charact_legend = ", self.charact_legend)
         print("charact_strleg = ", self.charact_strleg)
+        print("timefreq_style = ", self.timefreq_style)
+        print("timefreq_norm = ", self.timefreq_norm)
+        print("timefreq_mean = ", self.timefreq_mean)
+        print("timefreq_db = ", self.timefreq_db)
+        print("timefreq_legend = ", self.timefreq_legend)
+        print("timefreq_strleg = ", self.timefreq_strleg)
         print("approx = ", self.approx)
         print("animation = ", self.animation)
 

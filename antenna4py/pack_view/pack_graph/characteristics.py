@@ -3,10 +3,10 @@ import numpy as np
 import pack_calc.calc_list as cl
 
 if __name__ == "__main__":
-    print("Вы запустили модуль отображения характеристик (L3)")
+    print("Вы запустили модуль отображения характеристик адаптации (L3)")
 
 class Characteristics:
-    """Класс вывода графика характеристик для пользователя"""
+    """Класс вывода графика характеристик адаптации для пользователя"""
 
     def __init__(self, id):
         self.id = id
@@ -33,7 +33,7 @@ class Characteristics:
         self.charact_db = init[10]
         self.charact_legend = init[11]
         self.charact_strleg = init[12]
-        self.approx = init[13]
+        self.approx = init[19]
         self.vec_col1 = ['#000000', '#b22222', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.0, 1.0, 1.0, 1.0, 1.0]
@@ -49,14 +49,14 @@ class Characteristics:
         res.append(self.charact_mean)
         res.append(self.charact_db)
         res.append(self.charact_legend)
-        res.append(self.id)
+        res.append(self.charact_strleg)
         res.append(self.str_y)
         res.append(self.str_x)
         res.append(self.approx)
         return res
 
     def print(self):
-        print(" --- Параметры отображения характеристик (L3) --- ")
+        print(" --- Параметры отображения характеристик адаптации (L3) --- ")
         print("id = ", self.id)
         print("charact_style = ", self.charact_style)
         print("charact_norm = ", self.charact_norm)
@@ -69,7 +69,7 @@ class Characteristics:
         print("approx = ", self.approx)
 
     def print_short(self):
-        print(" --- Параметры отображения характеристик (L3) --- ")
+        print(" --- Параметры отображения характеристик адаптации (L3) --- ")
         print("characteristics = ", self.get())
 
     def draw_charact(self, x, y, str):

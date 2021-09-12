@@ -35,8 +35,10 @@ class View:
         self.model.print_out()
         # вывод графика ДН
         self.show_pattern()
-        # вывод графика характеристик
+        # вывод графика характеристик адаптации
         self.show_charact()
+        # вывод графика характеристик сигналов и помех
+        #self.show_timefreq()
 
     def set(self):
         # инициализация контроллера и модели
@@ -49,6 +51,7 @@ class View:
         # инициализация параметров интерфейса уровня L3
         self.list_graph.list_pattern.set(setview)
         self.list_graph.list_charact.set(setview)
+        self.list_graph.list_timefreq.set(setview)
 
     def show_settings(self):
         # вывод настроек программы
@@ -81,6 +84,11 @@ class View:
         x = np.array([self.vec_time, self.vec_time, self.vec_time])
         y = np.array([self.vec_attenout[0], self.vec_depthout[0], self.vec_depthout[1]])
         self.list_graph.draw_charact(x, y, ['dp', 'time'])
+
+    def show_timefreq(self):
+        x = np.array([self.vec_time, self.vec_time])
+        y = np.array([self.vec_attenout[0], self.vec_depthout[1]])
+        self.list_graph.draw_timefreq(x, y, ['ampt', 'time'])
 
     def print(self):
         print(" --- ПАРАМЕТРЫ МОДУЛЯ ВЫВОДА ИНФОРМАЦИИ (L1) --- ")
