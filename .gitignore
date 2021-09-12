@@ -1,5 +1,7 @@
-# pycache
+# Byte-files
+__pycache__/
 *.pyc
-# pycharm
+
+# Pycharm
 .idea/
 .idea

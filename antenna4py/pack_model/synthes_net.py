@@ -47,9 +47,6 @@ class Synt_net:
         vec_degsig, vec_degint = out_env[0], out_env[1]
         vec_eqdegsig, vec_eqdegint = out_array[7], out_array[8]
         vec_weight1, vec_weight2 = out_weight[2], out_weight[5]
-        print("vec_time = ", vec_time)
-        print("vec_degint = ", vec_degint)
-        print("vec_eqdegint = ", vec_eqdegint)
         # инициализируем размеры векторов
         len_time, len_pattern = vec_time.shape[0], vec_pattern.shape[0]
         len_sig, len_int = vec_degsig.shape[1], vec_degint.shape[1]
@@ -65,10 +62,6 @@ class Synt_net:
             # вычисление глубины подавления помехи и ослабления сигнала
             self.vec_outatten[i] = self.calc_difference(vec_pattern, vec_degsig[i], i)
             self.vec_outdeph[i] = self.calc_difference(vec_pattern, vec_degint[i], i)
-            # вывод информации
-            print("vec_outdeph = ", self.vec_outdeph[i])
-            print("vec_outatten = ", self.vec_outatten[i])
-
         self.vec_outsnir = []
         self.vec_outsnr = []
         self.vec_outinr = []

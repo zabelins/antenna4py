@@ -9,11 +9,7 @@ if __name__ == "__main__":
 class Model_AAA:
     """Класс динамического моделирования адаптивной антенны"""
 
-    def __init__(self, id_control, id_view, id_model, mode):
-        self.id_control = id_control
-        self.id_view = id_view
-        self.id_model = id_model
-        self.mode = mode
+    def __init__(self):
         self.list_settings = pack_model.settings.Model(1)
         self.list_env = pack_model.environment.Env(1)
         self.list_array = pack_model.array.Array(1)
@@ -22,6 +18,11 @@ class Model_AAA:
         self.list_train = pack_model.train_nn.Train(1)
         self.list_test = pack_model.test.Test(1)
         self.list_file = pack_model.file_io.File_IO(1)
+        self.out_set = []
+        self.out_env = []
+        self.out_array = []
+        self.out_weight = []
+        self.out_syntnet = []
 
     def set(self, obj_set):
         # инициализация параметров уровня L2
@@ -41,19 +42,14 @@ class Model_AAA:
         self.list_proc.list_kalman.set(obj_set.list_paradapt.get())
 
     def get(self):
-        res = []
-        res.append(self.id_control)
-        res.append(self.id_view)
-        res.append(self.id_model)
-        res.append(self.mode)
-        return res
+        # формирование выходных векторов
+        vec_pattern, vec_time = self.out_set[0], self.out_set[1]
+        vec_degsig, vec_degint = self.out_env[0], self.out_env[1]
+        vec_eqdegsig, vec_eqdegint = self.out_array[7], self.out_array[8]
+        return [self.out_syntnet, vec_pattern, vec_time, vec_degsig, vec_degint, vec_eqdegsig, vec_eqdegint]
 
     def print(self):
         print(" --- ПАРАМЕТРЫ ДИНАМИЧЕСКОЙ МОДЕЛИ ААР (L1) --- ")
-        print("id_control = ", self.id_control)
-        print("id_view = ", self.id_view)
-        print("id_model = ", self.id_model)
-        print("mode = ", self.mode)
         self.list_settings.print_short()
         self.list_env.print_short()
         self.list_array.print_short()
@@ -63,31 +59,22 @@ class Model_AAA:
         self.list_test.print_short()
         self.list_file.print_short()
 
-    def print_short(self):
-        print(" --- ПАРАМЕТРЫ ДИНАМИЧЕСКОЙ МОДЕЛИ ААР (L1) --- ")
-        print("prog_model = ", self.get())
-
     def calc_out(self):
         # создание векторов изменения параметров
         self.list_settings.calc_out()
-        out_set = self.list_settings.get_out()
+        self.out_set = self.list_settings.get_out()
         # создание векторов изменения сигналов и помех от времени
-        self.list_env.calc_out(out_set)
-        out_env = self.list_env.get_out()
+        self.list_env.calc_out(self.out_set)
+        self.out_env = self.list_env.get_out()
         # вычисление сигналов с антенной решётки
-        self.list_array.calc_out(out_set, out_env)
-        out_array = self.list_array.get_out()
+        self.list_array.calc_out(self.out_set, self.out_env)
+        self.out_array = self.list_array.get_out()
         # вычисление векторов ВК
-        self.list_proc.calc_out(out_array)
-        out_weight = self.list_proc.get_out()
+        self.list_proc.calc_out(self.out_array)
+        self.out_weight = self.list_proc.get_out()
         # вычисление ДН и характеристик
-        self.list_syntnet.calc_out(out_set, out_env, out_array, out_weight)
-        out_syntnet = self.list_syntnet.get_out()
-        # формирование выходных векторов
-        vec_pattern, vec_time = out_set[0], out_set[1]
-        vec_degsig, vec_degint = out_env[0], out_env[1]
-        vec_eqdegsig, vec_eqdegint = out_array[7], out_array[8]
-        return [out_syntnet, vec_pattern, vec_time, vec_degsig, vec_degint, vec_eqdegsig, vec_eqdegint]
+        self.list_syntnet.calc_out(self.out_set, self.out_env, self.out_array, self.out_weight)
+        self.out_syntnet = self.list_syntnet.get_out()
 
     def print_out(self):
         # вывод информации о ходе вычислений
