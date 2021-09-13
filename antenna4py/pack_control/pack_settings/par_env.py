@@ -9,11 +9,11 @@ class Par_env:
     def __init__(self, id):
         self.id = id
         self.id_config = 1
-        self.sig_mod = 1
+        self.sig_mod = 0
         self.sig_deg = [0]
         self.sig_amp = [1]
         self.sig_fband = [0]
-        self.int_mod = 1
+        self.int_mod = 0
         self.int_deg = [30, 80]
         self.int_amp = [1, 1]
         self.int_fband = [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)] # [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)]

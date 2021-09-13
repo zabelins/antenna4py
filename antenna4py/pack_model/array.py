@@ -99,9 +99,9 @@ class Array:
             # амплитуды для заданного угла обзора
             for j in range(len_pattern):
                 deg = math.radians(vec_pattern[j])
-                amp_elem = self.list_element.get_out(deg)
+                amp_elem = self.list_element.get_gain(deg)
                 amp = amp_sig * amp_elem * amp_dist * amp_rand
-                buf[j] = self.list_factor.get_out(amp, deg, num, deg_rand)
+                buf[j] = self.list_factor.get_signal(amp, deg, num, deg_rand)
             self.vec_test[i] = buf
             buf = np.zeros(shape=[len_pattern], dtype=complex)
 
@@ -163,9 +163,9 @@ class Array:
                         deg_rand = self.list_factor.get_randphi()
                         # амплитуды для заданного угла обзора
                         deg = math.radians(var_eqdeg[i][j])
-                        amp_elem = self.list_element.get_out(deg)
+                        amp_elem = self.list_element.get_gain(deg)
                         amp = amp_sig * amp_elem * amp_dist * amp_rand
-                        vec_buf[k] = vec_buf[k] + self.list_factor.get_out(amp, deg, num, deg_rand)
+                        vec_buf[k] = vec_buf[k] + self.list_factor.get_signal(amp, deg, num, deg_rand)
                     else:
                         vec_buf[k] = vec_buf[k]
                 vec[index] = vec_buf

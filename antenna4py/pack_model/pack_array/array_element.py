@@ -37,7 +37,7 @@ class Element:
         print(" --- Параметры модели элемента АР (L3) --- ")
         print("array_element = ", self.get())
 
-    def get_out(self, deg):
+    def get_gain(self, deg):
         # усиление сигнала для заданного угла обзора
         res = []
         if (self.id_elem == 1):

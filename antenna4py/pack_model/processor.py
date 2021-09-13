@@ -60,9 +60,9 @@ class Processor:
         vec_sig, vec_int, vec_nois = [out_array[1], out_array[2], out_array[3]]
         matrix_sig, matrix_int, matrix_nois = [out_array[4], out_array[5], out_array[6]]
         # вычисление начального вектора ВК
-        self.calc_strartWk(vec_test)
+        self.calc_strartWC(vec_test)
         # вычисление оптимальных векторов ВК
-        self.calc_optimWk(vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois)
+        self.calc_optimWC(vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois)
 
     def get_out(self):
         res = []
@@ -83,14 +83,14 @@ class Processor:
         print("vec_phi2.shape = ", self.vec_phi2.shape)
         print("vec_weight2.shape = ", self.vec_weight2.shape)
 
-    def calc_strartWk(self, vec_test):
+    def calc_strartWC(self, vec_test):
         # вычисление начального вектора ВК
         len_num = vec_test.shape[0]
         self.vec_amp1 = np.ones(shape=[len_num], dtype=complex)
         self.vec_phi1 = np.zeros(shape=[len_num], dtype=complex)
         self.vec_weight1 = self.vec_amp1  # не корректно, ради теста!
 
-    def calc_optimWk(self, vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois):
+    def calc_optimWC(self, vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois):
         # вычисление оптимального вектора ВК
         len_time, len_num = [vec_sig.shape[0], vec_sig.shape[2]]
         self.vec_amp2 = np.zeros(shape=[len_time, len_num], dtype=complex)

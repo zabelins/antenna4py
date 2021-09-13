@@ -64,7 +64,7 @@ class Model_AAA:
         self.list_settings.calc_out()
         self.out_set = self.list_settings.get_out()
         # создание векторов изменения сигналов и помех от времени
-        self.list_env.calc_out(self.out_set)
+        self.list_env.calc_dynamic(self.out_set)
         self.out_env = self.list_env.get_out()
         # вычисление сигналов с антенной решётки
         self.list_array.calc_out(self.out_set, self.out_env)

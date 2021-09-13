@@ -2,14 +2,17 @@ import numpy as np
 
 def ones_modul(a, b):
     # функция поэлементного умножения элементов списка на векторы
-    # a - направляющий вектор, b - скользящий вектор
-    c = np.zeros(shape=[len(a), len(b)])
-    buf = np.zeros(shape=[len(b)])
-    for i in range(len(a)):
-        for j in range(len(b)):
-            buf[j] = a[i] * b[j]
+    # a - временной вектор, b - вектор статичных параметров
+    len_time, len_param = a.shape[1], b.shape[0]
+    c = np.zeros(shape=[len_time, len_param])
+    buf = np.zeros(shape=[len_param])
+    # цикл по времени
+    for i in range(len_time):
+        # цикл по параметрам
+        for j in range(len_param):
+            buf[j] = a[j][i] * b[j]
         c[i] = buf
-        buf = np.zeros(shape=[len(b)])
+        buf = np.zeros(shape=[len_param])
     return c
 
 def approx(M, x_graph, x_n, y_n, lamda=0):

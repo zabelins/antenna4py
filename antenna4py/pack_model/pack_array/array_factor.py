@@ -60,7 +60,7 @@ class Factor:
         print(" --- Параметры модели множителя АР (L3) --- ")
         print("array_factor = ", self.get())
 
-    def get_out(self, amp, deg, num, rand):
+    def get_signal(self, amp, deg, num, rand):
         # комплексный сигнал для заданного элемента антенной решётки
         lambda_cen = self.con_c / self.f_cen
         step_array = self.beta * lambda_cen / 2

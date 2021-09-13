@@ -77,22 +77,26 @@ class Env:
         print(" --- Параметры модели сигналов и помех (L2) --- ")
         print("environment = ", self.get())
 
-    def calc_out(self, out_set):
+    def calc_dynamic(self, out_set):
         # распаковка исходных данных
         vec_time, len_time = [out_set[1], out_set[1].shape[0]]
-        # создаём вектор модуляции
         # нужно добавить амплитудную и частотную модуляцию
         # нужно добавить возможность изменения по углам
-        vec_ones = np.ones(len_time)
         # создаём вектора изменения сигналов и помех от времени
-        self.vec_degsig = cl.ones_modul(vec_ones, self.deg_sig)
-        self.vec_degint = cl.ones_modul(vec_ones, self.deg_int)
-        self.vec_ampsig = cl.ones_modul(vec_ones, self.amp_sig)
-        self.vec_ampint = cl.ones_modul(vec_ones, self.amp_int)
-        self.vec_ampnois = cl.ones_modul(vec_ones, self.amp_nois)
-        self.vec_fbandsig = cl.ones_modul(vec_ones, self.fband_sig)
-        self.vec_fbandint = cl.ones_modul(vec_ones, self.fband_int)
+        self.vec_degsig = self.list_gen.get_vecdeg(len_time, self.deg_sig, 0)
+        self.vec_degint = self.list_gen.get_vecdeg(len_time, self.deg_int, 0)
+        self.vec_ampsig = self.list_gen.get_vecamp(len_time, self.amp_sig, self.mod_sig)
+        self.vec_ampint = self.list_gen.get_vecamp(len_time, self.amp_int, self.mod_int)
+        self.vec_ampnois = self.list_gen.get_vecamp(len_time, self.amp_nois, 0)
+        self.vec_fbandsig = self.list_gen.get_vecband(len_time, self.fband_sig, 0)
+        self.vec_fbandint = self.list_gen.get_vecband(len_time, self.fband_int, 0)
         # нужно добавить разные типы расстановки помех
+        print("vec_time = ", vec_time)
+        print("self.vec_degint = ", self.vec_degint)
+        print("self.vec_ampint = ", self.vec_ampint)
+
+    def calc_static(self, out_set):
+        pass
 
     def get_out(self):
         res = []
