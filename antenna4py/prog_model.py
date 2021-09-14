@@ -44,9 +44,10 @@ class Model_AAA:
     def get(self):
         # формирование выходных векторов
         vec_pattern, vec_time = self.out_set[0], self.out_set[1]
-        vec_degsig, vec_degint = self.out_env[0], self.out_env[1]
+        #vec_degsig, vec_degint = self.out_env[0], self.out_env[1]
         vec_eqdegsig, vec_eqdegint = self.out_array[7], self.out_array[8]
-        return [self.out_syntnet, vec_pattern, vec_time, vec_degsig, vec_degint, vec_eqdegsig, vec_eqdegint]
+        #return [self.out_syntnet, vec_pattern, vec_time, vec_degsig, vec_degint, vec_eqdegsig, vec_eqdegint]
+        return [vec_pattern, vec_time, self.out_syntnet, self.out_env, vec_eqdegsig, vec_eqdegint]
 
     def print(self):
         print(" --- ПАРАМЕТРЫ ДИНАМИЧЕСКОЙ МОДЕЛИ ААР (L1) --- ")

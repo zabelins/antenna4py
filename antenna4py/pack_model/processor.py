@@ -96,13 +96,10 @@ class Processor:
         self.vec_amp2 = np.zeros(shape=[len_time, len_num], dtype=complex)
         self.vec_phi2 = np.zeros(shape=[len_time, len_num], dtype=complex)
         self.vec_weight2 = np.zeros(shape=[len_time, len_num], dtype=complex)
-        # формируем матрицы для обращения
-        matrix_sig = matrix_sig + matrix_nois
-        matrix_int = matrix_int + matrix_nois
         # запускаем цикл по времени
         for i in range(len_time):
             mu = abs(matrix_nois[i][0][0])
-            matrix = np.linalg.inv(matrix_int[i])
+            matrix = np.linalg.inv(matrix_int[i] + matrix_nois[i])
             vector = np.conj(vec_sig[i][0])
             self.vec_weight2[i] = mu * matrix.dot(vector)
         #print(self.vec_weight2)

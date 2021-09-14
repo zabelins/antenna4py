@@ -7,10 +7,13 @@ class Set_model:
     def __init__(self, id):
         self.id = id
         self.id_var = 1
+        # 1 ед = 1 град
         self.pattern_line = [-90, 90]
         self.pattern_step = 0.25
-        self.time_line = [0, 5]
-        self.time_step = 0.5
+        # 1 ед = 1 мс
+        self.time_line = [0, 1]
+        self.time_step = 0.01
+        # 1 ед
         self.var_line = [0, 5]
         self.var_step = 1
         self.save_calc = 1

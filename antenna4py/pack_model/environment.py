@@ -2,6 +2,7 @@ import pack_model.pack_environment as pe
 from pack_model.pack_environment import *
 import pack_calc.calc_list as cl
 import numpy as np
+import math
 
 if __name__ == "__main__":
     print("Вы запустили модуль модели сигналов и помех (L2)")
@@ -79,21 +80,21 @@ class Env:
 
     def calc_dynamic(self, out_set):
         # распаковка исходных данных
-        vec_time, len_time = [out_set[1], out_set[1].shape[0]]
-        # нужно добавить амплитудную и частотную модуляцию
-        # нужно добавить возможность изменения по углам
+        vec_time = out_set[1]
+        # частота модуляции сигналов
+        var_freq = 10 * math.pow(10, 6)
         # создаём вектора изменения сигналов и помех от времени
-        self.vec_degsig = self.list_gen.get_vecdeg(len_time, self.deg_sig, 0)
-        self.vec_degint = self.list_gen.get_vecdeg(len_time, self.deg_int, 0)
-        self.vec_ampsig = self.list_gen.get_vecamp(len_time, self.amp_sig, self.mod_sig)
-        self.vec_ampint = self.list_gen.get_vecamp(len_time, self.amp_int, self.mod_int)
-        self.vec_ampnois = self.list_gen.get_vecamp(len_time, self.amp_nois, 0)
-        self.vec_fbandsig = self.list_gen.get_vecband(len_time, self.fband_sig, 0)
-        self.vec_fbandint = self.list_gen.get_vecband(len_time, self.fband_int, 0)
+        self.vec_degsig = self.list_gen.get_vecdeg(vec_time, self.deg_sig, 0)
+        self.vec_degint = self.list_gen.get_vecdeg(vec_time, self.deg_int, 0)
+        self.vec_ampsig = self.list_gen.get_vecamp(vec_time, self.amp_sig, var_freq, self.mod_sig)
+        self.vec_ampint = self.list_gen.get_vecamp(vec_time, self.amp_int, var_freq, self.mod_int)
+        self.vec_ampnois = self.list_gen.get_vecamp(vec_time, self.amp_nois, var_freq, 0)
+        self.vec_fbandsig = self.list_gen.get_vecband(vec_time, self.fband_sig, 0)
+        self.vec_fbandint = self.list_gen.get_vecband(vec_time, self.fband_int, 0)
         # нужно добавить разные типы расстановки помех
-        print("vec_time = ", vec_time)
-        print("self.vec_degint = ", self.vec_degint)
-        print("self.vec_ampint = ", self.vec_ampint)
+        #print("vec_time = ", vec_time)
+        # print("self.vec_degint = ", self.vec_degint)
+        #print("self.vec_ampint = ", self.vec_ampint)
 
     def calc_static(self, out_set):
         pass

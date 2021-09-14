@@ -10,6 +10,7 @@ class Synt_net:
         self.id = id
         self.control_phistep = []
         self.control_ampstep = []
+        self.pattern_step = []
         self.vec_inpattern = []
         self.vec_outpattern = []
         self.vec_outdeph = []
@@ -28,6 +29,7 @@ class Synt_net:
         res.append(self.id)
         res.append(self.control_phistep)
         res.append(self.control_ampstep)
+        res.append(self.pattern_step)
         return res
 
     def print(self):
@@ -35,6 +37,7 @@ class Synt_net:
         print("id = ", self.id)
         print("control_phistep = ", self.control_phistep)
         print("control_ampstep = ", self.control_ampstep)
+        print("pattern_step = ", self.pattern_step)
 
     def print_short(self):
         print(" --- Параметры модели ДОС (L2) --- ")
@@ -43,6 +46,7 @@ class Synt_net:
     def calc_out(self, out_set, out_env, out_array, out_weight):
         # распаковка исходных данных
         vec_pattern, vec_time = out_set[0], out_set[1]
+        self.pattern_step = out_set[3]
         vec_test = out_array[0].T
         vec_degsig, vec_degint = out_env[0], out_env[1]
         vec_eqdegsig, vec_eqdegint = out_array[7], out_array[8]
@@ -97,6 +101,7 @@ class Synt_net:
         max_inpattern = self.vec_inpattern[index].max()
         for i in range(len_sig):
             # вычисление индексов для угла заданного сигнала
+            vec_deg[i] = round(vec_deg[i]/self.pattern_step) * self.pattern_step
             id_sig = np.where(vec_pattern == vec_deg[i])
             # вычисление в дБ разности ДН по заданным углам
             norm_inpattern = self.vec_inpattern[index][id_sig] / max_inpattern

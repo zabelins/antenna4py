@@ -19,9 +19,9 @@ class Set_view:
         self.charact_legend = 1
         self.charact_strleg = ["c1", "c2", "c3", "c4", "c5"]
         self.timefreq_style = 1
-        self.timefreq_norm = 1
+        self.timefreq_norm = 0
         self.timefreq_mean = 0
-        self.timefreq_db = 1
+        self.timefreq_db = 0
         self.timefreq_legend = 1
         self.timefreq_strleg = ["tf1", "tf2", "tf3", "tf4", "tf5"]
         self.approx = 0

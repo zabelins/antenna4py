@@ -69,7 +69,7 @@ class TimeFreq:
         print("timefreq = ", self.get())
 
     def draw_time(self, x, y, str):
-        plt.title("Характеристики ААР")
+        plt.title("Изменяемый параметр")
         # приведение типа к double
         x = np.array(x, dtype='float64')
         y = np.array(y, dtype='float64')
@@ -100,8 +100,7 @@ class TimeFreq:
             vec_axis = [x[0].min(), x[0].max(), 0, max_y]
         # отрисовка графика
         for i in range(len(x)):
-            plt.scatter(x[i], y[i], color=vec_col[i])
-            plt.plot(x[i], y[i], color=vec_col[i], linestyle='--', lw=0.7, label=self.timefreq_strleg[i])
+            plt.plot(x[i], y[i], color=vec_col[i], linestyle='-', lw=0.7, label=self.timefreq_strleg[i])
             if self.timefreq_mean == 1:
                 plt.hlines(np.mean(y[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
         # отображение легенды

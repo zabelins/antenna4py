@@ -74,6 +74,8 @@ class Model:
         res.append(self.vec_pattern)
         res.append(self.vec_time)
         res.append(self.vec_var)
+        res.append(self.pattern_step)
+        res.append(self.time_step)
         return res
 
     def print_out(self):
