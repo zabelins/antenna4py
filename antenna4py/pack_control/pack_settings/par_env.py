@@ -14,9 +14,9 @@ class Par_env:
         self.sig_amp = [1]
         self.sig_fband = [0]
         self.int_mod = 3
-        self.int_deg = [30]
-        self.int_amp = [1]
-        self.int_fband = [5 * math.pow(10, 8)] # [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)]
+        self.int_deg = [30, 50]
+        self.int_amp = [1, 2]
+        self.int_fband = [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)] # [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)]
         self.nois_amp = [1]
 
     def set(self, init):

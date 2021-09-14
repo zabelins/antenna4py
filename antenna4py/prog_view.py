@@ -76,11 +76,11 @@ class View:
         self.vec_ampint = out_model[3][3].T
         self.vec_eqdegsig = out_model[4]
         self.vec_eqdegint = out_model[5]
-        print("self.vec_time = ", self.vec_time)
+        #print("self.vec_time = ", self.vec_time)
         #print("self.vec_degint = ", self.vec_degint)
         #print("self.vec_attenout = ", self.vec_attenout)
         #print("self.vec_depthout = ", self.vec_depthout)
-        #print("self.vec_ampint = ", self.vec_ampint)
+        print("self.vec_ampint = ", self.vec_ampint)
 
     def show_pattern(self):
         # вывод графика ДН
@@ -90,14 +90,22 @@ class View:
         self.list_graph.draw_pattern(x, y, self.vec_degint[time])
 
     def show_charact(self):
-        # вывод графика характеристик
-        x = np.array([self.vec_time, self.vec_time])
-        y = np.array([self.vec_attenout[0], self.vec_depthout[0]])
+        # вывод графика характеристик адаптации
+        len_ampsig, len_ampint, x, y = self.vec_ampsig.shape[0], self.vec_ampint.shape[0], [], []
+        for i in range(len_ampsig):
+            x.append(self.vec_time)
+            y.append(self.vec_attenout[i])
+        for i in range(len_ampint):
+            x.append(self.vec_time)
+            y.append(self.vec_depthout[i])
         self.list_graph.draw_charact(x, y, ['dp', 'time'])
 
     def show_timefreq(self):
-        x = np.array([self.vec_time])
-        y = np.array([self.vec_ampint[0]])
+        # вывод графика характеристик сигналов и помех
+        len_ampint, x, y = self.vec_ampint.shape[0], [], []
+        for i in range(len_ampint):
+            x.append(self.vec_time)
+            y.append(self.vec_ampint[i])
         self.list_graph.draw_timefreq(x, y, ['ampt', 'time'])
 
     def print(self):

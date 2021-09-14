@@ -97,7 +97,7 @@ class TimeFreq:
         if self.timefreq_db == 1:
             vec_axis = [x[0].min(), x[0].max(), -70, max_y]
         else:
-            vec_axis = [x[0].min(), x[0].max(), 0, max_y]
+            vec_axis = [x[0].min(), x[0].max(), 0, max_y * 1.1]
         # отрисовка графика
         for i in range(len(x)):
             plt.plot(x[i], y[i], color=vec_col[i], linestyle='-', lw=0.7, label=self.timefreq_strleg[i])

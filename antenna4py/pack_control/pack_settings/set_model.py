@@ -12,7 +12,7 @@ class Set_model:
         self.pattern_step = 0.25
         # 1 ед = 1 мс
         self.time_line = [0, 1]
-        self.time_step = 0.01
+        self.time_step = 0.005
         # 1 ед
         self.var_line = [0, 5]
         self.var_step = 1
