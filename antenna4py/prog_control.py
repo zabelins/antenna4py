@@ -22,9 +22,17 @@ class Control:
         self.list_set.print_short()
         self.list_file.print_short()
 
-    def calc_model(self):
+    def calc_static(self):
+        # основное действие контроллера
+        pass
+
+    def calc_dynamic1nd(self):
         # основное действие контроллера
         self.model.calc_out()
+
+    def calc_dynamic2nd(self):
+        # основное действие контроллера
+        pass
 
 
 

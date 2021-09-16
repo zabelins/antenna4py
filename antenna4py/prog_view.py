@@ -31,17 +31,20 @@ class View:
     def start_prog(self):
         # инициализируем числовую модель
         self.set()
-        # синхронизация с моделью
-        self.sync_model()
-        # вывод служебной информации для графика
-        self.model.print_out()
-        # вывод графика ДН
-        self.show_pattern()
-        # вывод графика характеристик сигналов и помех
-        self.show_timefreq()
-        # вывод графика характеристик адаптации
-        self.show_charact()
-
+        # выбор режима расчёта
+        input_buf = self.list_console.input_mode()
+        self.list_console.print_namemode(input_buf)
+        # запуск выбранного режима
+        if input_buf == 1:
+            self.static_mode()
+        if input_buf == 2:
+            self.dynamic_mode1nd()
+        if input_buf == 3:
+            self.dynamic_mode2nd()
+        if input_buf == 4:
+            self.train_mode()
+        if input_buf == 5:
+            self.settings_mode()
 
     def set(self):
         # инициализация контроллера и модели
@@ -56,13 +59,42 @@ class View:
         self.list_graph.list_charact.set(setview)
         self.list_graph.list_timefreq.set(setview)
 
-    def show_settings(self):
-        # вывод настроек программы
+    def static_mode(self):
+        # режим расчёта диаграммы направленности
+        # синхронизация с моделью
+        self.sync_model()
+        # вывод служебной информации для графика
+        self.model.print_out()
+        # вывод графика ДН
+        self.show_pattern()
+
+    def dynamic_mode1nd(self):
+        # режим расчёта временных характеристик ААР (1 параметр)
+        # синхронизация с моделью
+        self.sync_model()
+        # вывод служебной информации для графика
+        self.model.print_out()
+        # вывод графика ДН
+        self.show_pattern()
+        # вывод графика характеристик сигналов и помех
+        self.show_timefreq()
+        # вывод графика характеристик адаптации
+        self.show_charact()
+
+    def dynamic_mode2nd(self):
+        # режим расчёта временных характеристик ААР (N параметров)
+        print("\tрежим в разработке :(")
+
+    def train_mode(self):
+        print("\tрежим в разработке :(")
+
+    def settings_mode(self):
+        # режим просмотра настроек программы
         self.controller.list_set.print()
 
     def sync_model(self):
         # синхронизация с моделью
-        self.controller.calc_model()
+        self.controller.calc_dynamic1nd()
         out_model = self.model.get()
         self.vec_pattern = out_model[0]
         self.vec_time = out_model[1]
@@ -80,7 +112,7 @@ class View:
         #print("self.vec_degint = ", self.vec_degint)
         #print("self.vec_attenout = ", self.vec_attenout)
         #print("self.vec_depthout = ", self.vec_depthout)
-        print("self.vec_ampint = ", self.vec_ampint)
+        #print("self.vec_ampint = ", self.vec_ampint)
 
     def show_pattern(self):
         # вывод графика ДН

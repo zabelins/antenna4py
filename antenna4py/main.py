@@ -4,7 +4,7 @@ import prog_view
 import numpy as np
 
 if __name__ == "__main__":
-    print("Добро пожаловать в программу моделирования ААР!")
+    print("Добро пожаловать в antenna4py!")
 
 # создаём вид-модель-контроллер
 model = prog_model.Model_AAA()

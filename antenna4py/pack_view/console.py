@@ -1,8 +1,24 @@
+DESCRIPTION_MODE1 = """Возможные действия: 
+\t1: расчёт диаграммы направленности ААР (t = const, par = const)
+\t2: расчёт временных характеристик ААР для одного параметра (t = var, par = const)
+\t3: расчёт временных характеристик ААР для различных параметров (t = var, par = var)
+\t4: дополнительные действия
+\t0: выход из программы"""
+DESCRIPTION_MODE2 = """Возможные дополнительные действия: 
+\t1: обучение нейронной сети 
+\t2: настройки и параметры программы
+\t0: выход из программы"""
+NAME_MODE1 = "РЕЖИМ РАСЧЁТА ДИАГРАММЫ НАПРАВЛЕННОСТИ"
+NAME_MODE2 = "РЕЖИМ РАСЧЁТА ВРЕМЕННЫХ ХАРАКТЕРИСТИК ААР (1 ПАРАМЕТР)"
+NAME_MODE3 = "РЕЖИМ РАСЧЁТА ВРЕМЕННЫХ ХАРАКТЕРИСТИК ААР (N ПАРАМЕТРОВ)"
+NAME_MODE4 = "РЕЖИМ ОБУЧЕНИЯ НЕЙРОННОЙ СЕТИ"
+NAME_MODE5 = "РЕЖИМ ПРОСМОТРА НАСТРОЕК И ПАРАМЕТРОВ ПРОГРАММЫ"
+
 if __name__ == "__main__":
-    print("Вы запустили модуль вывода текста (L2)")
+    print("Вы запустили модуль ввода-вывода текста (L2)")
 
 class Console:
-    """Класс вывода текста для пользователя"""
+    """Класс ввода-вывода текста для пользователя"""
 
     def __init__(self, id):
         self.id = id
@@ -22,3 +38,63 @@ class Console:
     def print_short(self):
         print(" --- Параметры вывода текста (L2) --- ")
         print("console = ", self.get())
+
+    def input_mode(self):
+        # главное меню действий
+        print(DESCRIPTION_MODE1)
+        res, input_buf = 0, []
+        while res == 0:
+            try:
+                # ввод номера действия
+                input_buf = int(input("Введите номер действия: "))
+                # проверка наличия действия
+                if (input_buf < 0) or (input_buf > 4):
+                    print("\tтакого действия нет")
+                else:
+                    # обработка выхода из программы
+                    if input_buf == 0:
+                        exit()
+                    # обработка дополнительных действий
+                    if input_buf == 4:
+                        input_buf = self.input_modeadd()
+                    # обработка выхода из цикла
+                    res = 1
+                    print("")
+            except ValueError:
+                print("\tнеобходимо ввести число")
+        return input_buf
+
+    def input_modeadd(self):
+        # меню дополнительных действий
+        print(DESCRIPTION_MODE2)
+        res, input_buf = 0, []
+        while res == 0:
+            try:
+                # ввод номера действия
+                input_buf = int(input("Введите номер действия: "))
+                # проверка наличия действия
+                if (input_buf < 0) or (input_buf > 2):
+                    print("\tтакого действия нет")
+                else:
+                    res = 1
+                    # обработка выхода из программы
+                    if input_buf == 0:
+                        exit()
+                    # обработка действий
+                    input_buf = input_buf + 3
+            except ValueError:
+                print("\tнеобходимо ввести число")
+        return input_buf
+
+    def print_namemode(self, id_mode):
+        # вывод в консоль названия действия
+        if (id_mode == 1):
+            print(NAME_MODE1)
+        if (id_mode == 2):
+            print(NAME_MODE2)
+        if (id_mode == 3):
+            print(NAME_MODE3)
+        if (id_mode == 4):
+            print(NAME_MODE4)
+        if (id_mode == 5):
+            print(NAME_MODE5)
