@@ -14,8 +14,6 @@ class Env:
     def __init__(self, id):
         self.id = id
         self.id_config = []
-        self.mod_sig = []
-        self.mod_int = []
         self.deg_sig = []
         self.deg_int = []
         self.amp_sig = []
@@ -34,22 +32,18 @@ class Env:
 
     def set(self, init):
         self.id_config = np.array(init[1])
-        self.mod_sig = np.array(init[2])
-        self.mod_int = np.array(init[6])
-        self.deg_sig = np.array(init[3])
-        self.deg_int = np.array(init[7])
-        self.amp_sig = np.array(init[4])
-        self.amp_int = np.array(init[8])
-        self.amp_nois = np.array(init[10])
-        self.fband_sig = np.array(init[5])
-        self.fband_int = np.array(init[9])
+        self.deg_sig = np.array(init[2])
+        self.deg_int = np.array(init[5])
+        self.amp_sig = np.array(init[3])
+        self.amp_int = np.array(init[6])
+        self.amp_nois = np.array(init[8])
+        self.fband_sig = np.array(init[4])
+        self.fband_int = np.array(init[7])
 
     def get(self):
         res = []
         res.append(self.id)
         res.append(self.id_config)
-        res.append(self.mod_sig)
-        res.append(self.mod_int)
         res.append(self.deg_sig)
         res.append(self.deg_int)
         res.append(self.amp_sig)
@@ -63,8 +57,6 @@ class Env:
         print(" --- Параметры модели сигналов и помех (L2) --- ")
         print("id = ", self.id)
         print("id_config = ", self.id_config)
-        print("mod_sig = ", self.mod_sig)
-        print("mod_int = ", self.mod_int)
         print("deg_sig = ", self.deg_sig)
         print("deg_int = ", self.deg_int)
         print("amp_sig = ", self.amp_sig)
@@ -78,26 +70,34 @@ class Env:
         print(" --- Параметры модели сигналов и помех (L2) --- ")
         print("environment = ", self.get())
 
-    def calc_dynamic(self, out_set):
+    def calc_out(self, out_set, id_script):
         # распаковка исходных данных
         vec_time = out_set[1]
         # частота модуляции сигналов
         var_freq = 10 * math.pow(10, 6)
+        # определение необходимой модуляции для заданного динамического сценария
+        id_ampint, id_degint, id_bandint = 0, 0, 0
+        if (id_script >= 1) and (id_script <= 3):
+            # если амплитудная модуляция
+            id_ampint = id_script
+        if (id_script == 4):
+            # если изменение углов
+            id_degint = 1
+            self.deg_int, self.amp_int, self.fband_int = np.array([-90]), np.array([1]), np.array([5 * math.pow(10, 8)])
+        if (id_script == 5):
+            # если рандомные помехи
+            pp = 0
         # создаём вектора изменения сигналов и помех от времени
         self.vec_degsig = self.list_gen.get_vecdeg(vec_time, self.deg_sig, 0)
-        self.vec_degint = self.list_gen.get_vecdeg(vec_time, self.deg_int, 0)
-        self.vec_ampsig = self.list_gen.get_vecamp(vec_time, self.amp_sig, var_freq, self.mod_sig)
-        self.vec_ampint = self.list_gen.get_vecamp(vec_time, self.amp_int, var_freq, self.mod_int)
+        self.vec_degint = self.list_gen.get_vecdeg(vec_time, self.deg_int, id_degint)
+        self.vec_ampsig = self.list_gen.get_vecamp(vec_time, self.amp_sig, var_freq, 0)
+        self.vec_ampint = self.list_gen.get_vecamp(vec_time, self.amp_int, var_freq, id_ampint)
         self.vec_ampnois = self.list_gen.get_vecamp(vec_time, self.amp_nois, var_freq, 0)
         self.vec_fbandsig = self.list_gen.get_vecband(vec_time, self.fband_sig, 0)
-        self.vec_fbandint = self.list_gen.get_vecband(vec_time, self.fband_int, 0)
-        # нужно добавить разные типы расстановки помех
+        self.vec_fbandint = self.list_gen.get_vecband(vec_time, self.fband_int, id_bandint)
         #print("vec_time = ", vec_time)
-        # print("self.vec_degint = ", self.vec_degint)
+        #print("self.vec_degint = ", self.vec_degint)
         #print("self.vec_ampint = ", self.vec_ampint)
-
-    def calc_static(self, out_set):
-        pass
 
     def get_out(self):
         res = []

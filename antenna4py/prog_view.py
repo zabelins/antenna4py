@@ -13,8 +13,8 @@ class View:
         self.model = model
         self.controller = controller
         self.list_graph = pack_view.graph.Graph(1)
-        self.list_console = pack_view.console.Console(1)
-        self.list_table = pack_view.table.Table(1)
+        self.list_client = pack_view.client.Client(1)
+        self.list_report = pack_view.report.Report(1)
         self.vec_pattern = []
         self.vec_time = []
         self.vec_patternin = []
@@ -32,8 +32,8 @@ class View:
         # инициализируем числовую модель
         self.set()
         # выбор режима расчёта
-        input_buf = self.list_console.input_mode()
-        self.list_console.print_namemode(input_buf)
+        input_buf = self.list_client.input_mode()
+        self.list_client.print_namemode(input_buf)
         # запуск выбранного режима
         if input_buf == 1:
             self.static_mode()
@@ -52,8 +52,8 @@ class View:
         setview = self.controller.list_set.list_setview.get()
         # инициализация параметров интерфейса уровня L2
         self.list_graph.set(setview)
-        self.list_console.set(setview)
-        self.list_table.set(setview)
+        self.list_client.set(setview)
+        self.list_report.set(setview)
         # инициализация параметров интерфейса уровня L3
         self.list_graph.list_pattern.set(setview)
         self.list_graph.list_charact.set(setview)
@@ -61,6 +61,8 @@ class View:
 
     def static_mode(self):
         # режим расчёта диаграммы направленности
+        # расчёт модели
+        self.controller.calc_static()
         # синхронизация с моделью
         self.sync_model()
         # вывод служебной информации для графика
@@ -70,6 +72,11 @@ class View:
 
     def dynamic_mode1nd(self):
         # режим расчёта временных характеристик ААР (1 параметр)
+        # выбор сценария моделирования
+        id_script = self.list_client.input_script()
+        print("ss = ", id_script)
+        # расчёт модели
+        self.controller.calc_dynamic1nd(id_script)
         # синхронизация с моделью
         self.sync_model()
         # вывод служебной информации для графика
@@ -94,7 +101,6 @@ class View:
 
     def sync_model(self):
         # синхронизация с моделью
-        self.controller.calc_dynamic1nd()
         out_model = self.model.get()
         self.vec_pattern = out_model[0]
         self.vec_time = out_model[1]
@@ -143,8 +149,8 @@ class View:
     def print(self):
         print(" --- ПАРАМЕТРЫ МОДУЛЯ ВЫВОДА ИНФОРМАЦИИ (L1) --- ")
         self.list_graph.print_short()
-        self.list_console.print_short()
-        self.list_table.print_short()
+        self.list_client.print_short()
+        self.list_report.print_short()
         self.controller.print()
         self.model.print()
 

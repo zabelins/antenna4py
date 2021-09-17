@@ -58,12 +58,12 @@ class Model_AAA:
         self.list_test.print_short()
         self.list_file.print_short()
 
-    def calc_out(self):
+    def calc_out(self, id_script):
         # создание векторов изменения параметров
-        self.list_settings.calc_out()
+        self.list_settings.calc_out(id_script)
         self.out_set = self.list_settings.get_out()
         # создание векторов изменения сигналов и помех от времени
-        self.list_env.calc_dynamic(self.out_set)
+        self.list_env.calc_out(self.out_set, id_script)
         self.out_env = self.list_env.get_out()
         # вычисление сигналов с антенной решётки
         self.list_array.calc_out(self.out_set, self.out_env)

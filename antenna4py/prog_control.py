@@ -23,15 +23,19 @@ class Control:
         self.list_file.print_short()
 
     def calc_static(self):
-        # основное действие контроллера
-        pass
+        # вычисление статической модели адаптации
+        self.model.calc_out(0)
 
-    def calc_dynamic1nd(self):
-        # основное действие контроллера
-        self.model.calc_out()
+    def calc_dynamic1nd(self, id_script):
+        # вычисление динамической модели адаптации
+        self.model.calc_out(id_script)
 
     def calc_dynamic2nd(self):
-        # основное действие контроллера
+        # вычисление динамической модели адаптации
+        pass
+
+    def calc_train(self):
+        # запуск обучения НС
         pass
 
 

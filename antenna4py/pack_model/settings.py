@@ -59,7 +59,11 @@ class Model:
         print(" --- Настройки динамического моделирования (L2) --- ")
         print("settings = ", self.get())
 
-    def calc_out(self):
+    def calc_out(self, id_script):
+        # определяем режим моделирования
+        if (id_script == 0):
+            self.time_line = [0, 0]
+            self.time_step = 1
         # определяем диапазон изменения параметров
         phi_min, phi_max = [self.pattern_line[0], self.pattern_line[1] + self.pattern_step]
         time_min, time_max = [self.time_line[0], self.time_line[1] + self.time_step]

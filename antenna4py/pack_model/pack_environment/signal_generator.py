@@ -38,7 +38,7 @@ class Generator:
         if (id_modulation == 0):
             # углы без изменений
             vec_mod = np.ones(shape=[len_deg, len_time])
-        else:
+        if (id_modulation == 1):
             # линейное изменение углов
             vec_mod = self.get_degline(len_deg, len_time)
         # вектора после модуляции
