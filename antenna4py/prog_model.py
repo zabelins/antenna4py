@@ -28,7 +28,7 @@ class Model_AAA:
     def set(self, obj_set):
         # инициализация параметров модели уровня L1
         par_array = obj_set.list_pararray.get()
-        self.f_cen = par_array[3]
+        self.f_cen = par_array[1]
         # инициализация параметров уровня L2
         self.list_settings.set(obj_set.list_setmodel.get())
         self.list_env.set(obj_set.list_parenv.get())

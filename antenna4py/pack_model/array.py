@@ -13,7 +13,8 @@ class Array:
 
     def __init__(self, id):
         self.id = id
-        self.N = []
+        self.f_cen = []
+        self.array_N = []
         self.vec_test = []
         self.vec_sig = []
         self.vec_int = []
@@ -27,18 +28,21 @@ class Array:
         self.list_element = pa.array_element.Element(1)
 
     def set(self, init):
-        self.N = np.array(init[1])
+        self.f_cen = np.array(init[1])
+        self.array_N = np.array(init[2])
 
     def get(self):
         res = []
         res.append(self.id)
-        res.append(self.N)
+        res.append(self.f_cen)
+        res.append(self.array_N)
         return res
 
     def print(self):
         print(" --- Параметры модели антенной решётки (L2) --- ")
         print("id = ", self.id)
-        print("N = ", self.N)
+        print("f_cen = ", self.f_cen)
+        print("array_N = ", self.array_N)
         self.list_factor.print_short()
         self.list_element.print_short()
 
@@ -102,14 +106,14 @@ class Array:
     def calc_testsig(self, vec_pattern, vec_sigamp):
         # вычисление вектора входного сигнала по всем углам для построения ДН (10x721)
         len_pattern = vec_pattern.shape[0]
-        self.vec_test = np.zeros(shape=[self.N, len_pattern], dtype=complex)
+        self.vec_test = np.zeros(shape=[self.array_N, len_pattern], dtype=complex)
         buf = np.zeros(shape=[len_pattern], dtype=complex)
-        for i in range(self.N):
+        for i in range(self.array_N):
             # вычисление номера элемента
             num = i + 1
             # амплитуды для заданного элемента
             amp_sig = vec_sigamp[0]
-            amp_dist = self.list_factor.get_dist(self.N, num)
+            amp_dist = self.list_factor.get_dist(self.array_N, num)
             amp_rand = self.list_factor.get_randamp()
             # фазы для заданного элемента
             deg_rand = self.list_factor.get_randphi()
@@ -126,10 +130,10 @@ class Array:
         # вычисление векторов входных сигналов и помех в зависимости от времени для заданных углов прихода
         len_time, len_sig, len_int = [vec_sigdeg.shape[0], vec_sigdeg.shape[1], vec_intdeg.shape[1]]
         # расчёт вектора и параметров эквивалентных сигналов
-        buf = self.list_factor.get_eqvec(len_time, len_sig, vec_sigdeg, vec_sigband, self.N)
+        buf = self.list_factor.get_eqvec(len_time, len_sig, vec_sigdeg, vec_sigband, self.array_N)
         self.vec_eqdegsig, len_eqsig, sumlen_eqsig, l0_maxsig, f_otnsig = buf
         # расчёт вектора и параметров эквивалентных помех
-        buf = self.list_factor.get_eqvec(len_time, len_int, vec_intdeg, vec_intband, self.N)
+        buf = self.list_factor.get_eqvec(len_time, len_int, vec_intdeg, vec_intband, self.array_N)
         self.vec_eqdegint, len_eqint, sumlen_eqint, l0_maxint, f_otnint = buf
         # вычисления размеров для векторов и матриц
         # max - максимум по столбцу, gmax - глобальный максимум
@@ -142,12 +146,12 @@ class Array:
         for i in range(len_int):
             maxlen_eqint[i] = buf[i].max()
         # инициализируем вектора и матрицы
-        self.vec_sig = np.zeros(shape=[len_time, gmaxlen_eqsig, self.N], dtype=complex)
-        self.vec_int = np.zeros(shape=[len_time, gmaxlen_eqint, self.N], dtype=complex)
-        self.vec_nois = np.zeros(shape=[len_time, 1, self.N], dtype=complex)
-        self.matrix_sig = np.zeros(shape=[len_time, self.N, self.N], dtype=complex)
-        self.matrix_int = np.zeros(shape=[len_time, self.N, self.N], dtype=complex)
-        self.matrix_nois = np.zeros(shape=[len_time, self.N, self.N], dtype=complex)
+        self.vec_sig = np.zeros(shape=[len_time, gmaxlen_eqsig, self.array_N], dtype=complex)
+        self.vec_int = np.zeros(shape=[len_time, gmaxlen_eqint, self.array_N], dtype=complex)
+        self.vec_nois = np.zeros(shape=[len_time, 1, self.array_N], dtype=complex)
+        self.matrix_sig = np.zeros(shape=[len_time, self.array_N, self.array_N], dtype=complex)
+        self.matrix_int = np.zeros(shape=[len_time, self.array_N, self.array_N], dtype=complex)
+        self.matrix_nois = np.zeros(shape=[len_time, self.array_N, self.array_N], dtype=complex)
         vec_coefsig = np.zeros(shape=[len_time, gmaxlen_eqsig])
         vec_coefint = np.zeros(shape=[len_time, gmaxlen_eqint])
         # запускаем цикл по времени
@@ -162,8 +166,8 @@ class Array:
             self.vec_sig[i] = self.edit_vector(self.vec_sig[i], vec_coefsig[i], gmaxlen_eqsig)
             self.vec_int[i] = self.edit_vector(self.vec_int[i], vec_coefint[i], gmaxlen_eqint)
             # вычисление вектора и матрицы для шума (!!! vec_nois должен быть рандомным !!!)
-            self.vec_nois[i] = np.ones(shape=[1, self.N], dtype=complex) * vec_noisamp[i]
-            self.matrix_nois[i] = np.eye(self.N, dtype=complex) * math.pow(vec_noisamp[i], 2)
+            self.vec_nois[i] = np.ones(shape=[1, self.array_N], dtype=complex) * vec_noisamp[i]
+            self.matrix_nois[i] = np.eye(self.array_N, dtype=complex) * math.pow(vec_noisamp[i], 2)
         #print("vec_sig = ", self.vec_sig[0])
         #print("self.vec_int = ", self.vec_int)
         #print("vec_coefint = ", vec_coefint)
@@ -175,21 +179,21 @@ class Array:
         gmaxlen_eqsig = 0
         for i in range(maxlen_eqsig.shape[0]):
             gmaxlen_eqsig = gmaxlen_eqsig + int(maxlen_eqsig[i])
-        vec = np.zeros(shape=[gmaxlen_eqsig, self.N], dtype=complex)
+        vec = np.zeros(shape=[gmaxlen_eqsig, self.array_N], dtype=complex)
         index = 0
         # запускаем цикл по реальным сигналам
         for i in range(len_sig):
             # запускаем цикл по эквивалентным сигналам
             for j in range(int(len_eqsig[i])):
-                vec_buf = np.zeros(shape=[self.N], dtype=complex)
+                vec_buf = np.zeros(shape=[self.array_N], dtype=complex)
                 # запускаем цикл по элементам АР
-                for k in range(self.N):
+                for k in range(self.array_N):
                     if (var_eqdeg[i][j] != 361.0):
                         # вычисление номера элемента
                         num = k + 1
                         # амплитуды для заданного элемента
                         amp_sig = var_amp[i]
-                        amp_dist = self.list_factor.get_dist(self.N, num)
+                        amp_dist = self.list_factor.get_dist(self.array_N, num)
                         amp_rand = self.list_factor.get_randamp()
                         # фазы для заданного элемента
                         deg_rand = self.list_factor.get_randphi()
@@ -213,7 +217,7 @@ class Array:
         gmaxlen_eqsig = 0
         for i in range(maxlen_eqsig.shape[0]):
             gmaxlen_eqsig = gmaxlen_eqsig + int(maxlen_eqsig[i])
-        matrix = np.zeros(shape=[self.N, self.N], dtype=complex)
+        matrix = np.zeros(shape=[self.array_N, self.array_N], dtype=complex)
         vec_coef = np.zeros(shape=[gmaxlen_eqsig])
         index = 0
         # запускаем цикл по реальным сигналам
@@ -221,7 +225,7 @@ class Array:
             # запускаем цикл по эквивалентным парам
             for j in range(int(l0_max[i])+1):
                 # вычисление коэффициена дискретного разложения Фурье
-                coef_fourier = self.list_factor.get_eqamp(self.N, l0_max[i], j, f_otn[i])
+                coef_fourier = self.list_factor.get_eqamp(self.array_N, l0_max[i], j, f_otn[i])
                 if (j == 0):
                     # расчёт корреляционной матрицы реального сигнала
                     var_vec = vec[index].T

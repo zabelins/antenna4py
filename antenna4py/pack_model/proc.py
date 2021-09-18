@@ -36,7 +36,6 @@ class Proc:
         res.append(self.id_type)
         res.append(self.id_crit)
         res.append(self.id_alg)
-        res.append(self.time_calc)
         return res
 
     def print(self):
@@ -45,7 +44,6 @@ class Proc:
         print("id_type = ", self.id_type)
         print("id_crit = ", self.id_crit)
         print("id_alg = ", self.id_alg)
-        print("time_calc = ", self.time_calc)
         self.list_tradalg.print_short()
         self.list_neuroalg.print_short()
         self.list_kalman.print_short()
@@ -116,4 +114,9 @@ class Proc:
             vector = np.conj(vec_sig[i][0])
             self.vec_weight2[i] = mu * matrix.dot(vector)
         #print(self.vec_weight2)
+
+    def calc_weights(self):
+        # вычисление весовых коэффициентов ААР
+        pass
+
 

@@ -6,11 +6,15 @@ class Par_adapt:
 
     def __init__(self, id):
         self.id = id
+        # номер типа адаптации (amp, phase, amp+phase)
         self.id_type = 1
+        # номера критерия адаптации и алгоритма
         self.id_crit = 1
         self.id_alg = 1
+        # параметры фильтра Калмана
         self.id_kalman = 1
         self.coef_kalman = 1
+        # дискретность управления
         self.control_phistep = 0
         self.control_ampstep = 1
 
@@ -48,4 +52,4 @@ class Par_adapt:
 
     def print_short(self):
         print(" --- Значения параметров адаптации (L3) --- ")
-        print("parameters_adapt = ", self.get())
+        print("par_adapt = ", self.get())
