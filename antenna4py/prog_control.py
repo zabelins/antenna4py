@@ -11,7 +11,7 @@ class Control:
 
     def __init__(self, model):
         self.model = model
-        self.list_set = pack_control.settings.Settings_list(1)
+        self.list_set = pack_control.settings.All_settings(1)
         self.list_file = file_io.File_IO(1)
 
     def set(self):

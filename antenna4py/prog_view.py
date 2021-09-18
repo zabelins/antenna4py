@@ -108,9 +108,9 @@ class View:
         self.vec_depthout = out_model[2][2].T
         self.vec_attenout = out_model[2][3].T
         self.vec_degsig = out_model[3][0]
-        self.vec_degint = out_model[3][1]
-        self.vec_ampsig = out_model[3][2].T
-        self.vec_ampint = out_model[3][3].T
+        self.vec_degint = out_model[3][3]
+        self.vec_ampsig = out_model[3][1].T
+        self.vec_ampint = out_model[3][4].T
         self.vec_eqdegsig = out_model[4]
         self.vec_eqdegint = out_model[5]
         #print("self.vec_time = ", self.vec_time)
@@ -146,7 +146,7 @@ class View:
         self.list_graph.draw_timefreq(x, y, ['ampt', 'time'])
 
     def print(self):
-        print(" --- ПАРАМЕТРЫ МОДУЛЯ ВЫВОДА ИНФОРМАЦИИ (L1) --- ")
+        print(" --- ПАРАМЕТРЫ МОДУЛЯ ПРЕДСТАВЛЕНИЯ (L1) --- ")
         self.list_graph.print_short()
         self.list_client.print_short()
         self.list_report.print_short()

@@ -13,120 +13,121 @@ class Env:
 
     def __init__(self, id):
         self.id = id
-        self.deg_sig = []
-        self.deg_int = []
-        self.amp_sig = []
-        self.amp_int = []
-        self.amp_nois = []
-        self.fband_sig = []
-        self.fband_int = []
-        self.vec_degsig = []
-        self.vec_degint = []
-        self.vec_ampsig = []
-        self.vec_ampint = []
-        self.vec_ampnois = []
-        self.vec_fbandsig = []
-        self.vec_fbandint = []
+        self.sig_deg = []
+        self.sig_amp = []
+        self.sig_band = []
+        self.int_deg = []
+        self.int_amp = []
+        self.int_band = []
+        self.nois_amp = []
+        self.vec_sigdeg = []
+        self.vec_sigamp = []
+        self.vec_sigband = []
+        self.vec_intdeg = []
+        self.vec_intamp = []
+        self.vec_intband = []
+        self.vec_noisamp = []
         self.list_gen = pe.signal_generator.Generator(1)
 
     def set(self, init):
-        self.deg_sig = np.array(init[1])
-        self.deg_int = np.array(init[4])
-        self.amp_sig = np.array(init[2])
-        self.amp_int = np.array(init[5])
-        self.amp_nois = np.array(init[7])
-        self.fband_sig = np.array(init[3])
-        self.fband_int = np.array(init[6])
+        self.sig_deg = np.array(init[1])
+        self.sig_amp = np.array(init[2])
+        self.sig_band = np.array(init[3])
+        self.int_deg = np.array(init[4])
+        self.int_amp = np.array(init[5])
+        self.int_band = np.array(init[6])
+        self.nois_amp = np.array(init[7])
 
     def get(self):
         res = []
         res.append(self.id)
-        res.append(self.deg_sig)
-        res.append(self.deg_int)
-        res.append(self.amp_sig)
-        res.append(self.amp_int)
-        res.append(self.amp_nois)
-        res.append(self.fband_sig)
-        res.append(self.fband_int)
+        res.append(self.sig_deg)
+        res.append(self.sig_amp)
+        res.append(self.sig_band)
+        res.append(self.int_deg)
+        res.append(self.int_amp)
+        res.append(self.int_band)
+        res.append(self.nois_amp)
         return res
 
     def print(self):
         print(" --- Параметры модели сигналов и помех (L2) --- ")
         print("id = ", self.id)
-        print("deg_sig = ", self.deg_sig)
-        print("deg_int = ", self.deg_int)
-        print("amp_sig = ", self.amp_sig)
-        print("amp_int = ", self.amp_int)
-        print("amp_nois = ", self.amp_nois)
-        print("fband_sig = ", self.fband_sig)
-        print("fband_int = ", self.fband_int)
+        print("sig_deg = ", self.sig_deg)
+        print("sig_amp = ", self.sig_amp)
+        print("sig_band = ", self.sig_band)
+        print("int_deg = ", self.int_deg)
+        print("int_amp = ", self.int_amp)
+        print("int_band = ", self.int_band)
+        print("nois_amp = ", self.nois_amp)
         self.list_gen.print_short()
 
     def print_short(self):
         print(" --- Параметры модели сигналов и помех (L2) --- ")
         print("env = ", self.get())
 
-    def calc_out(self, out_set, id_script):
+    def calc_out(self, out_set, f_cen, par_band, id_script):
         # распаковка исходных данных
         vec_time = out_set[1]
-        # частота модуляции сигналов
-        var_freq = 10 * math.pow(10, 6)
         # определение необходимой модуляции для заданного динамического сценария
-        id_ampint, id_degint, id_bandint = 0, 0, 0
+        id_intamp, id_intdeg, id_intband, freq_mod = 0, 0, 0, 0
         if (id_script >= 1) and (id_script <= 3):
             # если амплитудная модуляция
-            id_ampint = id_script
+            id_intamp = id_script
+            freq_mod = f_cen * 2 / math.pow(10, 3)
         if (id_script == 4):
             # если изменение углов
-            id_degint = 1
-            self.deg_int, self.amp_int, self.fband_int = np.array([-90]), np.array([1]), np.array([5 * math.pow(10, 8)])
+            id_intdeg = 1
+            self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([par_band])
         if (id_script == 5):
-            # если рандомные помехи
-            pp = 0
-        # создаём вектора изменения сигналов и помех от времени
-        self.vec_degsig = self.list_gen.get_vecdeg(vec_time, self.deg_sig, 0)
-        self.vec_degint = self.list_gen.get_vecdeg(vec_time, self.deg_int, id_degint)
-        self.vec_ampsig = self.list_gen.get_vecamp(vec_time, self.amp_sig, var_freq, 0)
-        self.vec_ampint = self.list_gen.get_vecamp(vec_time, self.amp_int, var_freq, id_ampint)
-        self.vec_ampnois = self.list_gen.get_vecamp(vec_time, self.amp_nois, var_freq, 0)
-        self.vec_fbandsig = self.list_gen.get_vecband(vec_time, self.fband_sig, 0)
-        self.vec_fbandint = self.list_gen.get_vecband(vec_time, self.fband_int, id_bandint)
-        #print("vec_time = ", vec_time)
-        #print("self.vec_degint = ", self.vec_degint)
-        #print("self.vec_ampint = ", self.vec_ampint)
+            # если рандомные помехи, максимальная полоса 10%
+            id_intamp, id_intdeg, id_intband = 4, 2, 1
+            max_band = f_cen / 10
+            self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([max_band])
+            pass
+        # создаём вектора изменения сигналов от времени
+        self.vec_sigdeg = self.list_gen.get_vecdeg(vec_time, self.sig_deg, 0)
+        self.vec_sigamp = self.list_gen.get_vecamp(vec_time, self.sig_amp, freq_mod, 0)
+        self.vec_sigband = self.list_gen.get_vecband(vec_time, self.sig_band, 0)
+        # создаём вектора изменения помех от времени
+        self.vec_intdeg = self.list_gen.get_vecdeg(vec_time, self.int_deg, id_intdeg)
+        self.vec_intamp = self.list_gen.get_vecamp(vec_time, self.int_amp, freq_mod, id_intamp)
+        self.vec_intband = self.list_gen.get_vecband(vec_time, self.int_band, id_intband)
+        # создаём вектора изменения шума от времени
+        self.vec_noisamp = self.list_gen.get_vecamp(vec_time, self.nois_amp, freq_mod, 0)
 
     def get_out(self):
         res = []
-        res.append(self.vec_degsig)
-        res.append(self.vec_degint)
-        res.append(self.vec_ampsig)
-        res.append(self.vec_ampint)
-        res.append(self.vec_ampnois)
-        res.append(self.vec_fbandsig)
-        res.append(self.vec_fbandint)
+        res.append(self.vec_sigdeg)
+        res.append(self.vec_sigamp)
+        res.append(self.vec_sigband)
+        res.append(self.vec_intdeg)
+        res.append(self.vec_intamp)
+        res.append(self.vec_intband)
+        res.append(self.vec_noisamp)
         return res
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_buf1 = isinstance(self.vec_degsig, np.ndarray)
-        bool_buf2 = isinstance(self.vec_degint, np.ndarray)
-        bool_buf3 = isinstance(self.vec_ampsig, np.ndarray)
-        bool_buf4 = isinstance(self.vec_ampint, np.ndarray)
-        bool_buf5 = isinstance(self.vec_ampnois, np.ndarray)
-        bool_buf6 = isinstance(self.vec_fbandsig, np.ndarray)
-        bool_buf7 = isinstance(self.vec_fbandint, np.ndarray)
+        bool_buf1 = isinstance(self.vec_sigdeg, np.ndarray)
+        bool_buf2 = isinstance(self.vec_sigamp, np.ndarray)
+        bool_buf3 = isinstance(self.vec_sigband, np.ndarray)
+        bool_buf4 = isinstance(self.vec_intdeg, np.ndarray)
+        bool_buf5 = isinstance(self.vec_intamp, np.ndarray)
+        bool_buf6 = isinstance(self.vec_intband, np.ndarray)
+        bool_buf7 = isinstance(self.vec_noisamp, np.ndarray)
         bool_res1 = (bool_buf1 == True) and (bool_buf2 == True) and (bool_buf3 == True)
         bool_res2 = (bool_buf4 == True) and (bool_buf5 == True) and (bool_buf6 == True)
         # вывод размерностей векторов
         if (bool_res1 == True) and (bool_res2 == True) and (bool_buf7 == True):
             print("Размерности векторов сигналов и помех от времени:")
-            print("vec_degsig.shape = ", self.vec_degsig.shape)
-            print("vec_degint.shape = ", self.vec_degint.shape)
-            print("vec_ampsig.shape = ", self.vec_ampsig.shape)
-            print("vec_ampint.shape = ", self.vec_ampint.shape)
-            print("vec_ampnois.shape = ", self.vec_ampnois.shape)
-            print("vec_fbandsig.shape = ", self.vec_fbandsig.shape)
-            print("vec_fbandint.shape = ", self.vec_fbandint.shape)
+            print("vec_sigdeg.shape = ", self.vec_sigdeg.shape)
+            print("vec_sigamp.shape = ", self.vec_sigamp.shape)
+            print("vec_sigband.shape = ", self.vec_sigband.shape)
+            print("vec_intdeg.shape = ", self.vec_intdeg.shape)
+            print("vec_intamp.shape = ", self.vec_intamp.shape)
+            print("vec_intband.shape = ", self.vec_intband.shape)
+            print("vec_noisamp.shape = ", self.vec_noisamp.shape)
         else:
             print("Ошибка проверки типа векторов сигналов и помех от времени")
 

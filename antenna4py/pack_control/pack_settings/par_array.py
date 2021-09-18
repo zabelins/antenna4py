@@ -3,7 +3,7 @@ import math
 if __name__ == "__main__":
     print("Вы запустили модуль параметров антенной решётки (L3)")
 
-class Par_array :
+class Par_array:
     """Класс исходных параметров антенной решётки"""
 
     def __init__(self, id):

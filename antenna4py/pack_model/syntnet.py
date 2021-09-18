@@ -48,7 +48,7 @@ class Syntnet:
         vec_pattern, vec_time = out_set[0], out_set[1]
         self.pattern_step = out_set[3]
         vec_test = out_array[0].T
-        vec_degsig, vec_degint = out_env[0], out_env[1]
+        vec_degsig, vec_degint = out_env[0], out_env[3]
         vec_eqdegsig, vec_eqdegint = out_array[7], out_array[8]
         vec_weight1, vec_weight2 = out_weight[2], out_weight[5]
         # инициализируем размеры векторов

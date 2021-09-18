@@ -1,7 +1,7 @@
 if __name__ == "__main__":
     print("Вы запустили модуль настроек обучения НС (L3)")
 
-class Set_nn:
+class Set_train:
     """Класс настроек НС"""
 
     def __init__(self, id):

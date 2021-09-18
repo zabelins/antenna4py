@@ -6,14 +6,14 @@ class Set_model:
 
     def __init__(self, id):
         self.id = id
-        # 1 ед = 1 град
+        # диапазон углов, 1 ед = 1 град
         self.pattern_line = [-90, 90]
         self.pattern_step = 0.25
-        # 1 ед = 1 мс
+        # диапазон времени, 1 ед = 1 мс
         self.time_line = [0, 1]
         self.time_step = 0.005
-        # 1 ед
-        self.var_line = [0, 5]
+        # диапазон параметров, 1 ед
+        self.var_line = [0, 10]
         self.var_step = 1
 
     def set(self, init):

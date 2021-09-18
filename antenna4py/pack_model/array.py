@@ -49,13 +49,13 @@ class Array:
     def calc_out(self, out_set, out_env):
         # распаковка исходных данных
         vec_pattern = out_set[0]
-        vec_degsig, vec_degint = [out_env[0], out_env[1]]
-        vec_ampsig, vec_ampint, vec_ampnois = [out_env[2], out_env[3], out_env[4]]
-        vec_fbandsig, vec_fbandint = [out_env[5], out_env[6]]
+        vec_degsig, vec_ampsig, vec_fbandsig = [out_env[0], out_env[1], out_env[2]]
+        vec_degint, vec_ampint, vec_fbandint = [out_env[3], out_env[4], out_env[5]]
+        vec_ampnois = out_env[6]
         # вычисление входного комплексного сигнала по элементам и углам
         self.calc_testsig(vec_pattern, vec_ampsig)
         # вычисление входных сигналов и помех от времени
-        self.calc_realsig(vec_degsig, vec_degint, vec_ampsig, vec_ampint, vec_ampnois, vec_fbandsig, vec_fbandint)
+        self.calc_realsig(vec_degsig, vec_ampsig, vec_fbandsig, vec_degint, vec_ampint, vec_fbandint, vec_ampnois)
 
     def get_out(self):
         res = []
@@ -99,8 +99,6 @@ class Array:
         else:
             print("Ошибка проверки типа векторов и матриц от антенной решётки")
 
-
-
     def calc_testsig(self, vec_pattern, vec_ampsig):
         # вычисление вектора входного сигнала по всем углам для построения ДН (10x721)
         len_pattern = vec_pattern.shape[0]
@@ -124,7 +122,7 @@ class Array:
             self.vec_test[i] = buf
             buf = np.zeros(shape=[len_pattern], dtype=complex)
 
-    def calc_realsig(self, vec_degsig, vec_degint, vec_ampsig, vec_ampint, vec_ampnois, vec_fbandsig, vec_fbandint):
+    def calc_realsig(self, vec_degsig, vec_ampsig, vec_fbandsig, vec_degint, vec_ampint, vec_fbandint, vec_ampnois):
         # вычисление векторов входных сигналов и помех в зависимости от времени для заданных углов прихода
         len_time, len_sig, len_int = [vec_degsig.shape[0], vec_degsig.shape[1], vec_degint.shape[1]]
         # расчёт вектора и параметров эквивалентных сигналов

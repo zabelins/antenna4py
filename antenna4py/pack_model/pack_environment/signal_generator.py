@@ -12,9 +12,6 @@ class Generator:
     def __init__(self, id):
         self.id = id
 
-    def set(self, init):
-        pass
-
     def get(self):
         res = []
         res.append(self.id)
@@ -30,54 +27,58 @@ class Generator:
 
     def get_vecdeg(self, vec_time, var_deg, id_modulation):
         # вычисление вектора изменения углов
-        len_deg = var_deg.shape[0]
-        len_time = vec_time.shape[0]
+        len_deg, len_time = var_deg.shape[0], vec_time.shape[0]
         vec_mod = []
-        print("len_deg = ", len_deg)
-        print("len_time = ", len_time)
         if (id_modulation == 0):
             # углы без изменений
             vec_mod = np.ones(shape=[len_deg, len_time])
         if (id_modulation == 1):
             # линейное изменение углов
             vec_mod = self.get_degline(len_deg, len_time)
+        if (id_modulation == 2):
+            # рандомное изменение углов
+            vec_mod = self.get_degrand(len_deg, len_time)
         # вектора после модуляции
         vec_deg = cl.ones_modul(vec_mod, var_deg)
         return vec_deg
 
     def get_vecamp(self, vec_time, var_amp, var_freq, id_modulation):
         # вычисление вектора изменения амплитуд
-        len_amp = var_amp.shape[0]
-        len_time = vec_time.shape[0]
+        len_amp, len_time = var_amp.shape[0], vec_time.shape[0]
         vec_mod = []
         if (id_modulation == 0):
             # амплитуды без изменений
             vec_mod = np.ones(shape=[len_amp, len_time])
         if (id_modulation == 1):
             # синусоидальный сигнал
-            vec_mod = self.get_sin(len_amp, var_freq, vec_time, 0)
+            vec_mod = self.get_ampsin(len_amp, var_freq, vec_time, 0)
         if (id_modulation == 2):
             # прямоугольные импульсы
-            vec_mod = self.get_pulse(len_amp, var_freq, vec_time, 0)
+            vec_mod = self.get_amppulse(len_amp, var_freq, vec_time, 0)
         if (id_modulation == 3):
             # короткие импульсы
-            vec_mod = self.get_shortpulse(len_amp, var_freq, vec_time, 0)
+            vec_mod = self.get_ampshort(len_amp, var_freq, vec_time, 0)
+        if (id_modulation == 4):
+            # рандомное изменение амплитуд
+            vec_mod = self.get_amprand(len_amp, len_time)
         vec_amp = cl.ones_modul(vec_mod, var_amp)
         return vec_amp
 
     def get_vecband(self, vec_time, var_band, id_modulation):
         # вычисление вектора изменения частотных полос
-        len_band = var_band.shape[0]
-        len_time = vec_time.shape[0]
+        len_band, len_time = var_band.shape[0], vec_time.shape[0]
         vec_mod = []
         if (id_modulation == 0):
             # частотные полосы без изменений
             vec_mod = np.ones(shape=[len_band, len_time])
+        if (id_modulation == 1):
+            # рандомное изменение частотных полос
+            vec_mod = self.get_bandrand(len_band, len_time)
         vec_band = cl.ones_modul(vec_mod, var_band)
         return vec_band
 
     def get_degline(self, len_deg, len_time):
-        # линейная модуляция от -1 до 1
+        # линейное изменение углов от -1 до 1
         vec_mod = np.ones(shape=[len_deg, len_time])
         # цикл по сигналам
         for i in range(len_deg):
@@ -86,7 +87,17 @@ class Generator:
                 vec_mod[i][j] = (2 * j / (len_time-1)) - 1
         return vec_mod
 
-    def get_sin(self, len_amp, var_freq, vec_time, shift):
+    def get_degrand(self, len_deg, len_time):
+        # рандомные значения углов по равномерному распределению от -1 до 1
+        vec_mod = np.ones(shape=[len_deg, len_time])
+        # цикл по сигналам
+        for i in range(len_deg):
+            # цикл по времени
+            for j in range(len_time):
+                vec_mod[i][j] = np.random.uniform(-1, 1)
+        return vec_mod
+
+    def get_ampsin(self, len_amp, var_freq, vec_time, shift):
         # синусоида амплитудой от 0 до 1
         len_time = vec_time.shape[0]
         vec_mod = np.ones(shape=[len_amp, len_time])
@@ -106,7 +117,7 @@ class Generator:
             buf_sign = buf_sign * (-1)
         return vec_mod
 
-    def get_pulse(self, len_amp, var_freq, vec_time, shift):
+    def get_amppulse(self, len_amp, var_freq, vec_time, shift):
         # импульсы амплитудой от 0 до 1
         len_time = vec_time.shape[0]
         vec_mod = np.ones(shape=[len_amp, len_time])
@@ -124,19 +135,39 @@ class Generator:
             buf_sign = buf_sign * (-1)
         return vec_mod
 
-    def get_shortpulse(self, len_amp, var_freq, vec_time, shift):
+    def get_ampshort(self, len_amp, var_freq, vec_time, shift):
         # короткие импульсы амплитудой от 0 до 1
         len_time = vec_time.shape[0]
         vec_mod = np.ones(shape=[len_amp, len_time])
         # индикатор инверсии
         buf_sign = 1
         for i in range(len_amp):
-            vec_mod1 = self.get_pulse(1, var_freq, vec_time, 0)
-            vec_mod2 = self.get_pulse(1, var_freq*2, vec_time, 0)
-            vec_mod3 = self.get_pulse(1, var_freq/2, vec_time, 0.25 * buf_sign)
+            vec_mod1 = self.get_amppulse(1, var_freq, vec_time, 0)
+            vec_mod2 = self.get_amppulse(1, var_freq*2, vec_time, 0)
+            vec_mod3 = self.get_amppulse(1, var_freq/2, vec_time, 0.25 * buf_sign)
             buf_sign = buf_sign * (-1)
             # импульсы длительностью 1/4 периода через один
             vec_mod[i] = vec_mod1 * vec_mod2 * vec_mod3
         return vec_mod
 
+    def get_amprand(self, len_amp, len_time):
+        # рандомные значения амплитуд по нормальному распределению
+        # среднее = 1, СКО = 0.3, строго > 0
+        vec_mod = np.ones(shape=[len_amp, len_time])
+        # цикл по сигналам
+        for i in range(len_amp):
+            # цикл по времени
+            for j in range(len_time):
+                vec_mod[i][j] = abs(np.random.normal(loc=1.0, scale=0.33))
+        return vec_mod
+
+    def get_bandrand(self, len_band, len_time):
+        # рандомные значения частотных полос по равномерному распределению от 0 до 1
+        vec_mod = np.ones(shape=[len_band, len_time])
+        # цикл по сигналам
+        for i in range(len_band):
+            # цикл по времени
+            for j in range(len_time):
+                vec_mod[i][j] = np.random.uniform(0, 1)
+        return vec_mod
 

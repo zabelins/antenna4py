@@ -18,6 +18,7 @@ class Model_AAA:
         self.list_train = pack_model.train.Train(1)
         self.list_test = pack_model.test.Test(1)
         self.list_file = pack_model.file_io.File_IO(1)
+        self.f_cen = []
         self.out_set = []
         self.out_env = []
         self.out_array = []
@@ -25,16 +26,18 @@ class Model_AAA:
         self.out_syntnet = []
 
     def set(self, obj_set):
+        # инициализация параметров модели уровня L1
+        par_array = obj_set.list_pararray.get()
+        self.f_cen = par_array[3]
         # инициализация параметров уровня L2
         self.list_settings.set(obj_set.list_setmodel.get())
         self.list_env.set(obj_set.list_parenv.get())
         self.list_array.set(obj_set.list_pararray.get())
         self.list_proc.set(obj_set.list_paradapt.get())
         self.list_syntnet.set(obj_set.list_paradapt.get())
-        self.list_train.set(obj_set.list_setnn.get())
+        self.list_train.set(obj_set.list_settrain.get())
         self.list_test.set(obj_set.list_settest.get())
         # инициализация параметров уровня L3
-        self.list_env.list_gen.set(obj_set.list_parenv.get())
         self.list_array.list_factor.set(obj_set.list_pararray.get())
         self.list_array.list_element.set(obj_set.list_pararray.get())
         self.list_proc.list_tradalg.set(obj_set.list_paradapt.get())
@@ -62,8 +65,10 @@ class Model_AAA:
         # создание векторов изменения параметров
         self.list_settings.calc_out(id_script)
         self.out_set = self.list_settings.get_out()
+        # определение параметра для углового режима
+        par_band = self.f_cen / 10
         # создание векторов изменения сигналов и помех от времени
-        self.list_env.calc_out(self.out_set, id_script)
+        self.list_env.calc_out(self.out_set, self.f_cen, par_band, id_script)
         self.out_env = self.list_env.get_out()
         # вычисление сигналов с антенной решётки
         self.list_array.calc_out(self.out_set, self.out_env)
