@@ -21,10 +21,12 @@ class View:
         self.vec_patternout = []
         self.vec_depthout = []
         self.vec_attenout = []
-        self.vec_degsig = []
-        self.vec_degint = []
-        self.vec_ampsig = []
-        self.vec_ampint = []
+        self.vec_sigdeg = []
+        self.vec_sigamp = []
+        self.vec_sigband = []
+        self.vec_intdeg = []
+        self.vec_intamp = []
+        self.vec_intband = []
         self.vec_eqdegsig = []
         self.vec_eqdegint = []
 
@@ -107,10 +109,12 @@ class View:
         self.vec_patternout = out_model[2][1]
         self.vec_depthout = out_model[2][2].T
         self.vec_attenout = out_model[2][3].T
-        self.vec_degsig = out_model[3][0]
-        self.vec_degint = out_model[3][3]
-        self.vec_ampsig = out_model[3][1].T
-        self.vec_ampint = out_model[3][4].T
+        self.vec_sigdeg = out_model[3][0].T
+        self.vec_sigamp = out_model[3][1].T
+        self.vec_sigband = out_model[3][2].T
+        self.vec_intdeg = out_model[3][3].T
+        self.vec_intamp = out_model[3][4].T
+        self.vec_intband = out_model[3][5].T
         self.vec_eqdegsig = out_model[4]
         self.vec_eqdegint = out_model[5]
         #print("self.vec_time = ", self.vec_time)
@@ -122,28 +126,41 @@ class View:
     def show_pattern(self):
         # вывод графика ДН
         time = 0
+        deg = self.vec_intdeg.T
         x = np.array([self.vec_pattern, self.vec_pattern])
         y = np.array([self.vec_patternin[time], self.vec_patternout[time]])
-        self.list_graph.draw_pattern(x, y, self.vec_degint[time])
+        self.list_graph.draw_pattern(x, y, deg[time])
 
     def show_charact(self):
         # вывод графика характеристик адаптации
-        len_ampsig, len_ampint, x, y = self.vec_ampsig.shape[0], self.vec_ampint.shape[0], [], []
-        for i in range(len_ampsig):
+        len_sigamp, len_intamp, x, y = self.vec_sigamp.shape[0], self.vec_intamp.shape[0], [], []
+        for i in range(len_sigamp):
             x.append(self.vec_time)
             y.append(self.vec_attenout[i])
-        for i in range(len_ampint):
+        for i in range(len_intamp):
             x.append(self.vec_time)
             y.append(self.vec_depthout[i])
         self.list_graph.draw_charact(x, y, ['dp', 'time'])
 
     def show_timefreq(self):
         # вывод графика характеристик сигналов и помех
-        len_ampint, x, y = self.vec_ampint.shape[0], [], []
-        for i in range(len_ampint):
+        len_intamp, x, y = self.vec_intamp.shape[0], [], []
+        for i in range(len_intamp):
             x.append(self.vec_time)
-            y.append(self.vec_ampint[i])
-        self.list_graph.draw_timefreq(x, y, ['ampt', 'time'])
+            y.append(self.vec_intamp[i])
+        self.list_graph.draw_timefreq(x, y, ['amp', 'time'])
+        # вывод графика характеристик сигналов и помех
+        len_intdeg, x, y = self.vec_intdeg.shape[0], [], []
+        for i in range(len_intdeg):
+            x.append(self.vec_time)
+            y.append(self.vec_intdeg[i])
+        self.list_graph.draw_timefreq(x, y, ['deg', 'time'])
+        # вывод графика характеристик сигналов и помех
+        len_intband, x, y = self.vec_intband.shape[0], [], []
+        for i in range(len_intband):
+            x.append(self.vec_time)
+            y.append(self.vec_intband[i])
+        self.list_graph.draw_timefreq(x, y, ['band', 'time'])
 
     def print(self):
         print(" --- ПАРАМЕТРЫ МОДУЛЯ ПРЕДСТАВЛЕНИЯ (L1) --- ")
