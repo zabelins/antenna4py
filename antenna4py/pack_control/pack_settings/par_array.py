@@ -62,4 +62,4 @@ class Par_array:
 
     def print_short(self):
         print(" --- Значения параметров антенной решётки (L3) --- ")
-        print("parameters_aa = ", self.get())
+        print("par_array = ", self.get())
