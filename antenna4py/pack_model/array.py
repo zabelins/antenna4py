@@ -71,16 +71,35 @@ class Array:
         return res
 
     def print_out(self):
-        print("Размерности векторов и матриц от антенной решётки:")
-        print("vec_test.shape = ", self.vec_test.shape)
-        print("vec_sig.shape = ", self.vec_sig.shape)
-        print("vec_int.shape = ", self.vec_int.shape)
-        print("vec_nois.shape = ", self.vec_nois.shape)
-        print("matrix_sig.shape = ", self.matrix_sig.shape)
-        print("matrix_int.shape = ", self.matrix_int.shape)
-        print("matrix_nois.shape = ", self.matrix_nois.shape)
-        print("vec_eqdegsig.shape = ", len(self.vec_eqdegsig))
-        print("vec_eqdegint.shape = ", len(self.vec_eqdegint))
+        # проверка типа векторов и матриц на ndarray и list
+        bool_buf1 = isinstance(self.vec_test, np.ndarray)
+        bool_buf2 = isinstance(self.vec_sig, np.ndarray)
+        bool_buf3 = isinstance(self.vec_int, np.ndarray)
+        bool_buf4 = isinstance(self.vec_nois, np.ndarray)
+        bool_buf5 = isinstance(self.matrix_sig, np.ndarray)
+        bool_buf6 = isinstance(self.matrix_int, np.ndarray)
+        bool_buf7 = isinstance(self.matrix_nois, np.ndarray)
+        bool_buf8 = isinstance(self.vec_eqdegsig, list)
+        bool_buf9 = isinstance(self.vec_eqdegint, list)
+        bool_res1 = (bool_buf1 == True) and (bool_buf2 == True) and (bool_buf3 == True)
+        bool_res2 = (bool_buf4 == True) and (bool_buf5 == True) and (bool_buf6 == True)
+        bool_res3 = (bool_buf7 == True) and (bool_buf8 == True) and (bool_buf9 == True)
+        # вывод размерностей векторов
+        if (bool_res1 == True) and (bool_res2 == True) and (bool_res3 == True):
+            print("Размерности векторов и матриц от антенной решётки:")
+            print("vec_test.shape = ", self.vec_test.shape)
+            print("vec_sig.shape = ", self.vec_sig.shape)
+            print("vec_int.shape = ", self.vec_int.shape)
+            print("vec_nois.shape = ", self.vec_nois.shape)
+            print("matrix_sig.shape = ", self.matrix_sig.shape)
+            print("matrix_int.shape = ", self.matrix_int.shape)
+            print("matrix_nois.shape = ", self.matrix_nois.shape)
+            print("vec_eqdegsig.shape = ", len(self.vec_eqdegsig))
+            print("vec_eqdegint.shape = ", len(self.vec_eqdegint))
+        else:
+            print("Ошибка проверки типа векторов и матриц от антенной решётки")
+
+
 
     def calc_testsig(self, vec_pattern, vec_ampsig):
         # вычисление вектора входного сигнала по всем углам для построения ДН (10x721)

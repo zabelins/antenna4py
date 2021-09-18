@@ -74,7 +74,6 @@ class View:
         # режим расчёта временных характеристик ААР (1 параметр)
         # выбор сценария моделирования
         id_script = self.list_client.input_script()
-        print("ss = ", id_script)
         # расчёт модели
         self.controller.calc_dynamic1nd(id_script)
         # синхронизация с моделью

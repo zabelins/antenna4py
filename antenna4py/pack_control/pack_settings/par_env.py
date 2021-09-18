@@ -8,7 +8,6 @@ class Par_env:
 
     def __init__(self, id):
         self.id = id
-        self.id_config = 1
         self.sig_deg = [0]
         self.sig_amp = [1]
         self.sig_fband = [0]
@@ -18,19 +17,17 @@ class Par_env:
         self.nois_amp = [1]
 
     def set(self, init):
-        self.id_config = init[0]
-        self.sig_deg = init[1]
-        self.sig_amp = init[2]
-        self.sig_fband = init[3]
-        self.int_deg = init[4]
-        self.int_amp = init[5]
-        self.int_fband = init[6]
-        self.nois_amp = init[7]
+        self.sig_deg = init[0]
+        self.sig_amp = init[1]
+        self.sig_fband = init[2]
+        self.int_deg = init[3]
+        self.int_amp = init[4]
+        self.int_fband = init[5]
+        self.nois_amp = init[6]
 
     def get(self):
         res = []
         res.append(self.id)
-        res.append(self.id_config)
         res.append(self.sig_deg)
         res.append(self.sig_amp)
         res.append(self.sig_fband)
@@ -41,9 +38,8 @@ class Par_env:
         return res
 
     def print(self):
-        print(" --- Значения параметров сигналов и помех (L3) --- ")
+        print(" --- Параметры сигнально-помеховой обстановки (L3) --- ")
         print("id = ", self.id)
-        print("id_config = ", self.id_config)
         print("sig_deg = ", self.sig_deg)
         print("sig_amp = ", self.sig_amp)
         print("sig_fband = ", self.sig_fband)
@@ -53,5 +49,5 @@ class Par_env:
         print("fband_int = ", self.nois_amp)
 
     def print_short(self):
-        print(" --- Значения параметров сигналов и помех (L3) --- ")
-        print("parameters_env = ", self.get())
+        print(" --- Параметры сигнально-помеховой обстановки (L3) --- ")
+        print("par_env = ", self.get())

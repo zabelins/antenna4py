@@ -11,17 +11,17 @@ class Model_AAA:
 
     def __init__(self):
         self.list_settings = pack_model.settings.Model(1)
-        self.list_env = pack_model.environment.Env(1)
+        self.list_env = pack_model.env.Env(1)
         self.list_array = pack_model.array.Array(1)
-        self.list_proc = pack_model.processor.Processor(1)
-        self.list_syntnet = pack_model.synthes_net.Synt_net(1)
-        self.list_train = pack_model.train_nn.Train(1)
+        self.list_proc = pack_model.proc.Proc(1)
+        self.list_syntnet = pack_model.syntnet.Syntnet(1)
+        self.list_train = pack_model.train.Train(1)
         self.list_test = pack_model.test.Test(1)
         self.list_file = pack_model.file_io.File_IO(1)
         self.out_set = []
         self.out_env = []
         self.out_array = []
-        self.out_weight = []
+        self.out_proc = []
         self.out_syntnet = []
 
     def set(self, obj_set):
@@ -70,9 +70,9 @@ class Model_AAA:
         self.out_array = self.list_array.get_out()
         # вычисление векторов ВК
         self.list_proc.calc_out(self.out_array)
-        self.out_weight = self.list_proc.get_out()
+        self.out_proc = self.list_proc.get_out()
         # вычисление ДН и характеристик
-        self.list_syntnet.calc_out(self.out_set, self.out_env, self.out_array, self.out_weight)
+        self.list_syntnet.calc_out(self.out_set, self.out_env, self.out_array, self.out_proc)
         self.out_syntnet = self.list_syntnet.get_out()
 
     def print_out(self):

@@ -6,7 +6,7 @@ if __name__ == "__main__":
     print("Вы запустили модуль модели сигнального процессора (L2)")
     print("Модуль использует пакет:", pp.NAME)
 
-class Processor:
+class Proc:
     """Класс моделирования сигнального процессора адаптивной антенны"""
 
     def __init__(self, id):
@@ -52,7 +52,7 @@ class Processor:
 
     def print_short(self):
         print(" --- Параметры модели сигнального процессора (L2) --- ")
-        print("processor = ", self.get())
+        print("proc = ", self.get())
 
     def calc_out(self, out_array):
         # распаковка исходных данных
@@ -75,13 +75,26 @@ class Processor:
         return res
 
     def print_out(self):
-        print("Размерности векторов ВК:")
-        print("vec_amp1.shape = ", self.vec_amp1.shape)
-        print("vec_phi1.shape = ", self.vec_phi1.shape)
-        print("vec_weight1.shape = ", self.vec_weight1.shape)
-        print("vec_amp2.shape = ", self.vec_amp2.shape)
-        print("vec_phi2.shape = ", self.vec_phi2.shape)
-        print("vec_weight2.shape = ", self.vec_weight2.shape)
+        # проверка типа векторов на ndarray
+        bool_buf1 = isinstance(self.vec_amp1, np.ndarray)
+        bool_buf2 = isinstance(self.vec_phi1, np.ndarray)
+        bool_buf3 = isinstance(self.vec_weight1, np.ndarray)
+        bool_buf4 = isinstance(self.vec_amp2, np.ndarray)
+        bool_buf5 = isinstance(self.vec_phi2, np.ndarray)
+        bool_buf6 = isinstance(self.vec_weight2, np.ndarray)
+        bool_res1 = (bool_buf1 == True) and (bool_buf2 == True) and (bool_buf3 == True)
+        bool_res2 = (bool_buf4 == True) and (bool_buf5 == True) and (bool_buf6 == True)
+        # вывод размерностей векторов
+        if (bool_res1 == True) and (bool_res2 == True):
+            print("Размерности векторов ВК:")
+            print("vec_amp1.shape = ", self.vec_amp1.shape)
+            print("vec_phi1.shape = ", self.vec_phi1.shape)
+            print("vec_weight1.shape = ", self.vec_weight1.shape)
+            print("vec_amp2.shape = ", self.vec_amp2.shape)
+            print("vec_phi2.shape = ", self.vec_phi2.shape)
+            print("vec_weight2.shape = ", self.vec_weight2.shape)
+        else:
+            print("Ошибка проверки типа векторов ВК")
 
     def calc_strartWC(self, vec_test):
         # вычисление начального вектора ВК

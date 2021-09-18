@@ -13,7 +13,6 @@ class Env:
 
     def __init__(self, id):
         self.id = id
-        self.id_config = []
         self.deg_sig = []
         self.deg_int = []
         self.amp_sig = []
@@ -31,19 +30,17 @@ class Env:
         self.list_gen = pe.signal_generator.Generator(1)
 
     def set(self, init):
-        self.id_config = np.array(init[1])
-        self.deg_sig = np.array(init[2])
-        self.deg_int = np.array(init[5])
-        self.amp_sig = np.array(init[3])
-        self.amp_int = np.array(init[6])
-        self.amp_nois = np.array(init[8])
-        self.fband_sig = np.array(init[4])
-        self.fband_int = np.array(init[7])
+        self.deg_sig = np.array(init[1])
+        self.deg_int = np.array(init[4])
+        self.amp_sig = np.array(init[2])
+        self.amp_int = np.array(init[5])
+        self.amp_nois = np.array(init[7])
+        self.fband_sig = np.array(init[3])
+        self.fband_int = np.array(init[6])
 
     def get(self):
         res = []
         res.append(self.id)
-        res.append(self.id_config)
         res.append(self.deg_sig)
         res.append(self.deg_int)
         res.append(self.amp_sig)
@@ -56,7 +53,6 @@ class Env:
     def print(self):
         print(" --- Параметры модели сигналов и помех (L2) --- ")
         print("id = ", self.id)
-        print("id_config = ", self.id_config)
         print("deg_sig = ", self.deg_sig)
         print("deg_int = ", self.deg_int)
         print("amp_sig = ", self.amp_sig)
@@ -68,7 +64,7 @@ class Env:
 
     def print_short(self):
         print(" --- Параметры модели сигналов и помех (L2) --- ")
-        print("environment = ", self.get())
+        print("env = ", self.get())
 
     def calc_out(self, out_set, id_script):
         # распаковка исходных данных
@@ -111,12 +107,27 @@ class Env:
         return res
 
     def print_out(self):
-        print("Размерности векторов сигналов и помех от времени:")
-        print("vec_degsig.shape = ", self.vec_degsig.shape)
-        print("vec_degint.shape = ", self.vec_degint.shape)
-        print("vec_ampsig.shape = ", self.vec_ampsig.shape)
-        print("vec_ampint.shape = ", self.vec_ampint.shape)
-        print("vec_ampnois.shape = ", self.vec_ampnois.shape)
-        print("vec_fbandsig.shape = ", self.vec_fbandsig.shape)
-        print("vec_fbandint.shape = ", self.vec_fbandint.shape)
+        # проверка типа векторов на ndarray
+        bool_buf1 = isinstance(self.vec_degsig, np.ndarray)
+        bool_buf2 = isinstance(self.vec_degint, np.ndarray)
+        bool_buf3 = isinstance(self.vec_ampsig, np.ndarray)
+        bool_buf4 = isinstance(self.vec_ampint, np.ndarray)
+        bool_buf5 = isinstance(self.vec_ampnois, np.ndarray)
+        bool_buf6 = isinstance(self.vec_fbandsig, np.ndarray)
+        bool_buf7 = isinstance(self.vec_fbandint, np.ndarray)
+        bool_res1 = (bool_buf1 == True) and (bool_buf2 == True) and (bool_buf3 == True)
+        bool_res2 = (bool_buf4 == True) and (bool_buf5 == True) and (bool_buf6 == True)
+        # вывод размерностей векторов
+        if (bool_res1 == True) and (bool_res2 == True) and (bool_buf7 == True):
+            print("Размерности векторов сигналов и помех от времени:")
+            print("vec_degsig.shape = ", self.vec_degsig.shape)
+            print("vec_degint.shape = ", self.vec_degint.shape)
+            print("vec_ampsig.shape = ", self.vec_ampsig.shape)
+            print("vec_ampint.shape = ", self.vec_ampint.shape)
+            print("vec_ampnois.shape = ", self.vec_ampnois.shape)
+            print("vec_fbandsig.shape = ", self.vec_fbandsig.shape)
+            print("vec_fbandint.shape = ", self.vec_fbandint.shape)
+        else:
+            print("Ошибка проверки типа векторов сигналов и помех от времени")
+
 

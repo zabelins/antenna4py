@@ -3,7 +3,7 @@ import numpy as np
 if __name__ == "__main__":
     print("Вы запустили модуль модели ДОС (L2)")
 
-class Synt_net:
+class Syntnet:
     """Класс моделирования схемы диаграммообразования"""
 
     def __init__(self, id):
@@ -84,15 +84,25 @@ class Synt_net:
         return res
 
     def print_out(self):
-        print("Размерности векторов ДОС:")
-        print("vec_inpattern.shape = ", self.vec_inpattern.shape)
-        print("vec_outpattern.shape = ", self.vec_outpattern.shape)
-        print("vec_outdeph.shape = ", self.vec_outdeph.shape)
-        print("vec_outatten.shape = ", self.vec_outatten.shape)
-        #print("vec_outsnir.shape = ", self.vec_outsnir.shape)
-        #print("vec_outsnr.shape = ", self.vec_outsnr.shape)
-        #print("vec_outinr.shape = ", self.vec_outinr.shape)
-        #print("vec_outsignal.shape = ", self.vec_outsignal.shape)
+        # проверка типа векторов на ndarray
+        bool_buf1 = isinstance(self.vec_inpattern, np.ndarray)
+        bool_buf2 = isinstance(self.vec_outpattern, np.ndarray)
+        bool_buf3 = isinstance(self.vec_outdeph, np.ndarray)
+        bool_buf4 = isinstance(self.vec_outatten, np.ndarray)
+        bool_res1 = (bool_buf1 == True) and (bool_buf2 == True) and (bool_buf3 == True)
+        # вывод размерностей векторов
+        if (bool_res1 == True) and (bool_buf4 == True):
+            print("Размерности векторов ДОС:")
+            print("vec_inpattern.shape = ", self.vec_inpattern.shape)
+            print("vec_outpattern.shape = ", self.vec_outpattern.shape)
+            print("vec_outdeph.shape = ", self.vec_outdeph.shape)
+            print("vec_outatten.shape = ", self.vec_outatten.shape)
+            # print("vec_outsnir.shape = ", self.vec_outsnir.shape)
+            # print("vec_outsnr.shape = ", self.vec_outsnr.shape)
+            # print("vec_outinr.shape = ", self.vec_outinr.shape)
+            # print("vec_outsignal.shape = ", self.vec_outsignal.shape)
+        else:
+            print("Ошибка проверки типа векторов ДОС")
 
     def calc_difference(self, vec_pattern, vec_deg, index):
         # вычисление разности искодной и оптимальной ДН по заданным углам
