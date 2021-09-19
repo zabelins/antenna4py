@@ -41,7 +41,7 @@ class Par_adapt:
         return res
 
     def print(self):
-        print(" --- Значения параметров адаптации (L3) --- ")
+        print(" --- Параметры адаптации (L3) --- ")
         print("id = ", self.id)
         print("adapt_type = ", self.adapt_type)
         print("alg_crit = ", self.alg_crit)
@@ -52,5 +52,5 @@ class Par_adapt:
         print("control_stepamp = ", self.control_stepamp)
 
     def print_short(self):
-        print(" --- Значения параметров адаптации (L3) --- ")
+        print(" --- Параметры адаптации (L3) --- ")
         print("par_adapt = ", self.get())

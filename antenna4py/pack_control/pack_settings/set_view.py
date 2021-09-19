@@ -13,9 +13,9 @@ class Set_view:
         self.pattern_legend = 1
         self.pattern_strleg = ["p1", "p2", "p3", "p4", "p5"]
         self.charact_style = 1
-        self.charact_norm = 1
+        self.charact_norm = 0
         self.charact_mean = 0
-        self.charact_db = 1
+        self.charact_db = 0
         self.charact_legend = 1
         self.charact_strleg = ["c1", "c2", "c3", "c4", "c5"]
         self.timefreq_style = 1
@@ -74,7 +74,7 @@ class Set_view:
         return res
 
     def print(self):
-        print(" --- Значения настроек вывода информации (L3) --- ")
+        print(" --- Настройки вывода информации (L3) --- ")
         print("id = ", self.id)
         print("pattern_style = ", self.pattern_style)
         print("pattern_norm = ", self.pattern_norm)
@@ -98,5 +98,5 @@ class Set_view:
         print("animation = ", self.animation)
 
     def print_short(self):
-        print(" --- Значения настроек вывода информации (L3) --- ")
-        print("settings_view = ", self.get())
+        print(" --- Настройки вывода информации (L3) --- ")
+        print("set_view = ", self.get())

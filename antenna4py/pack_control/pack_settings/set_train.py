@@ -30,14 +30,14 @@ class Set_train:
         return res
 
     def print(self):
-        print(" --- Значения настроек обучения НС (L3) --- ")
+        print(" --- Настройки обучения НС (L3) --- ")
         print("id = ", self.id)
-        print("id_alg = ", self.id_nn)
-        print("id_alg = ", self.id_learn)
+        print("id_nn = ", self.id_nn)
+        print("id_learn = ", self.id_learn)
         print("num_epoch = ", self.num_epoch)
         print("num_layers = ", self.num_layers)
         print("num_neurons = ", self.num_neurons)
 
     def print_short(self):
-        print(" --- Значения настроек обучения НС (L3) --- ")
-        print("settings_nn = ", self.get())
+        print(" --- Настройки обучения НС (L3) --- ")
+        print("set_train = ", self.get())
