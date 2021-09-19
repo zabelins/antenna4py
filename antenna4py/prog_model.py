@@ -40,8 +40,8 @@ class Model_AAA:
         # инициализация параметров уровня L3
         self.list_array.list_factor.set(obj_set.list_pararray.get())
         self.list_array.list_element.set(obj_set.list_pararray.get())
-        self.list_proc.list_tradalg.set(obj_set.list_paradapt.get())
-        self.list_proc.list_neuroalg.set(obj_set.list_paradapt.get())
+        self.list_proc.list_trad.set(obj_set.list_paradapt.get())
+        self.list_proc.list_neuro.set(obj_set.list_paradapt.get())
         self.list_proc.list_kalman.set(obj_set.list_paradapt.get())
 
     def get(self):

@@ -6,28 +6,25 @@ class Kalman:
 
     def __init__(self, id):
         self.id = id
-        self.id_kalman = []
-        self.coef_kalman = []
-        self.time_calc = []
+        self.kalman_type = []
+        self.kalman_coef = []
 
     def set(self, init):
-        self.id_kalman = init[5]
-        self.coef_kalman = init[6]
+        self.kalman_type = init[4]
+        self.kalman_coef = init[5]
 
     def get(self):
         res = []
         res.append(self.id)
-        res.append(self.id_kalman)
-        res.append(self.coef_kalman)
-        res.append(self.time_calc)
+        res.append(self.kalman_type)
+        res.append(self.kalman_coef)
         return res
 
     def print(self):
         print(" --- Параметры модели фильтра Калмана (L3) --- ")
         print("id = ", self.id)
-        print("id_kalman = ", self.id_kalman)
-        print("coef_kalman = ", self.coef_kalman)
-        print("time_calc = ", self.time_calc)
+        print("kalman_type = ", self.kalman_type)
+        print("coef_kalman = ", self.kalman_coef)
 
     def print_short(self):
         print(" --- Параметры модели фильтра Калмана (L3) --- ")

@@ -8,8 +8,8 @@ class Syntnet:
 
     def __init__(self, id):
         self.id = id
-        self.control_phistep = []
-        self.control_ampstep = []
+        self.control_stepphi = []
+        self.control_stepamp = []
         self.pattern_step = []
         self.vec_inpattern = []
         self.vec_outpattern = []
@@ -21,22 +21,22 @@ class Syntnet:
         self.vec_outsignal = []
 
     def set(self, init):
-        self.control_phistep = init[6]
-        self.control_ampstep = init[7]
+        self.control_stepphi = init[6]
+        self.control_stepamp = init[7]
 
     def get(self):
         res = []
         res.append(self.id)
-        res.append(self.control_phistep)
-        res.append(self.control_ampstep)
+        res.append(self.control_stepphi)
+        res.append(self.control_stepamp)
         res.append(self.pattern_step)
         return res
 
     def print(self):
         print(" --- Параметры модели ДОС (L2) --- ")
         print("id = ", self.id)
-        print("control_phistep = ", self.control_phistep)
-        print("control_ampstep = ", self.control_ampstep)
+        print("control_stepphi = ", self.control_stepphi)
+        print("control_stepamp = ", self.control_stepamp)
         print("pattern_step = ", self.pattern_step)
 
     def print_short(self):
@@ -50,7 +50,7 @@ class Syntnet:
         vec_test = out_array[0].T
         vec_degsig, vec_degint = out_env[0], out_env[3]
         vec_eqdegsig, vec_eqdegint = out_array[7], out_array[8]
-        vec_weight1, vec_weight2 = out_weight[2], out_weight[5]
+        vec_weight1, vec_weight2 = out_weight[0], out_weight[1]
         # инициализируем размеры векторов
         len_time, len_pattern = vec_time.shape[0], vec_pattern.shape[0]
         len_sig, len_int = vec_degsig.shape[1], vec_degint.shape[1]

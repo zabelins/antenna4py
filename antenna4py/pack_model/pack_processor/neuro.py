@@ -6,21 +6,25 @@ class Neuro_alg:
 
     def __init__(self, id):
         self.id = id
-        self.time_calc = []
+        self.adapt_type = []
+        self.alg_crit = []
 
     def set(self, init):
-        pass
+        self.adapt_type = init[1]
+        self.alg_crit = init[2]
 
     def get(self):
         res = []
         res.append(self.id)
-        res.append(self.time_calc)
+        res.append(self.adapt_type)
+        res.append(self.alg_crit)
         return res
 
     def print(self):
         print(" --- Параметры модели НС алгоритма (L3) --- ")
         print("id = ", self.id)
-        print("time_calc = ", self.time_calc)
+        print("adapt_type = ", self.adapt_type)
+        print("alg_crit = ", self.alg_crit)
 
     def print_short(self):
         print(" --- Параметры модели НС алгоритма (L3) --- ")

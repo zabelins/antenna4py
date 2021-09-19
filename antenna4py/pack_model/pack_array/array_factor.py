@@ -72,7 +72,7 @@ class Factor:
         fun_sig = amp * cmath.exp(1j * fun_u * (num - 1)) * cmath.exp(1j * rand)
         return fun_sig
 
-    def get_dist(self, num_all, num_var):
+    def get_dist(self, num_var):
         # АФР для заданного элемента антенной решётки
         res = []
         if (self.array_dist == 1):
@@ -80,11 +80,11 @@ class Factor:
             res = 1.0
         if (self.array_dist == 2):
             # косинусное распределение
-            res = 0.4 + 0.6 * math.cos(math.pi * (num_var-1) / (num_all-1) - math.pi/2)
+            res = 0.4 + 0.6 * math.cos(math.pi * (num_var-1) / (self.array_N-1) - math.pi/2)
         if (self.array_dist == 3):
             # распределение чебышева
+            res = 1.0
             # нужно использовать Chebyshev()
-            res = []
         return res
 
     def get_randamp(self):
@@ -106,8 +106,9 @@ class Factor:
             res = np.random.normal(loc=0.0, scale=self.error_maxphi)
         return res
 
-    def get_eqvec(self, len_time, len_sig, vec_deg, vec_fband, num_all):
+    def get_eqvec(self, vec_deg, vec_fband):
         # вычисление временного вектора эквивалентных углов сигнала
+        len_time, len_sig = vec_deg.shape[0], vec_deg.shape[1]
         vec_eqdegsig = []
         len_eqsig, sumlen_eqsig = np.zeros([len_time, len_sig]), np.zeros([len_time])
         l0_maxsig, f_otnsig = np.zeros([len_time, len_sig]), np.zeros([len_time, len_sig])
@@ -115,7 +116,7 @@ class Factor:
             buf_eqdeg = []
             for j in range(len_sig):
                 # вычисление углов эквивалентных сигналов
-                buf = self.get_eqsig(vec_deg[i][j], vec_fband[i][j], num_all)
+                buf = self.get_eqsig(vec_deg[i][j], vec_fband[i][j], self.array_N)
                 buf_eqdeg.append(buf[0])
                 len_eqsig[i][j] = buf[1]
                 l0_maxsig[i][j] = buf[2]

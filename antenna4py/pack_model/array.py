@@ -107,33 +107,32 @@ class Array:
         # вычисление вектора входного сигнала по всем углам для построения ДН (10x721)
         len_pattern = vec_pattern.shape[0]
         self.vec_test = np.zeros(shape=[self.array_N, len_pattern], dtype=complex)
-        buf = np.zeros(shape=[len_pattern], dtype=complex)
         for i in range(self.array_N):
-            # вычисление номера элемента
+            # вычисление текущего номера элемента
             num = i + 1
             # амплитуды для заданного элемента
             amp_sig = vec_sigamp[0]
-            amp_dist = self.list_factor.get_dist(self.array_N, num)
+            amp_dist = self.list_factor.get_dist(num)
             amp_rand = self.list_factor.get_randamp()
             # фазы для заданного элемента
             deg_rand = self.list_factor.get_randphi()
             # амплитуды для заданного угла обзора
+            buf = np.zeros(shape=[len_pattern], dtype=complex)
             for j in range(len_pattern):
                 deg = math.radians(vec_pattern[j])
                 amp_elem = self.list_element.get_gain(deg)
                 amp = amp_sig * amp_elem * amp_dist * amp_rand
                 buf[j] = self.list_factor.get_signal(amp, deg, num, deg_rand)
             self.vec_test[i] = buf
-            buf = np.zeros(shape=[len_pattern], dtype=complex)
 
     def calc_realsig(self, vec_sigdeg, vec_sigamp, vec_sigband, vec_intdeg, vec_intamp, vec_intband, vec_noisamp):
         # вычисление векторов входных сигналов и помех в зависимости от времени для заданных углов прихода
         len_time, len_sig, len_int = [vec_sigdeg.shape[0], vec_sigdeg.shape[1], vec_intdeg.shape[1]]
         # расчёт вектора и параметров эквивалентных сигналов
-        buf = self.list_factor.get_eqvec(len_time, len_sig, vec_sigdeg, vec_sigband, self.array_N)
+        buf = self.list_factor.get_eqvec(vec_sigdeg, vec_sigband)
         self.vec_eqdegsig, len_eqsig, sumlen_eqsig, l0_maxsig, f_otnsig = buf
         # расчёт вектора и параметров эквивалентных помех
-        buf = self.list_factor.get_eqvec(len_time, len_int, vec_intdeg, vec_intband, self.array_N)
+        buf = self.list_factor.get_eqvec(vec_intdeg, vec_intband)
         self.vec_eqdegint, len_eqint, sumlen_eqint, l0_maxint, f_otnint = buf
         # вычисления размеров для векторов и матриц
         # max - максимум по столбцу, gmax - глобальный максимум
@@ -169,9 +168,9 @@ class Array:
             self.vec_nois[i] = np.ones(shape=[1, self.array_N], dtype=complex) * vec_noisamp[i]
             self.matrix_nois[i] = np.eye(self.array_N, dtype=complex) * math.pow(vec_noisamp[i], 2)
         #print("vec_sig = ", self.vec_sig[0])
-        #print("self.vec_int = ", self.vec_int)
+        #print("vec_int = ", self.vec_int)
         #print("vec_coefint = ", vec_coefint)
-        #print("self.matrix_int = ", self.matrix_int)
+        #print("matrix_int = ", self.matrix_int)
 
     def calc_vector(self, var_amp, var_eqdeg, len_eqsig, maxlen_eqsig):
         # вычисление вектора сигнала для одного момента времени
@@ -185,15 +184,15 @@ class Array:
         for i in range(len_sig):
             # запускаем цикл по эквивалентным сигналам
             for j in range(int(len_eqsig[i])):
-                vec_buf = np.zeros(shape=[self.array_N], dtype=complex)
                 # запускаем цикл по элементам АР
+                vec_buf = np.zeros(shape=[self.array_N], dtype=complex)
                 for k in range(self.array_N):
                     if (var_eqdeg[i][j] != 361.0):
-                        # вычисление номера элемента
+                        # вычисление текущего номера элемента
                         num = k + 1
                         # амплитуды для заданного элемента
                         amp_sig = var_amp[i]
-                        amp_dist = self.list_factor.get_dist(self.array_N, num)
+                        amp_dist = self.list_factor.get_dist(num)
                         amp_rand = self.list_factor.get_randamp()
                         # фазы для заданного элемента
                         deg_rand = self.list_factor.get_randphi()
@@ -207,8 +206,6 @@ class Array:
                 vec[index] = vec_buf
                 index = index + 1
             index = int(maxlen_eqsig[i])
-
-        #print(vec)
         return vec
 
     def calc_matrix(self, vec, l0_max, f_otn, maxlen_eqsig):
