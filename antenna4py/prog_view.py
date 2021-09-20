@@ -38,9 +38,12 @@ class View:
         self.vec_outatten = []
         self.vec_outsnir = []
         # параметрические характеристики адаптации
-        self.vec_rasdepth = []
-        self.vec_rasatten = []
-        self.vec_rassnir = []
+        self.vec_meanindepth = []
+        self.vec_meaninatten = []
+        self.vec_meaninsnir = []
+        self.vec_meanoutdepth = []
+        self.vec_meanoutatten = []
+        self.vec_meanoutsnir = []
 
     def set(self):
         # инициализация контроллера и модели
@@ -120,7 +123,7 @@ class View:
 
     def sync_model(self):
         # синхронизация с моделью
-        out_model = self.model.get()
+        out_model = self.model.get_out()
         # координатные сетки
         self.vec_pattern = out_model[0]
         self.vec_time = out_model[1]
@@ -138,15 +141,18 @@ class View:
         self.vec_inpattern = out_model[2][0]
         self.vec_indepth = out_model[2][1].T
         self.vec_inatten = out_model[2][2].T
-        self.vec_insnir = out_model[2][3].T
-        self.vec_outpattern = out_model[2][4]
-        self.vec_outdepth = out_model[2][5].T
-        self.vec_outatten = out_model[2][6].T
-        self.vec_outsnir = out_model[2][7].T
+        self.vec_insnir = []
+        self.vec_outpattern = out_model[2][3]
+        self.vec_outdepth = out_model[2][4].T
+        self.vec_outatten = out_model[2][5].T
+        self.vec_outsnir = []
         # параметрические характеристики адаптации
-        self.vec_rasdepth = []
-        self.vec_rasatten = []
-        self.vec_rassnir = []
+        self.vec_meanindepth = []
+        self.vec_meaninatten = []
+        self.vec_meaninsnir = []
+        self.vec_meanoutdepth = []
+        self.vec_meanoutatten = []
+        self.vec_meanoutsnir = []
         #print("self.vec_time = ", self.vec_time)
         #print("self.vec_degint = ", self.vec_degint)
         #print("self.vec_attenout = ", self.vec_attenout)

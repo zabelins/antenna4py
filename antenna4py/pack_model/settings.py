@@ -1,4 +1,5 @@
 import numpy as np
+import pack_calc.calc_list as cl
 
 if __name__ == "__main__":
     print("Вы запустили модуль настроек динамического моделирования (L2)")
@@ -8,12 +9,16 @@ class Model:
 
     def __init__(self, id):
         self.id = id
+        # диапазон углов
         self.pattern_line = []
         self.pattern_step = []
+        # диапазон времени
         self.time_line = []
         self.time_step = []
+        # диапазон параметров
         self.var_line = []
         self.var_step = []
+        # координатная сетка
         self.vec_pattern = []
         self.vec_time = []
         self.vec_var = []
@@ -74,21 +79,16 @@ class Model:
         res.append(self.vec_pattern)
         res.append(self.vec_time)
         res.append(self.vec_var)
-        res.append(self.pattern_step)
-        res.append(self.time_step)
-        res.append(self.var_step)
         return res
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_buf1 = isinstance(self.vec_time, np.ndarray)
-        bool_buf2 = isinstance(self.vec_pattern, np.ndarray)
-        bool_buf3 = isinstance(self.vec_var, np.ndarray)
+        bool_res = cl.is_ndarray([self.vec_time, self.vec_pattern, self.vec_var])
         # вывод размерностей векторов
-        if (bool_buf1 == True) and (bool_buf2 == True) and (bool_buf3 == True):
+        if (bool_res == True):
             print("Размерности векторов динамических параметров:")
-            print("vec_pattern.shape = ", self.vec_pattern.shape)
-            print("vec_time.shape = ", self.vec_time.shape)
-            print("vec_var.shape = ", self.vec_var.shape)
+            print("\tvec_pattern.shape = ", self.vec_pattern.shape)
+            print("\tvec_time.shape = ", self.vec_time.shape)
+            print("\tvec_var.shape = ", self.vec_var.shape)
         else:
             print("Ошибка проверки типа векторов динамических параметров")

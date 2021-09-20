@@ -9,25 +9,27 @@ class Trad_alg:
 
     def __init__(self, id):
         self.id = id
-        self.adapt_type = []
+        # номер критерия адаптации
         self.alg_crit = []
+        # тип управления
+        self.control_type = []
 
     def set(self, init):
-        self.adapt_type = init[1]
-        self.alg_crit = init[2]
+        self.alg_crit = init[1]
+        self.control_type = init[5]
 
     def get(self):
         res = []
         res.append(self.id)
-        res.append(self.adapt_type)
         res.append(self.alg_crit)
+        res.append(self.control_type)
         return res
 
     def print(self):
         print(" --- Параметры модели традиционного алгоритма (L3) --- ")
         print("id = ", self.id)
-        print("adapt_type = ", self.adapt_type)
         print("alg_crit = ", self.alg_crit)
+        print("control_type = ", self.control_type)
 
     def print_short(self):
         print(" --- Параметры модели традиционного алгоритма (L3) --- ")
@@ -41,18 +43,25 @@ class Trad_alg:
             # критерий адаптации без ограничений
             for i in range(len_time):
                 mu = abs(matrix_nois[i][0][0])
-                matrix_M = np.linalg.inv(matrix_int[i] + matrix_nois[i])
+                matrix_in = np.linalg.inv(matrix_int[i] + matrix_nois[i])
                 vector_in = np.array(vec_sig[i][0])
                 vector_cj = np.conj(vector_in)
-                res[i] = mu * matrix_M.dot(vector_cj)
+                res[i] = mu * matrix_in.dot(vector_cj)
         if (self.alg_crit == 2):
             # критерий с ограничениями
             for i in range(len_time):
                 mu = abs(len_num * matrix_sig[i][0][0])
-                matrix_M = np.linalg.inv(matrix_int[i] + matrix_nois[i])
+                matrix_in = np.linalg.inv(matrix_int[i] + matrix_nois[i])
                 vector_in = np.array(vec_sig[i][0])
                 vector_cj = np.conj(vector_in)
-                matrix_buf1 = vector_cj.dot(matrix_M)
-                matrix_buf2 = matrix_buf1.dot(vector_in)
-                res[i] = mu * matrix_M.dot(vector_cj) / matrix_buf2
+                buf = self.calc_power(vector_in, matrix_in)
+                res[i] = mu * matrix_in.dot(vector_cj) / buf
+        return res
+
+    def calc_power(self, vector_in, matrix):
+        # вычисление мощности для 1 момента времени
+        vector_cj = np.conj(vector_in)
+        matrix_in = matrix
+        matrix_buf = vector_cj.dot(matrix_in)
+        res = matrix_buf.dot(vector_in)
         return res

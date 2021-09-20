@@ -1,5 +1,5 @@
 import math
-
+import pack_calc.calc_list as cl
 import pack_model.pack_array as pa
 from pack_model.pack_array import *
 import numpy as np
@@ -13,15 +13,21 @@ class Array:
 
     def __init__(self, id):
         self.id = id
+        # центральная частота для антенной системы
         self.f_cen = []
+        # параметры множителя решётки
         self.array_N = []
+        # тестовый вектор
         self.vec_test = []
+        # входные комплексные вектора
         self.vec_sig = []
         self.vec_int = []
         self.vec_nois = []
+        # корреляционные матрицы
         self.matrix_sig = []
         self.matrix_int = []
         self.matrix_nois = []
+        # вектора эквивалентных углов
         self.vec_eqdegsig = []
         self.vec_eqdegint = []
         self.list_factor = pa.array_factor.Factor(1)
@@ -76,30 +82,21 @@ class Array:
 
     def print_out(self):
         # проверка типа векторов и матриц на ndarray и list
-        bool_buf1 = isinstance(self.vec_test, np.ndarray)
-        bool_buf2 = isinstance(self.vec_sig, np.ndarray)
-        bool_buf3 = isinstance(self.vec_int, np.ndarray)
-        bool_buf4 = isinstance(self.vec_nois, np.ndarray)
-        bool_buf5 = isinstance(self.matrix_sig, np.ndarray)
-        bool_buf6 = isinstance(self.matrix_int, np.ndarray)
-        bool_buf7 = isinstance(self.matrix_nois, np.ndarray)
-        bool_buf8 = isinstance(self.vec_eqdegsig, list)
-        bool_buf9 = isinstance(self.vec_eqdegint, list)
-        bool_res1 = (bool_buf1 == True) and (bool_buf2 == True) and (bool_buf3 == True)
-        bool_res2 = (bool_buf4 == True) and (bool_buf5 == True) and (bool_buf6 == True)
-        bool_res3 = (bool_buf7 == True) and (bool_buf8 == True) and (bool_buf9 == True)
+        bool_res1 = cl.is_ndarray([self.vec_test, self.vec_sig, self.vec_int, self.vec_nois])
+        bool_res2 = cl.is_ndarray([self.matrix_sig, self.matrix_int, self.matrix_nois])
+        bool_res3 = cl.is_list([self.vec_eqdegsig, self.vec_eqdegint])
         # вывод размерностей векторов
         if (bool_res1 == True) and (bool_res2 == True) and (bool_res3 == True):
             print("Размерности векторов и матриц от антенной решётки:")
-            print("vec_test.shape = ", self.vec_test.shape)
-            print("vec_sig.shape = ", self.vec_sig.shape)
-            print("vec_int.shape = ", self.vec_int.shape)
-            print("vec_nois.shape = ", self.vec_nois.shape)
-            print("matrix_sig.shape = ", self.matrix_sig.shape)
-            print("matrix_int.shape = ", self.matrix_int.shape)
-            print("matrix_nois.shape = ", self.matrix_nois.shape)
-            print("vec_eqdegsig.shape = ", len(self.vec_eqdegsig))
-            print("vec_eqdegint.shape = ", len(self.vec_eqdegint))
+            print("\tvec_test.shape = ", self.vec_test.shape)
+            print("\tvec_sig.shape = ", self.vec_sig.shape)
+            print("\tvec_int.shape = ", self.vec_int.shape)
+            print("\tvec_nois.shape = ", self.vec_nois.shape)
+            print("\tmatrix_sig.shape = ", self.matrix_sig.shape)
+            print("\tmatrix_int.shape = ", self.matrix_int.shape)
+            print("\tmatrix_nois.shape = ", self.matrix_nois.shape)
+            print("\tvec_eqdegsig.shape = ", len(self.vec_eqdegsig))
+            print("\tvec_eqdegint.shape = ", len(self.vec_eqdegint))
         else:
             print("Ошибка проверки типа векторов и матриц от антенной решётки")
 

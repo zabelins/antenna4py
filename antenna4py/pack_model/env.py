@@ -13,19 +13,25 @@ class Env:
 
     def __init__(self, id):
         self.id = id
+        # параметры сигналов
         self.sig_deg = []
         self.sig_amp = []
         self.sig_band = []
+        # параметры помех
         self.int_deg = []
         self.int_amp = []
         self.int_band = []
+        # параметры шума
         self.nois_amp = []
+        # врменные вектора сигналов
         self.vec_sigdeg = []
         self.vec_sigamp = []
         self.vec_sigband = []
+        # врменные вектора помех
         self.vec_intdeg = []
         self.vec_intamp = []
         self.vec_intband = []
+        # врменные вектора шума
         self.vec_noisamp = []
         self.list_gen = pe.signal_generator.Generator(1)
 
@@ -109,25 +115,18 @@ class Env:
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_buf1 = isinstance(self.vec_sigdeg, np.ndarray)
-        bool_buf2 = isinstance(self.vec_sigamp, np.ndarray)
-        bool_buf3 = isinstance(self.vec_sigband, np.ndarray)
-        bool_buf4 = isinstance(self.vec_intdeg, np.ndarray)
-        bool_buf5 = isinstance(self.vec_intamp, np.ndarray)
-        bool_buf6 = isinstance(self.vec_intband, np.ndarray)
-        bool_buf7 = isinstance(self.vec_noisamp, np.ndarray)
-        bool_res1 = (bool_buf1 == True) and (bool_buf2 == True) and (bool_buf3 == True)
-        bool_res2 = (bool_buf4 == True) and (bool_buf5 == True) and (bool_buf6 == True)
+        bool_res1 = cl.is_ndarray([self.vec_sigdeg, self.vec_sigamp, self.vec_sigband])
+        bool_res2 = cl.is_ndarray([self.vec_intdeg, self.vec_intamp, self.vec_intband, self.vec_noisamp])
         # вывод размерностей векторов
-        if (bool_res1 == True) and (bool_res2 == True) and (bool_buf7 == True):
+        if (bool_res1 == True) and (bool_res2 == True):
             print("Размерности векторов сигналов и помех от времени:")
-            print("vec_sigdeg.shape = ", self.vec_sigdeg.shape)
-            print("vec_sigamp.shape = ", self.vec_sigamp.shape)
-            print("vec_sigband.shape = ", self.vec_sigband.shape)
-            print("vec_intdeg.shape = ", self.vec_intdeg.shape)
-            print("vec_intamp.shape = ", self.vec_intamp.shape)
-            print("vec_intband.shape = ", self.vec_intband.shape)
-            print("vec_noisamp.shape = ", self.vec_noisamp.shape)
+            print("\tvec_sigdeg.shape = ", self.vec_sigdeg.shape)
+            print("\tvec_sigamp.shape = ", self.vec_sigamp.shape)
+            print("\tvec_sigband.shape = ", self.vec_sigband.shape)
+            print("\tvec_intdeg.shape = ", self.vec_intdeg.shape)
+            print("\tvec_intamp.shape = ", self.vec_intamp.shape)
+            print("\tvec_intband.shape = ", self.vec_intband.shape)
+            print("\tvec_noisamp.shape = ", self.vec_noisamp.shape)
         else:
             print("Ошибка проверки типа векторов сигналов и помех от времени")
 

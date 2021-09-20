@@ -12,11 +12,14 @@ class Factor:
 
     def __init__(self, id):
         self.id = id
+        # центральная частота для антенной системы
         self.f_cen = []
+        # параметры множителя решётки
         self.array_N = []
         self.array_beta = []
         self.array_dist = []
         self.array_effect = []
+        # параметры амплитудных и фазовых ошибок
         self.error_distphi = []
         self.error_distamp = []
         self.error_maxphi = []

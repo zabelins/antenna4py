@@ -31,3 +31,17 @@ def approx(M, x_graph, x_n, y_n, lamda=0):
     XT2 = np.power(x_graph, e2)
     y_graph = np.matmul(w, XT2)
     return y_graph
+
+def is_ndarray(vec):
+    bool_res = True
+    for i in range(len(vec)):
+        bool_buf = isinstance(vec[i], np.ndarray)
+        bool_res = (bool_res == True) and (bool_buf == True)
+    return bool_res
+
+def is_list(vec):
+    bool_res = True
+    for i in range(len(vec)):
+        bool_buf = isinstance(vec[i], list)
+        bool_res = (bool_res == True) and (bool_buf == True)
+    return bool_res

@@ -6,12 +6,13 @@ class Kalman:
 
     def __init__(self, id):
         self.id = id
+        # параметры фильтра Калмана
         self.kalman_type = []
         self.kalman_coef = []
 
     def set(self, init):
-        self.kalman_type = init[4]
-        self.kalman_coef = init[5]
+        self.kalman_type = init[3]
+        self.kalman_coef = init[4]
 
     def get(self):
         res = []

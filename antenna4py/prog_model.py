@@ -10,6 +10,7 @@ class Model_AAA:
     """Класс динамического моделирования адаптивной антенны"""
 
     def __init__(self):
+        self.f_cen = []
         self.list_settings = pack_model.settings.Model(1)
         self.list_env = pack_model.env.Env(1)
         self.list_array = pack_model.array.Array(1)
@@ -18,12 +19,17 @@ class Model_AAA:
         self.list_train = pack_model.train.Train(1)
         self.list_test = pack_model.test.Test(1)
         self.list_file = pack_model.file_io.File_IO(1)
-        self.f_cen = []
         self.out_set = []
         self.out_env = []
         self.out_array = []
         self.out_proc = []
         self.out_syntnet = []
+        self.vec_meanindepth = []
+        self.vec_meaninatten = []
+        self.vec_meaninsnir = []
+        self.vec_meanoutdepth = []
+        self.vec_meanoutatten = []
+        self.vec_meanoutsnir = []
 
     def set(self, obj_set):
         # инициализация параметров модели уровня L1
@@ -45,13 +51,13 @@ class Model_AAA:
         self.list_proc.list_kalman.set(obj_set.list_paradapt.get())
 
     def get(self):
-        # формирование выходных векторов
-        vec_pattern, vec_time = self.out_set[0], self.out_set[1]
-        vec_eqdegsig, vec_eqdegint = self.out_array[7], self.out_array[8]
-        return [vec_pattern, vec_time, self.out_syntnet, self.out_env, vec_eqdegsig, vec_eqdegint]
+        res = []
+        res.append(self.f_cen)
+        return res
 
     def print(self):
         print(" --- ПАРАМЕТРЫ ДИНАМИЧЕСКОЙ МОДЕЛИ ААР (L1) --- ")
+        print("f_cen = ", self.f_cen)
         self.list_settings.print_short()
         self.list_env.print_short()
         self.list_array.print_short()
@@ -79,6 +85,12 @@ class Model_AAA:
         # вычисление ДН и характеристик
         self.list_syntnet.calc_out(self.out_set, self.out_env, self.out_array, self.out_proc)
         self.out_syntnet = self.list_syntnet.get_out()
+
+    def get_out(self):
+        # формирование выходных векторов
+        vec_pattern, vec_time = self.out_set[0], self.out_set[1]
+        vec_eqdegsig, vec_eqdegint = self.out_array[7], self.out_array[8]
+        return [vec_pattern, vec_time, self.out_syntnet, self.out_env, vec_eqdegsig, vec_eqdegint]
 
     def print_out(self):
         # вывод информации о ходе вычислений

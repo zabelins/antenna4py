@@ -9,7 +9,9 @@ class Element:
 
     def __init__(self, id):
         self.id = id
+        # центральная частота для антенной системы
         self.f_cen = []
+        # параметры элементов решётки
         self.elem_type = []
 
     def set(self, init):
