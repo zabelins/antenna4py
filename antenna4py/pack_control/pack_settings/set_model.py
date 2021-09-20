@@ -13,8 +13,8 @@ class Set_model:
         self.time_line = [0, 1]
         self.time_step = 0.005
         # диапазон параметров, 1 ед
-        self.var_line = [0, 10]
-        self.var_step = 1
+        self.var_line = [0, 0.1]
+        self.var_step = 0.01
 
     def set(self, init):
         self.pattern_line = init[0]

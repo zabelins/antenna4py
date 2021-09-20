@@ -90,7 +90,10 @@ class Env:
             id_intamp, id_intdeg, id_intband = 4, 2, 1
             max_band = f_cen / 10
             self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([max_band])
-            pass
+        if (id_script == 6):
+            # если параметрическое моделирование - изменение углов
+            id_intdeg = 1
+            self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([par_band])
         # создаём вектора изменения сигналов от времени
         self.vec_sigdeg = self.list_gen.get_vecdeg(vec_time, self.sig_deg, 0)
         self.vec_sigamp = self.list_gen.get_vecamp(vec_time, self.sig_amp, freq_mod, 0)

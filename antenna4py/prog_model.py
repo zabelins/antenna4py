@@ -71,26 +71,64 @@ class Model_AAA:
         # создание векторов изменения параметров
         self.list_settings.calc_out(id_script)
         self.out_set = self.list_settings.get_out()
-        # определение параметра для углового режима
-        par_band = self.f_cen / 10
-        # создание векторов изменения сигналов и помех от времени
-        self.list_env.calc_out(self.out_set, self.f_cen, par_band, id_script)
-        self.out_env = self.list_env.get_out()
-        # вычисление сигналов с антенной решётки
-        self.list_array.calc_out(self.out_set, self.out_env)
-        self.out_array = self.list_array.get_out()
-        # вычисление векторов ВК
-        self.list_proc.calc_out(self.out_array)
-        self.out_proc = self.list_proc.get_out()
-        # вычисление ДН и характеристик
-        self.list_syntnet.calc_out(self.out_set, self.out_env, self.out_array, self.out_proc)
-        self.out_syntnet = self.list_syntnet.get_out()
+        # запускаем цикл по параметрам
+        len_var = self.out_set[2].shape[0]
+        for i in range(len_var):
+            # вычисление параметра
+            if (id_script == 6):
+                var_par = self.out_set[2][i]
+                par_band = self.f_cen * var_par
+                print("var_par = ", var_par)
+            else:
+                var_par = 0.1
+                par_band = self.f_cen * var_par
+                if (id_script == 4):
+                    print("var_par = ", var_par)
+            # создание векторов изменения сигналов и помех от времени
+            self.list_env.calc_out(self.out_set, self.f_cen, par_band, id_script)
+            self.out_env = self.list_env.get_out()
+            # инициализация векторов усреднённых характеристик
+            len_sig, len_int = self.out_env[0].shape[1], self.out_env[3].shape[1]
+            if (i == 0):
+                self.vec_meanindepth = np.zeros(shape=[len_var, len_int])
+                self.vec_meaninatten = np.zeros(shape=[len_var, len_sig])
+                self.vec_meaninsnir = np.zeros(shape=[len_var])
+                self.vec_meanoutdepth = np.zeros(shape=[len_var, len_int])
+                self.vec_meanoutatten = np.zeros(shape=[len_var, len_sig])
+                self.vec_meanoutsnir = np.zeros(shape=[len_var])
+            # вычисление сигналов с антенной решётки
+            self.list_array.calc_out(self.out_set, self.out_env)
+            self.out_array = self.list_array.get_out()
+            # вычисление векторов ВК
+            self.list_proc.calc_out(self.out_array)
+            self.out_proc = self.list_proc.get_out()
+            # вычисление ДН и характеристик
+            self.list_syntnet.calc_out(self.out_set, self.out_env, self.out_array, self.out_proc)
+            self.out_syntnet = self.list_syntnet.get_out()
+            # сохранение усреднённых параметров
+            self.vec_meanindepth[i] = self.out_syntnet[6]
+            self.vec_meaninatten[i] = self.out_syntnet[7]
+            self.vec_meaninsnir[i] = self.out_proc[4]
+            self.vec_meanoutdepth[i] = self.out_syntnet[8]
+            self.vec_meanoutatten[i] = self.out_syntnet[9]
+            self.vec_meanoutsnir[i] = self.out_proc[5]
+            #self.vec_meanindepth.append(self.out_syntnet[6])
+            #self.vec_meaninatten.append(self.out_syntnet[7])
+            #self.vec_meaninsnir.append(self.out_proc[4])
+            #self.vec_meanoutdepth.append(self.out_syntnet[8])
+            #self.vec_meanoutatten.append(self.out_syntnet[9])
+            #self.vec_meanoutsnir.append(self.out_proc[5])
 
     def get_out(self):
         # формирование выходных векторов
-        vec_pattern, vec_time = self.out_set[0], self.out_set[1]
-        vec_eqdegsig, vec_eqdegint = self.out_array[7], self.out_array[8]
-        return [vec_pattern, vec_time, self.out_syntnet, self.out_env, vec_eqdegsig, vec_eqdegint]
+        out_model = []
+        out_model.append(self.vec_meanindepth)
+        out_model.append(self.vec_meaninatten)
+        out_model.append(self.vec_meaninsnir)
+        out_model.append(self.vec_meanoutdepth)
+        out_model.append(self.vec_meanoutatten)
+        out_model.append(self.vec_meanoutsnir)
+        return [self.out_set, self.out_env, self.out_array, self.out_proc, self.out_syntnet, out_model]
 
     def print_out(self):
         # вывод информации о ходе вычислений

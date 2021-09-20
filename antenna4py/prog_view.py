@@ -108,11 +108,24 @@ class View:
         # вывод графика характеристик сигналов и помех
         self.show_timefreq()
         # вывод графика характеристик адаптации
-        self.show_charact()
+        self.show_charact1nd()
 
     def dynamic_mode2nd(self):
         # режим расчёта временных характеристик ААР (N параметров)
-        print("\tрежим в разработке :(")
+        # расчёт модели
+        self.controller.calc_dynamic2nd()
+        # синхронизация с моделью
+        self.sync_model()
+        # вывод служебной информации для графика
+        self.model.print_out()
+        # вывод графика ДН
+        self.show_pattern()
+        # вывод графика характеристик сигналов и помех
+        self.show_timefreq()
+        # вывод графика характеристик адаптации
+        self.show_charact1nd()
+        # вывод графика усреднённых характеристик адаптации
+        self.show_charact2nd()
 
     def train_mode(self):
         print("\tрежим в разработке :(")
@@ -125,39 +138,41 @@ class View:
         # синхронизация с моделью
         out_model = self.model.get_out()
         # координатные сетки
-        self.vec_pattern = out_model[0]
-        self.vec_time = out_model[1]
-        self.vec_var = out_model[2]
+        self.vec_pattern = out_model[0][0]
+        self.vec_time = out_model[0][1]
+        self.vec_var = out_model[0][2]
         # временные характеристики сигналов и помех
-        self.vec_sigdeg = out_model[3][0].T
-        self.vec_sigamp = out_model[3][1].T
-        self.vec_sigband = out_model[3][2].T
-        self.vec_intdeg = out_model[3][3].T
-        self.vec_intamp = out_model[3][4].T
-        self.vec_intband = out_model[3][5].T
-        self.vec_eqdegsig = out_model[4]
-        self.vec_eqdegint = out_model[5]
+        self.vec_sigdeg = out_model[1][0].T
+        self.vec_sigamp = out_model[1][1].T
+        self.vec_sigband = out_model[1][2].T
+        self.vec_intdeg = out_model[1][3].T
+        self.vec_intamp = out_model[1][4].T
+        self.vec_intband = out_model[1][5].T
+        self.vec_eqdegsig = out_model[2][7]
+        self.vec_eqdegint = out_model[2][8]
         # временные характеристики адаптации
-        self.vec_inpattern = out_model[2][0]
-        self.vec_indepth = out_model[2][1].T
-        self.vec_inatten = out_model[2][2].T
-        self.vec_insnir = []
-        self.vec_outpattern = out_model[2][3]
-        self.vec_outdepth = out_model[2][4].T
-        self.vec_outatten = out_model[2][5].T
-        self.vec_outsnir = []
+        self.vec_insnir = out_model[3][1]
+        self.vec_outsnir = out_model[3][3]
+        self.vec_inpattern = out_model[4][0]
+        self.vec_indepth = out_model[4][1].T
+        self.vec_inatten = out_model[4][2].T
+        self.vec_outpattern = out_model[4][3]
+        self.vec_outdepth = out_model[4][4].T
+        self.vec_outatten = out_model[4][5].T
         # параметрические характеристики адаптации
-        self.vec_meanindepth = []
-        self.vec_meaninatten = []
-        self.vec_meaninsnir = []
-        self.vec_meanoutdepth = []
-        self.vec_meanoutatten = []
-        self.vec_meanoutsnir = []
-        #print("self.vec_time = ", self.vec_time)
-        #print("self.vec_degint = ", self.vec_degint)
-        #print("self.vec_attenout = ", self.vec_attenout)
-        #print("self.vec_indepth = ", self.vec_indepth)
-        #print("self.vec_outdepth = ", self.vec_outdepth)
+        self.vec_meanindepth = out_model[5][0]
+        self.vec_meaninatten = out_model[5][1]
+        self.vec_meaninsnir = out_model[5][2]
+        self.vec_meanoutdepth = out_model[5][3]
+        self.vec_meanoutatten = out_model[5][4]
+        self.vec_meanoutsnir = out_model[5][5]
+        #print("self.vec_var = ", self.vec_var)
+        #print("self.vec_meanindepth = ", self.vec_meanindepth)
+        #print("self.vec_meaninatten = ", self.vec_meaninatten)
+        #print("self.vec_meaninsnir = ", self.vec_meaninsnir)
+        #print("self.vec_meanoutdepth = ", self.vec_meanoutdepth)
+        #print("self.vec_meanoutatten = ", self.vec_meanoutatten)
+        #print("self.vec_meanoutsnir = ", self.vec_meanoutsnir)
 
     def show_pattern(self):
         # вывод графика ДН
@@ -166,21 +181,6 @@ class View:
         x = np.array([self.vec_pattern, self.vec_pattern])
         y = np.array([self.vec_inpattern[time], self.vec_outpattern[time]])
         self.list_graph.draw_pattern(x, y, deg[time])
-
-    def show_charact(self):
-        # вывод графика характеристик адаптации
-        len_sigamp, len_intamp, x, y = self.vec_sigamp.shape[0], self.vec_intamp.shape[0], [], []
-        for i in range(len_sigamp):
-            x.append(self.vec_time)
-            db_outatten = 20 * np.log10(abs(self.vec_outatten[i]))
-            db_inatten = 20 * np.log10(abs(self.vec_inatten[i]))
-            y.append(db_outatten - db_inatten)
-        for i in range(len_intamp):
-            x.append(self.vec_time)
-            db_outdepth = 20 * np.log10(abs(self.vec_outdepth[i]))
-            db_indepth = 20 * np.log10(abs(self.vec_indepth[i]))
-            y.append(db_outdepth - db_indepth)
-        self.list_graph.draw_charact(x, y, ['dp', 'time'])
 
     def show_timefreq(self):
         # вывод графика характеристик сигналов и помех
@@ -201,6 +201,36 @@ class View:
             x.append(self.vec_time)
             y.append(self.vec_intband[i])
         self.list_graph.draw_timefreq(x, y, ['band', 'time'])
+
+    def show_charact1nd(self):
+        # вывод графика характеристик адаптации
+        len_sigamp, len_intamp, x, y = self.vec_sigamp.shape[0], self.vec_intamp.shape[0], [], []
+        for i in range(len_sigamp):
+            x.append(self.vec_time)
+            db_outatten = 20 * np.log10(abs(self.vec_outatten[i]))
+            db_inatten = 20 * np.log10(abs(self.vec_inatten[i]))
+            y.append(db_outatten - db_inatten)
+        for i in range(len_intamp):
+            x.append(self.vec_time)
+            db_outdepth = 20 * np.log10(abs(self.vec_outdepth[i]))
+            db_indepth = 20 * np.log10(abs(self.vec_indepth[i]))
+            y.append(db_outdepth - db_indepth)
+        self.list_graph.draw_charact(x, y, ['dp', 'time'])
+
+    def show_charact2nd(self):
+        # вывод графика характеристик адаптации
+        x, y = [], []
+        # ослабление сигнала
+        x.append(self.vec_var)
+        db_outatten = 20 * np.log10(abs(self.vec_meanoutatten))
+        db_inatten = 20 * np.log10(abs(self.vec_meaninatten))
+        y.append(db_outatten - db_inatten)
+        # подавление помехи
+        x.append(self.vec_var)
+        db_outdepth = 20 * np.log10(abs(self.vec_meanoutdepth))
+        db_indepth = 20 * np.log10(abs(self.vec_meanindepth))
+        y.append(db_outdepth - db_indepth)
+        self.list_graph.draw_charact(x, y, ['dp', 'par'])
 
 
 

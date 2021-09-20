@@ -32,7 +32,7 @@ class Control:
 
     def calc_dynamic2nd(self):
         # вычисление динамической модели адаптации
-        pass
+        self.model.calc_out(6)
 
     def calc_train(self):
         # запуск обучения НС
