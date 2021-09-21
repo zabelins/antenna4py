@@ -5,7 +5,7 @@ import pack_calc.calc_list as cl
 if __name__ == "__main__":
     print("Вы запустили модуль отображения характеристик адаптации (L3)")
 
-class Characteristics:
+class Charact:
     """Класс вывода графика характеристик адаптации для пользователя"""
 
     def __init__(self, id):

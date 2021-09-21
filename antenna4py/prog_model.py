@@ -113,6 +113,7 @@ class Model_AAA:
             self.vec_meanoutsnir[i] = self.out_proc1nd[3]
 
     def get_out(self):
+        # получить усреднённые характеристики
         res = []
         res.append(self.vec_meanindepth)
         res.append(self.vec_meaninatten)

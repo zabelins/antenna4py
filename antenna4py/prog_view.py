@@ -115,9 +115,9 @@ class View:
         # вывод графика ДН
         self.show_pattern()
         # вывод графика характеристик сигналов и помех
-        self.show_timefreq()
+        self.show_signals()
         # вывод графика характеристик адаптации
-        self.show_charact1nd()
+        self.show_adapt()
 
     def mode_dynamic2nd(self):
         # режим расчёта временных характеристик ААР (N параметров)
@@ -127,11 +127,11 @@ class View:
         # вывод графика ДН
         self.show_pattern()
         # вывод графика характеристик сигналов и помех
-        self.show_timefreq()
+        self.show_signals()
         # вывод графика характеристик адаптации
-        self.show_charact1nd()
+        self.show_adapt()
         # вывод графика усреднённых характеристик адаптации
-        self.show_charact2nd()
+        self.show_mean()
 
     def mode_train(self):
         print("\tрежим в разработке :(")
@@ -170,62 +170,75 @@ class View:
         self.vec_meanoutsnir = out_model[5][5]
 
     def show_pattern(self):
-        # вывод графика ДН
-        time = 0
-        deg = self.vec_intdeg.T
-        x = np.array([self.vec_pattern, self.vec_pattern])
-        y = np.array([self.vec_inpattern[time], self.vec_outpattern[time]])
-        self.list_graph.draw_pattern(x, y, deg[time])
+        # вывод графика диаграммы направленности
+        vec = self.get_vecpattern()
+        self.list_graph.draw_pattern(vec)
 
-    def show_timefreq(self):
-        # вывод графика характеристик сигналов и помех
-        len_intamp, x, y = self.vec_intamp.shape[0], [], []
-        for i in range(len_intamp):
-            x.append(self.vec_time)
-            y.append(self.vec_intamp[i])
-        self.list_graph.draw_timefreq(x, y, ['amp', 'time'])
-        # вывод графика характеристик сигналов и помех
-        len_intdeg, x, y = self.vec_intdeg.shape[0], [], []
-        for i in range(len_intdeg):
-            x.append(self.vec_time)
-            y.append(self.vec_intdeg[i])
-        self.list_graph.draw_timefreq(x, y, ['deg', 'time'])
-        # вывод графика характеристик сигналов и помех
-        len_intband, x, y = self.vec_intband.shape[0], [], []
-        for i in range(len_intband):
-            x.append(self.vec_time)
-            y.append(self.vec_intband[i])
-        self.list_graph.draw_timefreq(x, y, ['band', 'time'])
+    def show_signals(self):
+        # вывод графиков временных характеристик сигналов
+        vec = self.get_vectime()
+        self.list_graph.draw_signals(vec)
 
-    def show_charact1nd(self):
-        # вывод графика характеристик адаптации
-        len_sigamp, len_intamp, x, y = self.vec_sigamp.shape[0], self.vec_intamp.shape[0], [], []
-        for i in range(len_sigamp):
-            x.append(self.vec_time)
-            db_outatten = 20 * np.log10(abs(self.vec_outatten[i]))
-            db_inatten = 20 * np.log10(abs(self.vec_inatten[i]))
-            y.append(db_outatten - db_inatten)
-        for i in range(len_intamp):
-            x.append(self.vec_time)
-            db_outdepth = 20 * np.log10(abs(self.vec_outdepth[i]))
-            db_indepth = 20 * np.log10(abs(self.vec_indepth[i]))
-            y.append(db_outdepth - db_indepth)
-        self.list_graph.draw_charact(x, y, ['dp', 'time'])
+    def show_adapt(self):
+        # вывод графиков временных характеристик адаптации
+        vec = self.get_vecadapt()
+        self.list_graph.draw_adapt(vec)
 
-    def show_charact2nd(self):
-        # вывод графика характеристик адаптации
-        x, y = [], []
-        # ослабление сигнала
-        x.append(self.vec_var)
-        db_outatten = 20 * np.log10(self.vec_meanoutatten)
-        db_inatten = 20 * np.log10(self.vec_meaninatten)
-        y.append(db_outatten - db_inatten)
-        # подавление помехи
-        x.append(self.vec_var)
-        db_outdepth = 20 * np.log10(self.vec_meanoutdepth)
-        db_indepth = 20 * np.log10(self.vec_meanindepth)
-        y.append(db_outdepth - db_indepth)
-        self.list_graph.draw_charact(x, y, ['dp', 'par'])
+    def show_mean(self):
+        # вывод графиков усреднённых характеристик адаптации
+        vec = self.get_vecmeanadapt()
+        self.list_graph.draw_mean(vec)
+
+    def get_vecpattern(self):
+        # получить вектора для диаграммы направленности
+        res = []
+        res.append(self.vec_pattern)
+        res.append(self.vec_sigdeg)
+        res.append(self.vec_intdeg)
+        res.append(self.vec_eqdegsig)
+        res.append(self.vec_eqdegint)
+        res.append(self.vec_inpattern)
+        res.append(self.vec_outpattern)
+        return res
+
+    def get_vectime(self):
+        # получить вектора для временных характеристик сигналов
+        res = []
+        res.append(self.vec_time)
+        res.append(self.vec_sigdeg)
+        res.append(self.vec_sigamp)
+        res.append(self.vec_sigband)
+        res.append(self.vec_intdeg)
+        res.append(self.vec_intamp)
+        res.append(self.vec_intband)
+        res.append(self.vec_eqdegsig)
+        res.append(self.vec_eqdegint)
+        return res
+
+    def get_vecadapt(self):
+        # получить вектора для временных характеристик адаптации
+        res = []
+        res.append(self.vec_time)
+        res.append(self.vec_indepth)
+        res.append(self.vec_inatten)
+        res.append(self.vec_insnir)
+        res.append(self.vec_outdepth)
+        res.append(self.vec_outatten)
+        res.append(self.vec_outsnir)
+        return res
+
+    def get_vecmeanadapt(self):
+        # получить вектора для усреднённых характеристик адаптации
+        res = []
+        res.append(self.vec_var)
+        res.append(self.vec_meanindepth)
+        res.append(self.vec_meaninatten)
+        res.append(self.vec_meaninsnir)
+        res.append(self.vec_meanoutdepth)
+        res.append(self.vec_meanoutatten)
+        res.append(self.vec_meanoutsnir)
+        return res
+
 
 
 

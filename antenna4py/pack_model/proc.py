@@ -131,8 +131,6 @@ class Proc:
         # деление на общее количество
         self.mean_insnir = self.mean_insnir / len_time
         self.mean_outsnir = self.mean_outsnir / len_time
-        #print("self.mean_insnir = ", self.mean_insnir)
-        #print("self.mean_outsnir = ", self.mean_outsnir)
 
 
 
