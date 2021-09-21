@@ -15,6 +15,9 @@ class View:
         self.list_graph = pack_view.graph.Graph(1)
         self.list_client = pack_view.client.Client(1)
         self.list_report = pack_view.report.Report(1)
+        # вывод и сохранение результатов
+        self.id_print = 1
+        self.id_save = 1
         # координатная сетка для графиков
         self.vec_pattern = []
         self.vec_time = []
@@ -47,22 +50,22 @@ class View:
 
     def set(self):
         # инициализация контроллера и модели
-        self.controller.set()
-        setview = self.controller.list_set.list_setview.get()
+        self.controller.set(self.id_print, self.id_save)
+        vec_setview = self.controller.list_set.list_setview.get()
         # инициализация параметров интерфейса уровня L2
-        self.list_graph.set(setview)
-        self.list_client.set(setview)
-        self.list_report.set(setview)
+        self.list_graph.set(vec_setview)
+        self.list_client.set(vec_setview)
+        self.list_report.set(vec_setview)
         # инициализация параметров интерфейса уровня L3
-        self.list_graph.list_pattern.set(setview)
-        self.list_graph.list_charact.set(setview)
-        self.list_graph.list_timefreq.set(setview)
+        self.list_graph.list_pattern.set(vec_setview)
+        self.list_graph.list_charact.set(vec_setview)
+        self.list_graph.list_timefreq.set(vec_setview)
 
     def print(self):
-        print(" --- ПАРАМЕТРЫ МОДУЛЯ ПРЕДСТАВЛЕНИЯ (L1) --- ")
-        self.list_graph.print_short()
-        self.list_client.print_short()
-        self.list_report.print_short()
+        print("Параметры модуля представления (L1):")
+        self.list_graph.print()
+        self.list_client.print()
+        self.list_report.print()
 
     def start_prog(self):
         # инициализируем числовую модель
@@ -72,37 +75,43 @@ class View:
         self.list_client.print_namemode(input_buf)
         # запуск выбранного режима
         if input_buf == 1:
-            self.static_mode()
-        if input_buf == 2:
-            self.dynamic_mode1nd()
-        if input_buf == 3:
-            self.dynamic_mode2nd()
-        if input_buf == 4:
-            self.train_mode()
-        if input_buf == 5:
-            self.settings_mode()
+            # расчёт диаграммы направленности
+            self.mode_static()
+        elif input_buf == 2:
+            # расчёт временных характеристик
+            self.mode_dynamic1nd()
+        elif input_buf == 3:
+            # расчёт усреднённых характеристик
+            self.mode_dynamic2nd()
+        elif input_buf == 4:
+            # обучение нейронной сети
+            self.mode_train()
+        elif input_buf == 5:
+            # просмотр исходных настроек программы
+            self.controller.mode_print(1)
+        elif input_buf == 6:
+            # просмотр параметров модели
+            self.controller.mode_print(2)
+        elif input_buf == 7:
+            # просмотр параметров графиков
+            self.list_graph.print()
 
-    def static_mode(self):
+    def mode_static(self):
         # режим расчёта диаграммы направленности
-        # расчёт модели
-        self.controller.calc_static()
+        self.controller.mode_static()
         # синхронизация с моделью
         self.sync_model()
-        # вывод служебной информации для графика
-        self.model.print_out()
         # вывод графика ДН
         self.show_pattern()
 
-    def dynamic_mode1nd(self):
+    def mode_dynamic1nd(self):
         # режим расчёта временных характеристик ААР (1 параметр)
         # выбор сценария моделирования
         id_script = self.list_client.input_script()
         # расчёт модели
-        self.controller.calc_dynamic1nd(id_script)
+        self.controller.mode_dynamic1nd(id_script)
         # синхронизация с моделью
         self.sync_model()
-        # вывод служебной информации для графика
-        self.model.print_out()
         # вывод графика ДН
         self.show_pattern()
         # вывод графика характеристик сигналов и помех
@@ -110,14 +119,11 @@ class View:
         # вывод графика характеристик адаптации
         self.show_charact1nd()
 
-    def dynamic_mode2nd(self):
+    def mode_dynamic2nd(self):
         # режим расчёта временных характеристик ААР (N параметров)
-        # расчёт модели
-        self.controller.calc_dynamic2nd()
+        self.controller.mode_dynamic2nd()
         # синхронизация с моделью
         self.sync_model()
-        # вывод служебной информации для графика
-        self.model.print_out()
         # вывод графика ДН
         self.show_pattern()
         # вывод графика характеристик сигналов и помех
@@ -127,16 +133,12 @@ class View:
         # вывод графика усреднённых характеристик адаптации
         self.show_charact2nd()
 
-    def train_mode(self):
+    def mode_train(self):
         print("\tрежим в разработке :(")
-
-    def settings_mode(self):
-        # режим просмотра настроек программы
-        self.controller.list_set.print()
 
     def sync_model(self):
         # синхронизация с моделью
-        out_model = self.model.get_out()
+        out_model = self.model.get_out1nd()
         # координатные сетки
         self.vec_pattern = out_model[0][0]
         self.vec_time = out_model[0][1]
@@ -148,11 +150,11 @@ class View:
         self.vec_intdeg = out_model[1][3].T
         self.vec_intamp = out_model[1][4].T
         self.vec_intband = out_model[1][5].T
-        self.vec_eqdegsig = out_model[2][7]
-        self.vec_eqdegint = out_model[2][8]
+        self.vec_eqdegsig = out_model[2][1]
+        self.vec_eqdegint = out_model[2][2]
         # временные характеристики адаптации
-        self.vec_insnir = out_model[3][1]
-        self.vec_outsnir = out_model[3][3]
+        self.vec_insnir = out_model[3][0]
+        self.vec_outsnir = out_model[3][1]
         self.vec_inpattern = out_model[4][0]
         self.vec_indepth = out_model[4][1].T
         self.vec_inatten = out_model[4][2].T
@@ -166,13 +168,6 @@ class View:
         self.vec_meanoutdepth = out_model[5][3]
         self.vec_meanoutatten = out_model[5][4]
         self.vec_meanoutsnir = out_model[5][5]
-        #print("self.vec_var = ", self.vec_var)
-        #print("self.vec_meanindepth = ", self.vec_meanindepth)
-        #print("self.vec_meaninatten = ", self.vec_meaninatten)
-        #print("self.vec_meaninsnir = ", self.vec_meaninsnir)
-        #print("self.vec_meanoutdepth = ", self.vec_meanoutdepth)
-        #print("self.vec_meanoutatten = ", self.vec_meanoutatten)
-        #print("self.vec_meanoutsnir = ", self.vec_meanoutsnir)
 
     def show_pattern(self):
         # вывод графика ДН
@@ -222,13 +217,13 @@ class View:
         x, y = [], []
         # ослабление сигнала
         x.append(self.vec_var)
-        db_outatten = 20 * np.log10(abs(self.vec_meanoutatten))
-        db_inatten = 20 * np.log10(abs(self.vec_meaninatten))
+        db_outatten = 20 * np.log10(self.vec_meanoutatten)
+        db_inatten = 20 * np.log10(self.vec_meaninatten)
         y.append(db_outatten - db_inatten)
         # подавление помехи
         x.append(self.vec_var)
-        db_outdepth = 20 * np.log10(abs(self.vec_meanoutdepth))
-        db_indepth = 20 * np.log10(abs(self.vec_meanindepth))
+        db_outdepth = 20 * np.log10(self.vec_meanoutdepth)
+        db_indepth = 20 * np.log10(self.vec_meanindepth)
         y.append(db_outdepth - db_indepth)
         self.list_graph.draw_charact(x, y, ['dp', 'par'])
 

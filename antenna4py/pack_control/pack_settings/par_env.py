@@ -30,7 +30,6 @@ class Par_env:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.sig_deg)
         res.append(self.sig_amp)
         res.append(self.sig_band)
@@ -41,16 +40,12 @@ class Par_env:
         return res
 
     def print(self):
-        print(" --- Параметры сигнально-помеховой обстановки (L3) --- ")
-        print("id = ", self.id)
-        print("sig_deg = ", self.sig_deg)
-        print("sig_amp = ", self.sig_amp)
-        print("sig_band = ", self.sig_band)
-        print("int_deg = ", self.int_deg)
-        print("int_amp = ", self.int_amp)
-        print("int_band = ", self.int_band)
-        print("nois_amp = ", self.nois_amp)
+        print("Параметры сигнально-помеховой обстановки (L3):")
+        print("\tsig_deg = ", self.sig_deg)
+        print("\tsig_amp = ", self.sig_amp)
+        print("\tsig_band = ", self.sig_band)
+        print("\tint_deg = ", self.int_deg)
+        print("\tint_amp = ", self.int_amp)
+        print("\tint_band = ", self.int_band)
+        print("\tnois_amp = ", self.nois_amp)
 
-    def print_short(self):
-        print(" --- Параметры сигнально-помеховой обстановки (L3) --- ")
-        print("par_env = ", self.get())

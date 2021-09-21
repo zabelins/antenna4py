@@ -26,7 +26,6 @@ class Set_model:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.pattern_line)
         res.append(self.pattern_step)
         res.append(self.time_line)
@@ -36,15 +35,11 @@ class Set_model:
         return res
 
     def print(self):
-        print(" --- Настройки динамического моделирования (L3) --- ")
-        print("id = ", self.id)
-        print("pattern_line = ", self.pattern_line)
-        print("pattern_step = ", self.pattern_step)
-        print("time_line = ", self.time_line)
-        print("time_step = ", self.time_step)
-        print("var_line = ", self.var_line)
-        print("var_step = ", self.var_step)
+        print("Настройки динамического моделирования (L3):")
+        print("\tpattern_line = ", self.pattern_line)
+        print("\tpattern_step = ", self.pattern_step)
+        print("\ttime_line = ", self.time_line)
+        print("\ttime_step = ", self.time_step)
+        print("\tvar_line = ", self.var_line)
+        print("\tvar_step = ", self.var_step)
 
-    def print_short(self):
-        print(" --- Настройки динамического моделирования (L3) --- ")
-        print("set_model = ", self.get())

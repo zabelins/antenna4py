@@ -26,19 +26,18 @@ class Factor:
         self.error_maxamp = []
 
     def set(self, init):
-        self.f_cen = np.array(init[1])
-        self.array_N = np.array(init[2])
-        self.array_beta = np.array(init[3])
-        self.array_dist = np.array(init[4])
-        self.array_effect = np.array(init[5])
-        self.error_distphi = np.array(init[7])
-        self.error_distamp = np.array(init[8])
-        self.error_maxphi = np.array(init[9])
-        self.error_maxamp = np.array(init[10])
+        self.f_cen = np.array(init[0])
+        self.array_N = np.array(init[1])
+        self.array_beta = np.array(init[2])
+        self.array_dist = np.array(init[3])
+        self.array_effect = np.array(init[4])
+        self.error_distphi = np.array(init[6])
+        self.error_distamp = np.array(init[7])
+        self.error_maxphi = np.array(init[8])
+        self.error_maxamp = np.array(init[9])
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.f_cen)
         res.append(self.array_N)
         res.append(self.array_beta)
@@ -51,21 +50,16 @@ class Factor:
         return res
 
     def print(self):
-        print(" --- Параметры модели множителя АР (L3) --- ")
-        print("id = ", self.id)
-        print("f_cen = ", self.f_cen)
-        print("array_N = ", self.array_N)
-        print("array_beta = ", self.array_beta)
-        print("array_dist = ", self.array_dist)
-        print("array_effect = ", self.array_effect)
-        print("error_distphi = ", self.error_distphi)
-        print("error_distamp = ", self.error_distamp)
-        print("error_maxphi = ", self.error_maxphi)
-        print("error_maxamp = ", self.error_maxamp)
-
-    def print_short(self):
-        print(" --- Параметры модели множителя АР (L3) --- ")
-        print("array_factor = ", self.get())
+        print("Параметры модели множителя АР (L3):")
+        print("\tf_cen = ", self.f_cen)
+        print("\tarray_N = ", self.array_N)
+        print("\tarray_beta = ", self.array_beta)
+        print("\tarray_dist = ", self.array_dist)
+        print("\tarray_effect = ", self.array_effect)
+        print("\terror_distphi = ", self.error_distphi)
+        print("\terror_distamp = ", self.error_distamp)
+        print("\terror_maxphi = ", self.error_maxphi)
+        print("\terror_maxamp = ", self.error_maxamp)
 
     def get_signal(self, amp, deg, num, rand):
         # комплексный сигнал для заданного элемента антенной решётки

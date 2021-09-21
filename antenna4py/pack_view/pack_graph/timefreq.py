@@ -26,12 +26,12 @@ class TimeFreq:
         self.vec_lwd2 = []
 
     def set(self, init):
-        self.timefreq_style = init[13]
-        self.timefreq_norm = init[14]
-        self.timefreq_mean = init[15]
-        self.timefreq_db = init[16]
-        self.timefreq_legend = init[17]
-        self.timefreq_strleg = init[18]
+        self.timefreq_style = init[12]
+        self.timefreq_norm = init[13]
+        self.timefreq_mean = init[14]
+        self.timefreq_db = init[15]
+        self.timefreq_legend = init[16]
+        self.timefreq_strleg = init[17]
         self.vec_col1 = ['#000000', '#b22222', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.0, 1.0, 1.0, 1.0, 1.0]
@@ -41,7 +41,6 @@ class TimeFreq:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.timefreq_style)
         res.append(self.timefreq_norm)
         res.append(self.timefreq_mean)
@@ -53,20 +52,15 @@ class TimeFreq:
         return res
 
     def print(self):
-        print(" --- Параметры отображения характеристик сигналов и помех (L3) --- ")
-        print("id = ", self.id)
-        print("timefreq_style = ", self.timefreq_style)
-        print("timefreq_norm = ", self.timefreq_norm)
-        print("timefreq_mean = ", self.timefreq_mean)
-        print("timefreq_db = ", self.timefreq_db)
-        print("timefreq_legend = ", self.timefreq_legend)
-        print("timefreq_strleg = ", self.timefreq_strleg)
-        print("str_y = ", self.str_y)
-        print("str_x = ", self.str_x)
-
-    def print_short(self):
-        print(" --- Параметры отображения характеристик сигналов и помех (L3) --- ")
-        print("timefreq = ", self.get())
+        print("Параметры отображения характеристик сигналов и помех (L3):")
+        print("\ttimefreq_style = ", self.timefreq_style)
+        print("\ttimefreq_norm = ", self.timefreq_norm)
+        print("\ttimefreq_mean = ", self.timefreq_mean)
+        print("\ttimefreq_db = ", self.timefreq_db)
+        print("\ttimefreq_legend = ", self.timefreq_legend)
+        print("\ttimefreq_strleg = ", self.timefreq_strleg)
+        print("\tstr_y = ", self.str_y)
+        print("\tstr_x = ", self.str_x)
 
     def draw_time(self, x, y, str):
         plt.title("Изменяемый параметр")

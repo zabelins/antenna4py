@@ -12,6 +12,8 @@ class Array:
     """Класс моделирования антенной решётки"""
 
     def __init__(self, id):
+        self.list_factor = pa.array_factor.Factor(1)
+        self.list_element = pa.array_element.Element(1)
         self.id = id
         # центральная частота для антенной системы
         self.f_cen = []
@@ -19,6 +21,9 @@ class Array:
         self.array_N = []
         # тестовый вектор
         self.vec_test = []
+        # вектора эквивалентных углов
+        self.vec_eqdegsig = []
+        self.vec_eqdegint = []
         # входные комплексные вектора
         self.vec_sig = []
         self.vec_int = []
@@ -27,76 +32,71 @@ class Array:
         self.matrix_sig = []
         self.matrix_int = []
         self.matrix_nois = []
-        # вектора эквивалентных углов
-        self.vec_eqdegsig = []
-        self.vec_eqdegint = []
-        self.list_factor = pa.array_factor.Factor(1)
-        self.list_element = pa.array_element.Element(1)
 
     def set(self, init):
-        self.f_cen = np.array(init[1])
-        self.array_N = np.array(init[2])
+        self.f_cen = np.array(init[0])
+        self.array_N = np.array(init[1])
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.f_cen)
         res.append(self.array_N)
         return res
 
     def print(self):
-        print(" --- Параметры модели антенной решётки (L2) --- ")
-        print("id = ", self.id)
-        print("f_cen = ", self.f_cen)
-        print("array_N = ", self.array_N)
-        self.list_factor.print_short()
-        self.list_element.print_short()
-
-    def print_short(self):
-        print(" --- Параметры модели антенной решётки (L2) --- ")
-        print("array = ", self.get())
+        print("Параметры модели антенной решётки (L2):")
+        print("\tf_cen = ", self.f_cen)
+        print("\tarray_N = ", self.array_N)
+        self.list_factor.print()
+        self.list_element.print()
 
     def calc_out(self, out_set, out_env):
         # распаковка исходных данных
         vec_pattern = out_set[0]
-        vec_sigdeg, vec_sigamp, vec_sigband = [out_env[0], out_env[1], out_env[2]]
-        vec_intdeg, vec_intamp, vec_intband = [out_env[3], out_env[4], out_env[5]]
+        vec_sigdeg, vec_sigamp, vec_sigband = out_env[0], out_env[1], out_env[2]
+        vec_intdeg, vec_intamp, vec_intband = out_env[3], out_env[4], out_env[5]
         vec_noisamp = out_env[6]
         # вычисление входного комплексного сигнала по элементам и углам
         self.calc_testsig(vec_pattern, vec_sigamp)
         # вычисление входных сигналов и помех от времени
         self.calc_realsig(vec_sigdeg, vec_sigamp, vec_sigband, vec_intdeg, vec_intamp, vec_intband, vec_noisamp)
 
-    def get_out(self):
+    def get_out1nd(self):
+        # получить вектора для отрисовки ДН
         res = []
         res.append(self.vec_test)
+        res.append(self.vec_eqdegsig)
+        res.append(self.vec_eqdegint)
+        return res
+
+    def get_out2nd(self):
+        # получить вектора для вычислений
+        res = []
         res.append(self.vec_sig)
         res.append(self.vec_int)
         res.append(self.vec_nois)
         res.append(self.matrix_sig)
         res.append(self.matrix_int)
         res.append(self.matrix_nois)
-        res.append(self.vec_eqdegsig)
-        res.append(self.vec_eqdegint)
         return res
 
     def print_out(self):
         # проверка типа векторов и матриц на ndarray и list
-        bool_res1 = cl.is_ndarray([self.vec_test, self.vec_sig, self.vec_int, self.vec_nois])
-        bool_res2 = cl.is_ndarray([self.matrix_sig, self.matrix_int, self.matrix_nois])
-        bool_res3 = cl.is_list([self.vec_eqdegsig, self.vec_eqdegint])
+        bool_res1 = cl.is_list([self.vec_eqdegsig, self.vec_eqdegint])
+        bool_res2 = cl.is_ndarray([self.vec_test, self.vec_sig, self.vec_int, self.vec_nois])
+        bool_res3 = cl.is_ndarray([self.matrix_sig, self.matrix_int, self.matrix_nois])
         # вывод размерностей векторов
         if (bool_res1 == True) and (bool_res2 == True) and (bool_res3 == True):
             print("Размерности векторов и матриц от антенной решётки:")
             print("\tvec_test.shape = ", self.vec_test.shape)
+            print("\tvec_eqdegsig.shape = ", len(self.vec_eqdegsig))
+            print("\tvec_eqdegint.shape = ", len(self.vec_eqdegint))
             print("\tvec_sig.shape = ", self.vec_sig.shape)
             print("\tvec_int.shape = ", self.vec_int.shape)
             print("\tvec_nois.shape = ", self.vec_nois.shape)
             print("\tmatrix_sig.shape = ", self.matrix_sig.shape)
             print("\tmatrix_int.shape = ", self.matrix_int.shape)
             print("\tmatrix_nois.shape = ", self.matrix_nois.shape)
-            print("\tvec_eqdegsig.shape = ", len(self.vec_eqdegsig))
-            print("\tvec_eqdegint.shape = ", len(self.vec_eqdegint))
         else:
             print("Ошибка проверки типа векторов и матриц от антенной решётки")
 
@@ -164,10 +164,6 @@ class Array:
             # вычисление вектора и матрицы для шума (!!! vec_nois должен быть рандомным !!!)
             self.vec_nois[i] = np.ones(shape=[1, self.array_N], dtype=complex) * vec_noisamp[i]
             self.matrix_nois[i] = np.eye(self.array_N, dtype=complex) * math.pow(vec_noisamp[i], 2)
-        #print("vec_sig = ", self.vec_sig[0])
-        #print("vec_int = ", self.vec_int)
-        #print("vec_coefint = ", vec_coefint)
-        #print("matrix_int = ", self.matrix_int)
 
     def calc_vector(self, var_amp, var_eqdeg, len_eqsig, maxlen_eqsig):
         # вычисление вектора сигнала для одного момента времени
@@ -241,8 +237,6 @@ class Array:
                     vec_coef[index+1] = coef_fourier / 2
                     index = index + 2
             index = int(maxlen_eqsig[i])
-        #print(matrix)
-        #print(vec_coef)
         return [matrix, vec_coef]
 
     def edit_vector(self, var_sig, var_coefsig, gmaxlen_eqsig):

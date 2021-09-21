@@ -13,15 +13,9 @@ class Set_test:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.id_test)
         return res
 
     def print(self):
-        print(" --- Значения настроек тестирования ПО (L3) --- ")
-        print("id = ", self.id)
-        print("id_test = ", self.id_test)
-
-    def print_short(self):
-        print(" --- Значения настроек тестирования ПО (L3) --- ")
-        print("settings_test = ", self.get())
+        print("Значения настроек тестирования ПО (L3):")
+        print("\tid_test = ", self.id_test)

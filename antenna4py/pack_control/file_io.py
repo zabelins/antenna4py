@@ -10,15 +10,9 @@ class File_IO:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.dir)
         return res
 
     def print(self):
-        print(" --- Настройки работы с файлами (L2) --- ")
-        print("id = ", self.id)
-        print("dir = ", self.dir)
-
-    def print_short(self):
-        print(" --- Настройки работы с файлами (L2) --- ")
-        print("file_io = ", self.get())
+        print("Настройки работы с файлами (L2):")
+        print("\tdir = ", self.dir)

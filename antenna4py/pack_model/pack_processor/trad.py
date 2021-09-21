@@ -15,25 +15,19 @@ class Trad_alg:
         self.control_type = []
 
     def set(self, init):
-        self.alg_crit = init[1]
-        self.control_type = init[5]
+        self.alg_crit = init[0]
+        self.control_type = init[4]
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.alg_crit)
         res.append(self.control_type)
         return res
 
     def print(self):
-        print(" --- Параметры модели традиционного алгоритма (L3) --- ")
-        print("id = ", self.id)
-        print("alg_crit = ", self.alg_crit)
-        print("control_type = ", self.control_type)
-
-    def print_short(self):
-        print(" --- Параметры модели традиционного алгоритма (L3) --- ")
-        print("trad_alg = ", self.get())
+        print("Параметры модели традиционного алгоритма (L3):")
+        print("\talg_crit = ", self.alg_crit)
+        print("\tcontrol_type = ", self.control_type)
 
     def get_invers(self, vec_sig, matrix_sig, matrix_int, matrix_nois):
         # алгоритм прямого обращения матрицы

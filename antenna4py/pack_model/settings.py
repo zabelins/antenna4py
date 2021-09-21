@@ -24,16 +24,15 @@ class Model:
         self.vec_var = []
 
     def set(self, init):
-        self.pattern_line = np.array(init[1])
-        self.pattern_step = np.array(init[2])
-        self.time_line = np.array(init[3])
-        self.time_step = np.array(init[4])
-        self.var_line = np.array(init[5])
-        self.var_step = np.array(init[6])
+        self.pattern_line = np.array(init[0])
+        self.pattern_step = np.array(init[1])
+        self.time_line = np.array(init[2])
+        self.time_step = np.array(init[3])
+        self.var_line = np.array(init[4])
+        self.var_step = np.array(init[5])
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.pattern_line)
         res.append(self.pattern_step)
         res.append(self.time_line)
@@ -43,18 +42,13 @@ class Model:
         return res
 
     def print(self):
-        print(" --- Настройки динамического моделирования (L2) --- ")
-        print("id = ", self.id)
-        print("pattern_line = ", self.pattern_line)
-        print("pattern_step = ", self.pattern_step)
-        print("time_line = ", self.time_line)
-        print("time_step = ", self.time_step)
-        print("var_line = ", self.var_line)
-        print("var_step = ", self.var_step)
-
-    def print_short(self):
-        print(" --- Настройки динамического моделирования (L2) --- ")
-        print("settings = ", self.get())
+        print("Настройки динамического моделирования (L2):")
+        print("\tpattern_line = ", self.pattern_line)
+        print("\tpattern_step = ", self.pattern_step)
+        print("\ttime_line = ", self.time_line)
+        print("\ttime_step = ", self.time_step)
+        print("\tvar_line = ", self.var_line)
+        print("\tvar_step = ", self.var_step)
 
     def calc_out(self, id_script):
         # один временной отсчёт для статического режима

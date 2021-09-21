@@ -25,12 +25,12 @@ class Pattern:
         self.vec_lwd2 = []
 
     def set(self, init):
-        self.pattern_style = init[1]
-        self.pattern_norm = init[2]
-        self.pattern_mean = init[3]
-        self.pattern_db = init[4]
-        self.pattern_legend = init[5]
-        self.pattern_strleg = init[6]
+        self.pattern_style = init[0]
+        self.pattern_norm = init[1]
+        self.pattern_mean = init[2]
+        self.pattern_db = init[3]
+        self.pattern_legend = init[4]
+        self.pattern_strleg = init[5]
         self.vec_col1 = ['#000000', '#b22222', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.0, 1.0, 1.0, 1.0, 1.0]
@@ -40,7 +40,6 @@ class Pattern:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.pattern_style)
         res.append(self.pattern_norm)
         res.append(self.pattern_mean)
@@ -52,20 +51,15 @@ class Pattern:
         return res
 
     def print(self):
-        print(" --- Параметры отображения ДН (L3) --- ")
-        print("id = ", self.id)
-        print("pattern_style = ", self.pattern_style)
-        print("pattern_norm = ", self.pattern_norm)
-        print("pattern_mean = ", self.pattern_mean)
-        print("pattern_db = ", self.pattern_db)
-        print("pattern_legend = ", self.pattern_legend)
-        print("pattern_strleg = ", self.pattern_strleg)
-        print("str_y = ", self.str_y)
-        print("str_x = ", self.str_x)
-
-    def print_short(self):
-        print(" --- Параметры отображения ДН (L3) --- ")
-        print("pattern = ", self.get())
+        print("Параметры отображения ДН (L3):")
+        print("\tpattern_style = ", self.pattern_style)
+        print("\tpattern_norm = ", self.pattern_norm)
+        print("\tpattern_mean = ", self.pattern_mean)
+        print("\tpattern_db = ", self.pattern_db)
+        print("\tpattern_legend = ", self.pattern_legend)
+        print("\tpattern_strleg = ", self.pattern_strleg)
+        print("\tstr_y = ", self.str_y)
+        print("\tstr_x = ", self.str_x)
 
     def draw_pattern(self, x, y, deg_int):
         plt.title("Диаграмма направленности ААР")

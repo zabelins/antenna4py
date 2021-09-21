@@ -12,6 +12,7 @@ class Env:
     """Класс моделирования сигнально-помеховой обстановки"""
 
     def __init__(self, id):
+        self.list_gen = pe.signal_generator.Generator(1)
         self.id = id
         # параметры сигналов
         self.sig_deg = []
@@ -33,20 +34,18 @@ class Env:
         self.vec_intband = []
         # врменные вектора шума
         self.vec_noisamp = []
-        self.list_gen = pe.signal_generator.Generator(1)
 
     def set(self, init):
-        self.sig_deg = np.array(init[1])
-        self.sig_amp = np.array(init[2])
-        self.sig_band = np.array(init[3])
-        self.int_deg = np.array(init[4])
-        self.int_amp = np.array(init[5])
-        self.int_band = np.array(init[6])
-        self.nois_amp = np.array(init[7])
+        self.sig_deg = np.array(init[0])
+        self.sig_amp = np.array(init[1])
+        self.sig_band = np.array(init[2])
+        self.int_deg = np.array(init[3])
+        self.int_amp = np.array(init[4])
+        self.int_band = np.array(init[5])
+        self.nois_amp = np.array(init[6])
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.sig_deg)
         res.append(self.sig_amp)
         res.append(self.sig_band)
@@ -57,20 +56,15 @@ class Env:
         return res
 
     def print(self):
-        print(" --- Параметры модели сигналов и помех (L2) --- ")
-        print("id = ", self.id)
-        print("sig_deg = ", self.sig_deg)
-        print("sig_amp = ", self.sig_amp)
-        print("sig_band = ", self.sig_band)
-        print("int_deg = ", self.int_deg)
-        print("int_amp = ", self.int_amp)
-        print("int_band = ", self.int_band)
-        print("nois_amp = ", self.nois_amp)
-        self.list_gen.print_short()
-
-    def print_short(self):
-        print(" --- Параметры модели сигналов и помех (L2) --- ")
-        print("env = ", self.get())
+        print("Параметры модели сигналов и помех (L2):")
+        print("\tsig_deg = ", self.sig_deg)
+        print("\tsig_amp = ", self.sig_amp)
+        print("\tsig_band = ", self.sig_band)
+        print("\tint_deg = ", self.int_deg)
+        print("\tint_amp = ", self.int_amp)
+        print("\tint_band = ", self.int_band)
+        print("\tnois_amp = ", self.nois_amp)
+        self.list_gen.print()
 
     def calc_out(self, out_set, f_cen, par_band, id_script):
         # распаковка исходных данных
@@ -81,16 +75,16 @@ class Env:
             # если амплитудная модуляция
             id_intamp = id_script
             freq_mod = f_cen * 2 / math.pow(10, 3)
-        if (id_script == 4):
+        elif (id_script == 4):
             # если изменение углов
             id_intdeg = 1
             self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([par_band])
-        if (id_script == 5):
+        elif (id_script == 5):
             # если рандомные помехи, максимальная полоса 10%
             id_intamp, id_intdeg, id_intband = 4, 2, 1
             max_band = f_cen / 10
             self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([max_band])
-        if (id_script == 6):
+        elif (id_script == 6):
             # если параметрическое моделирование - изменение углов
             id_intdeg = 1
             self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([par_band])

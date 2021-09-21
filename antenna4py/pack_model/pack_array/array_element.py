@@ -15,25 +15,19 @@ class Element:
         self.elem_type = []
 
     def set(self, init):
-        self.f_cen = np.array(init[1])
-        self.elem_type = np.array(init[6])
+        self.f_cen = np.array(init[0])
+        self.elem_type = np.array(init[5])
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.f_cen)
         res.append(self.elem_type)
         return res
 
     def print(self):
-        print(" --- Параметры модели элемента АР (L3) --- ")
-        print("id = ", self.id)
-        print("f_cen = ", self.f_cen)
-        print("elem_type = ", self.elem_type)
-
-    def print_short(self):
-        print(" --- Параметры модели элемента АР (L3) --- ")
-        print("array_element = ", self.get())
+        print("Параметры модели элемента АР (L3):")
+        print("\tf_cen = ", self.f_cen)
+        print("\telem_type = ", self.elem_type)
 
     def get_gain(self, deg):
         # усиление сигнала для заданного угла обзора

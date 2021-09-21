@@ -37,7 +37,6 @@ class Par_array:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.f_cen)
         res.append(self.array_N)
         res.append(self.array_beta)
@@ -51,19 +50,14 @@ class Par_array:
         return res
 
     def print(self):
-        print(" --- Параметры антенной решётки (L3) --- ")
-        print("id = ", self.id)
-        print("f_cen = ", self.f_cen)
-        print("array_N = ", self.array_N)
-        print("array_beta = ", self.array_beta)
-        print("array_dist = ", self.array_dist)
-        print("array_effect = ", self.array_effect)
-        print("elem_type = ", self.elem_type)
-        print("error_distphi = ", self.error_distphi)
-        print("error_distamp = ", self.error_distamp)
-        print("error_maxphi = ", self.error_maxphi)
-        print("error_maxamp = ", self.error_maxamp)
-
-    def print_short(self):
-        print(" --- Параметры антенной решётки (L3) --- ")
-        print("par_array = ", self.get())
+        print("Параметры антенной решётки (L3):")
+        print("\tf_cen = ", self.f_cen)
+        print("\tarray_N = ", self.array_N)
+        print("\tarray_beta = ", self.array_beta)
+        print("\tarray_dist = ", self.array_dist)
+        print("\tarray_effect = ", self.array_effect)
+        print("\telem_type = ", self.elem_type)
+        print("\terror_distphi = ", self.error_distphi)
+        print("\terror_distamp = ", self.error_distamp)
+        print("\terror_maxphi = ", self.error_maxphi)
+        print("\terror_maxamp = ", self.error_maxamp)

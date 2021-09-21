@@ -21,7 +21,6 @@ class Set_train:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.id_nn)
         res.append(self.id_learn)
         res.append(self.num_epoch)
@@ -30,14 +29,10 @@ class Set_train:
         return res
 
     def print(self):
-        print(" --- Настройки обучения НС (L3) --- ")
-        print("id = ", self.id)
-        print("id_nn = ", self.id_nn)
-        print("id_learn = ", self.id_learn)
-        print("num_epoch = ", self.num_epoch)
-        print("num_layers = ", self.num_layers)
-        print("num_neurons = ", self.num_neurons)
+        print("Настройки обучения НС (L3):")
+        print("\tid_nn = ", self.id_nn)
+        print("\tid_learn = ", self.id_learn)
+        print("\tnum_epoch = ", self.num_epoch)
+        print("\tnum_layers = ", self.num_layers)
+        print("\tnum_neurons = ", self.num_neurons)
 
-    def print_short(self):
-        print(" --- Настройки обучения НС (L3) --- ")
-        print("set_train = ", self.get())

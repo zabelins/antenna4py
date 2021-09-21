@@ -17,25 +17,19 @@ class Graph:
         self.list_timefreq = pg.timefreq.TimeFreq(1)
 
     def set(self, init):
-        self.animation = init[20]
+        self.animation = init[19]
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.animation)
         return res
 
     def print(self):
-        print(" --- Параметры вывода графика (L2) --- ")
-        print("id = ", self.id)
-        print("animation = ", self.animation)
-        self.list_pattern.print_short()
-        self.list_charact.print_short()
-        self.list_timefreq.print_short()
-
-    def print_short(self):
-        print(" --- Параметры вывода графика (L2) --- ")
-        print("graph = ", self.get())
+        print("Параметры вывода графика (L2):")
+        print("\tanimation = ", self.animation)
+        self.list_pattern.print()
+        self.list_charact.print()
+        self.list_timefreq.print()
 
     def draw_pattern(self, x, y, deg_int=[]):
         # отобразить диаграмму направленности

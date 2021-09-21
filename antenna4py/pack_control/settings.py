@@ -21,21 +21,17 @@ class All_settings:
 
     def get(self):
         res = []
-        res.append(self.id)
         return res
 
     def print(self):
-        print(" --- Настройки программы и модели (L2) --- ")
-        print("id = ", self.id)
-        self.list_parenv.print_short()
-        self.list_pararray.print_short()
-        self.list_paradapt.print_short()
-        self.list_setmodel.print_short()
-        self.list_settrain.print_short()
-        self.list_setview.print_short()
-        self.list_settest.print_short()
+        print("Настройки программы и модели (L2):")
+        print("\t-")
+        self.list_parenv.print()
+        self.list_pararray.print()
+        self.list_paradapt.print()
+        self.list_setmodel.print()
+        self.list_settrain.print()
+        self.list_setview.print()
+        self.list_settest.print()
 
-    def print_short(self):
-        print(" --- Настройки программы и модели (L2) --- ")
-        print("settings = ", self.get())
 

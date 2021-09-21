@@ -13,15 +13,22 @@ class File_IO:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.dir)
         return res
 
     def print(self):
-        print(" --- Настройки работы с файлами (L2) --- ")
-        print("id = ", self.id)
-        print("dir = ", self.dir)
+        print("Настройки работы с файлами (L2):")
+        print("\tdir = ", self.dir)
 
-    def print_short(self):
-        print(" --- Настройки работы с файлами (L2) --- ")
-        print("file_io = ", self.get())
+    def save_file(self, vec_data):
+        # сохранить файл
+        print("\nСохранение файла:")
+        print("len_save = ", len(vec_data))
+
+    def open_file(self):
+        # открыть файл
+        pass
+
+    def read_file(self):
+        # прочитать файл
+        pass

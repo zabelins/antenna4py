@@ -1,6 +1,7 @@
 import pack_model
 from pack_model import *
 import numpy as np
+import pack_calc.calc_list as cl
 
 if __name__ == "__main__":
     print("Вы запустили модуль динамической модели ААР (L1)")
@@ -10,7 +11,6 @@ class Model_AAA:
     """Класс динамического моделирования адаптивной антенны"""
 
     def __init__(self):
-        self.f_cen = []
         self.list_settings = pack_model.settings.Model(1)
         self.list_env = pack_model.env.Env(1)
         self.list_array = pack_model.array.Array(1)
@@ -19,10 +19,13 @@ class Model_AAA:
         self.list_train = pack_model.train.Train(1)
         self.list_test = pack_model.test.Test(1)
         self.list_file = pack_model.file_io.File_IO(1)
+        self.f_cen = []
         self.out_set = []
         self.out_env = []
-        self.out_array = []
-        self.out_proc = []
+        self.out_array1nd = []
+        self.out_array2nd = []
+        self.out_proc1nd = []
+        self.out_proc2nd = []
         self.out_syntnet = []
         self.vec_meanindepth = []
         self.vec_meaninatten = []
@@ -34,7 +37,7 @@ class Model_AAA:
     def set(self, obj_set):
         # инициализация параметров модели уровня L1
         par_array = obj_set.list_pararray.get()
-        self.f_cen = par_array[1]
+        self.f_cen = par_array[0]
         # инициализация параметров уровня L2
         self.list_settings.set(obj_set.list_setmodel.get())
         self.list_env.set(obj_set.list_parenv.get())
@@ -56,84 +59,111 @@ class Model_AAA:
         return res
 
     def print(self):
-        print(" --- ПАРАМЕТРЫ ДИНАМИЧЕСКОЙ МОДЕЛИ ААР (L1) --- ")
-        print("f_cen = ", self.f_cen)
-        self.list_settings.print_short()
-        self.list_env.print_short()
-        self.list_array.print_short()
-        self.list_proc.print_short()
-        self.list_syntnet.print_short()
-        self.list_train.print_short()
-        self.list_test.print_short()
-        self.list_file.print_short()
+        print("Параметры динамической модели (L1):")
+        print("\tf_cen = ", self.f_cen)
+        self.list_settings.print()
+        self.list_env.print()
+        self.list_array.print()
+        self.list_proc.print()
+        self.list_syntnet.print()
+        self.list_train.print()
+        self.list_test.print()
+        self.list_file.print()
 
     def calc_out(self, id_script):
         # создание векторов изменения параметров
         self.list_settings.calc_out(id_script)
         self.out_set = self.list_settings.get_out()
-        # запускаем цикл по параметрам
+        # запускаем цикл по параметру (частотной полосе)
         len_var = self.out_set[2].shape[0]
         for i in range(len_var):
             # вычисление параметра
-            if (id_script == 6):
-                var_par = self.out_set[2][i]
-                par_band = self.f_cen * var_par
-                print("var_par = ", var_par)
+            if id_script == 6:
+                var_band = self.out_set[2][i]
+                print("var_band = ", var_band)
+            elif id_script == 4:
+                var_band = 0.1
             else:
-                var_par = 0.1
-                par_band = self.f_cen * var_par
-                if (id_script == 4):
-                    print("var_par = ", var_par)
+                var_band = 0
+            par_band = self.f_cen * var_band
             # создание векторов изменения сигналов и помех от времени
             self.list_env.calc_out(self.out_set, self.f_cen, par_band, id_script)
             self.out_env = self.list_env.get_out()
-            # инициализация векторов усреднённых характеристик
-            len_sig, len_int = self.out_env[0].shape[1], self.out_env[3].shape[1]
-            if (i == 0):
-                self.vec_meanindepth = np.zeros(shape=[len_var, len_int])
-                self.vec_meaninatten = np.zeros(shape=[len_var, len_sig])
-                self.vec_meaninsnir = np.zeros(shape=[len_var])
-                self.vec_meanoutdepth = np.zeros(shape=[len_var, len_int])
-                self.vec_meanoutatten = np.zeros(shape=[len_var, len_sig])
-                self.vec_meanoutsnir = np.zeros(shape=[len_var])
             # вычисление сигналов с антенной решётки
             self.list_array.calc_out(self.out_set, self.out_env)
-            self.out_array = self.list_array.get_out()
+            self.out_array1nd = self.list_array.get_out1nd()
+            self.out_array2nd = self.list_array.get_out2nd()
             # вычисление векторов ВК
-            self.list_proc.calc_out(self.out_array)
-            self.out_proc = self.list_proc.get_out()
+            self.list_proc.calc_out(self.out_array2nd)
+            self.out_proc1nd = self.list_proc.get_out1nd()
+            self.out_proc2nd = self.list_proc.get_out2nd()
             # вычисление ДН и характеристик
-            self.list_syntnet.calc_out(self.out_set, self.out_env, self.out_array, self.out_proc)
+            self.list_syntnet.calc_out(self.out_set, self.out_env, self.out_array1nd, self.out_proc2nd)
             self.out_syntnet = self.list_syntnet.get_out()
+            # инициализация векторов усреднённых характеристик
+            if i == 0:
+                len_sig, len_int = self.out_env[0].shape[1], self.out_env[3].shape[1]
+                self.init_vecmean(len_var, len_sig, len_int)
             # сохранение усреднённых параметров
             self.vec_meanindepth[i] = self.out_syntnet[6]
             self.vec_meaninatten[i] = self.out_syntnet[7]
-            self.vec_meaninsnir[i] = self.out_proc[4]
+            self.vec_meaninsnir[i] = self.out_proc1nd[2]
             self.vec_meanoutdepth[i] = self.out_syntnet[8]
             self.vec_meanoutatten[i] = self.out_syntnet[9]
-            self.vec_meanoutsnir[i] = self.out_proc[5]
-            #self.vec_meanindepth.append(self.out_syntnet[6])
-            #self.vec_meaninatten.append(self.out_syntnet[7])
-            #self.vec_meaninsnir.append(self.out_proc[4])
-            #self.vec_meanoutdepth.append(self.out_syntnet[8])
-            #self.vec_meanoutatten.append(self.out_syntnet[9])
-            #self.vec_meanoutsnir.append(self.out_proc[5])
+            self.vec_meanoutsnir[i] = self.out_proc1nd[3]
 
     def get_out(self):
-        # формирование выходных векторов
-        out_model = []
-        out_model.append(self.vec_meanindepth)
-        out_model.append(self.vec_meaninatten)
-        out_model.append(self.vec_meaninsnir)
-        out_model.append(self.vec_meanoutdepth)
-        out_model.append(self.vec_meanoutatten)
-        out_model.append(self.vec_meanoutsnir)
-        return [self.out_set, self.out_env, self.out_array, self.out_proc, self.out_syntnet, out_model]
+        res = []
+        res.append(self.vec_meanindepth)
+        res.append(self.vec_meaninatten)
+        res.append(self.vec_meaninsnir)
+        res.append(self.vec_meanoutdepth)
+        res.append(self.vec_meanoutatten)
+        res.append(self.vec_meanoutsnir)
+        return res
 
     def print_out(self):
+        # проверка типа векторов на ndarray
+        bool_res1 = cl.is_ndarray([self.vec_meanindepth, self.vec_meaninatten, self.vec_meaninsnir])
+        bool_res2 = cl.is_ndarray([self.vec_meanoutdepth, self.vec_meanoutatten, self.vec_meanoutsnir])
+        # вывод размерностей векторов
+        if (bool_res1 == True) and (bool_res2 == True):
+            print("Размерности векторов модели ААР:")
+            print("\tvec_meanindepth.shape = ", self.vec_meanindepth.shape)
+            print("\tvec_meaninatten.shape = ", self.vec_meaninatten.shape)
+            print("\tvec_meaninsnir.shape = ", self.vec_meaninsnir.shape)
+            print("\tvec_meanoutdepth.shape = ", self.vec_meanoutdepth.shape)
+            print("\tvec_meanoutatten.shape = ", self.vec_meanoutatten.shape)
+            print("\tvec_meanoutsnir.shape = ", self.vec_meanoutsnir.shape)
+
+    def print_calc(self):
         # вывод информации о ходе вычислений
         self.list_settings.print_out()
         self.list_env.print_out()
         self.list_array.print_out()
         self.list_proc.print_out()
         self.list_syntnet.print_out()
+        self.print_out()
+
+    def get_out1nd(self):
+        # получить вектора для представления
+        out_model = self.get_out()
+        return [self.out_set, self.out_env, self.out_array1nd, self.out_proc1nd, self.out_syntnet, out_model]
+
+    def get_out2nd(self):
+        # получить вектора для обучения НС
+        out_model = self.get_out()
+        return [self.out_array2nd, self.out_proc2nd, out_model]
+
+    def save_learn(self):
+        # сохранение обучающей выборки
+        vec_data = self.get_out2nd()
+        self.list_file.save_file(vec_data)
+
+    def init_vecmean(self, len_var, len_sig, len_int):
+        self.vec_meanindepth = np.zeros(shape=[len_var, len_int])
+        self.vec_meaninatten = np.zeros(shape=[len_var, len_sig])
+        self.vec_meaninsnir = np.zeros(shape=[len_var])
+        self.vec_meanoutdepth = np.zeros(shape=[len_var, len_int])
+        self.vec_meanoutatten = np.zeros(shape=[len_var, len_sig])
+        self.vec_meanoutsnir = np.zeros(shape=[len_var])

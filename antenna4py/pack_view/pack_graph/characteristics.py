@@ -27,13 +27,13 @@ class Characteristics:
         self.vec_lwd2 = []
 
     def set(self, init):
-        self.charact_style = init[7]
-        self.charact_norm = init[8]
-        self.charact_mean = init[9]
-        self.charact_db = init[10]
-        self.charact_legend = init[11]
-        self.charact_strleg = init[12]
-        self.approx = init[19]
+        self.charact_style = init[6]
+        self.charact_norm = init[7]
+        self.charact_mean = init[8]
+        self.charact_db = init[9]
+        self.charact_legend = init[10]
+        self.charact_strleg = init[11]
+        self.approx = init[18]
         self.vec_col1 = ['#000000', '#b22222', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.0, 1.0, 1.0, 1.0, 1.0]
@@ -43,7 +43,6 @@ class Characteristics:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.charact_style)
         res.append(self.charact_norm)
         res.append(self.charact_mean)
@@ -56,21 +55,16 @@ class Characteristics:
         return res
 
     def print(self):
-        print(" --- Параметры отображения характеристик адаптации (L3) --- ")
-        print("id = ", self.id)
-        print("charact_style = ", self.charact_style)
-        print("charact_norm = ", self.charact_norm)
-        print("charact_mean = ", self.charact_mean)
-        print("charact_db = ", self.charact_db)
-        print("charact_legend = ", self.charact_legend)
-        print("charact_strleg = ", self.charact_strleg)
-        print("str_y = ", self.str_y)
-        print("str_x = ", self.str_x)
-        print("approx = ", self.approx)
-
-    def print_short(self):
-        print(" --- Параметры отображения характеристик адаптации (L3) --- ")
-        print("characteristics = ", self.get())
+        print("Параметры отображения характеристик адаптации (L3):")
+        print("\tcharact_style = ", self.charact_style)
+        print("\tcharact_norm = ", self.charact_norm)
+        print("\tcharact_mean = ", self.charact_mean)
+        print("\tcharact_db = ", self.charact_db)
+        print("\tcharact_legend = ", self.charact_legend)
+        print("\tcharact_strleg = ", self.charact_strleg)
+        print("\tstr_y = ", self.str_y)
+        print("\tstr_x = ", self.str_x)
+        print("\tapprox = ", self.approx)
 
     def draw_charact(self, x, y, str):
         plt.title("Характеристики ААР")

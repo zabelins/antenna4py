@@ -12,18 +12,16 @@ class Generator:
     def __init__(self, id):
         self.id = id
 
+    def set(self):
+        pass
+
     def get(self):
         res = []
-        res.append(self.id)
         return res
 
     def print(self):
-        print(" --- Параметры генератора сигналов (L3) --- ")
-        print("id = ", self.id)
-
-    def print_short(self):
-        print(" --- Параметры генератора сигналов (L3) --- ")
-        print("signal_generator = ", self.get())
+        print("Параметры генератора сигналов (L3):")
+        print("\t-")
 
     def get_vecdeg(self, vec_time, var_deg, id_modulation):
         # вычисление вектора изменения углов

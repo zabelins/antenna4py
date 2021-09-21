@@ -26,32 +26,26 @@ class Syntnet:
         self.mean_outatten = []
 
     def set(self, init):
-        self.control_stepphi = init[6]
-        self.control_stepamp = init[7]
+        self.control_stepphi = init[5]
+        self.control_stepamp = init[6]
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.control_stepphi)
         res.append(self.control_stepamp)
         return res
 
     def print(self):
-        print(" --- Параметры модели ДОС (L2) --- ")
-        print("id = ", self.id)
-        print("control_stepphi = ", self.control_stepphi)
-        print("control_stepamp = ", self.control_stepamp)
+        print("Параметры модели ДОС (L2):")
+        print("\tcontrol_stepphi = ", self.control_stepphi)
+        print("\tcontrol_stepamp = ", self.control_stepamp)
 
-    def print_short(self):
-        print(" --- Параметры модели ДОС (L2) --- ")
-        print("syntnet = ", self.get())
-
-    def calc_out(self, out_set, out_env, out_array, out_proc):
+    def calc_out(self, out_set, out_env, out_array1nd, out_proc2nd):
         # распаковка исходных данных
         vec_pattern, vec_time = out_set[0], out_set[1]
         vec_degsig, vec_degint = out_env[0], out_env[3]
-        vec_test, vec_eqdegsig, vec_eqdegint = out_array[0].T, out_array[7], out_array[8]
-        vec_inweight, vec_outweight = out_proc[0], out_proc[2]
+        vec_test, vec_eqdegsig, vec_eqdegint = out_array1nd[0].T, out_array1nd[1], out_array1nd[2]
+        vec_inweight, vec_outweight = out_proc2nd[0], out_proc2nd[1]
         # вычисляем размерности
         len_time, len_pattern = vec_time.shape[0], vec_pattern.shape[0]
         len_sig, len_int = vec_degsig.shape[1], vec_degint.shape[1]
@@ -155,13 +149,15 @@ class Syntnet:
         if (id_eq == 2):
             # среднее усиление по эквивалентным сигналам
             len_eqdeg = var_eqdeg.shape[0]
-            res = 0
+            res, div = 0, len_eqdeg
             # цикл по эквивалентным помехам
             for i in range(len_eqdeg):
                 if (var_eqdeg[i] != 361):
                     id_sig = self.calc_deg2ind(var_eqdeg[i], vec_pattern, pattern_step)
                     res = res + vec_inout[var_time][id_sig]
-            res = res / len_eqdeg
+                else:
+                    div = div - 1
+            res = res / div
         return res
 
     def calc_deg2ind(self, var_deg, vec_pattern, pattern_step):

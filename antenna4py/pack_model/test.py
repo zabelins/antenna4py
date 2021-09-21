@@ -6,19 +6,16 @@ class Test:
 
     def __init__(self, id):
         self.id = id
+        self.id_test = 1
 
     def set(self, init):
         pass
 
     def get(self):
         res = []
-        res.append(self.id)
+        res.append(self.id_test)
         return res
 
     def print(self):
-        print(" --- Настройки тестирования ПО (L2) --- ")
-        print("id = ", self.id)
-
-    def print_short(self):
-        print(" --- Настройки тестирования ПО (L2) --- ")
-        print("test = ", self.get())
+        print("Настройки тестирования ПО (L2):")
+        print("\tid_test = ", self.id_test)

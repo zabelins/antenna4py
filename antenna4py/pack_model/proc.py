@@ -11,6 +11,9 @@ class Proc:
     """Класс моделирования сигнального процессора адаптивной антенны"""
 
     def __init__(self, id):
+        self.list_trad = pp.trad.Trad_alg(1)
+        self.list_neuro = pp.neuro.Neuro_alg(1)
+        self.list_kalman = pp.kalman.Kalman(1)
         self.id = id
         # номера критерия и алгоритма адаптации
         self.alg_crit = []
@@ -25,69 +28,66 @@ class Proc:
         # усреднённые осшп
         self.mean_insnir = []
         self.mean_outsnir = []
-        self.list_trad = pp.trad.Trad_alg(1)
-        self.list_neuro = pp.neuro.Neuro_alg(1)
-        self.list_kalman = pp.kalman.Kalman(1)
 
     def set(self, init):
-        self.alg_crit = init[1]
-        self.alg_type = init[2]
-        self.control_type = init[5]
+        self.alg_crit = init[0]
+        self.alg_type = init[1]
+        self.control_type = init[4]
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.alg_crit)
         res.append(self.alg_type)
         res.append(self.control_type)
         return res
 
     def print(self):
-        print(" --- Параметры модели сигнального процессора (L2) --- ")
-        print("id = ", self.id)
-        print("alg_crit = ", self.alg_crit)
-        print("alg_type = ", self.alg_type)
-        print("control_type = ", self.control_type)
-        self.list_trad.print_short()
-        self.list_neuro.print_short()
-        self.list_kalman.print_short()
+        print("Параметры модели сигнального процессора (L2):")
+        print("\talg_crit = ", self.alg_crit)
+        print("\talg_type = ", self.alg_type)
+        print("\tcontrol_type = ", self.control_type)
+        self.list_trad.print()
+        self.list_neuro.print()
+        self.list_kalman.print()
 
-    def print_short(self):
-        print(" --- Параметры модели сигнального процессора (L2) --- ")
-        print("proc = ", self.get())
-
-    def calc_out(self, out_array):
+    def calc_out(self, out_array2nd):
         # распаковка исходных данных
-        vec_sig, vec_int, vec_nois = [out_array[1], out_array[2], out_array[3]]
-        matrix_sig, matrix_int, matrix_nois = [out_array[4], out_array[5], out_array[6]]
+        vec_sig, vec_int, vec_nois = out_array2nd[0], out_array2nd[1], out_array2nd[2]
+        matrix_sig, matrix_int, matrix_nois = out_array2nd[3], out_array2nd[4], out_array2nd[5]
         # вычисление векторов ВК
         self.calc_weights(vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois)
         # вычисление ОСШП
         self.calc_snir(matrix_sig, matrix_int, matrix_nois)
 
-    def get_out(self):
+    def get_out1nd(self):
+        # получить вектора для отрисовки ДН
         res = []
-        res.append(self.vec_inweight)
         res.append(self.vec_insnir)
-        res.append(self.vec_outweight)
         res.append(self.vec_outsnir)
         res.append(self.mean_insnir)
         res.append(self.mean_outsnir)
         return res
 
+    def get_out2nd(self):
+        # получить вектора для вычислений
+        res = []
+        res.append(self.vec_inweight)
+        res.append(self.vec_outweight)
+        return res
+
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res1 = cl.is_ndarray([self.vec_inweight, self.vec_insnir, self.vec_outweight, self.vec_outsnir])
-        bool_res2 = cl.is_ndarray([self.mean_insnir, self.mean_outsnir])
+        bool_res1 = cl.is_ndarray([self.vec_insnir, self.vec_outsnir, self.mean_insnir, self.mean_outsnir])
+        bool_res2 = cl.is_ndarray([self.vec_inweight, self.vec_outweight])
         # вывод размерностей векторов
         if (bool_res1 == True) and (bool_res2 == True):
             print("Размерности векторов ВК:")
-            print("\tvec_inweight.shape = ", self.vec_inweight.shape)
             print("\tvec_insnir.shape = ", self.vec_insnir.shape)
-            print("\tvec_outweight.shape = ", self.vec_outweight.shape)
             print("\tvec_outsnir.shape = ", self.vec_outsnir.shape)
             print("\tmean_insnir.shape = ", self.mean_insnir.shape)
             print("\tmean_outsnir.shape = ", self.mean_outsnir.shape)
+            print("\tvec_inweight.shape = ", self.vec_inweight.shape)
+            print("\tvec_outweight.shape = ", self.vec_outweight.shape)
         else:
             print("Ошибка проверки типа векторов ВК")
 

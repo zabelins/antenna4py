@@ -17,15 +17,14 @@ class Train:
         self.matrix_test = []
 
     def set(self, init):
-        self.id_nn = init[1]
-        self.id_learn = init[2]
-        self.num_epoch = init[3]
-        self.num_layers = init[4]
-        self.num_neurons = init[5]
+        self.id_nn = init[0]
+        self.id_learn = init[1]
+        self.num_epoch = init[2]
+        self.num_layers = init[3]
+        self.num_neurons = init[4]
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.id_nn)
         res.append(self.id_learn)
         res.append(self.num_epoch)
@@ -34,17 +33,12 @@ class Train:
         return res
 
     def print(self):
-        print(" --- Параметры обучения НС (L2) --- ")
-        print("id = ", self.id)
-        print("id_nn = ", self.id_nn)
-        print("id_learn = ", self.id_learn)
-        print("num_epoch = ", self.num_epoch)
-        print("num_layers = ", self.num_layers)
-        print("num_neurons = ", self.num_neurons)
-
-    def print_short(self):
-        print(" --- Параметры обучения НС (L2) --- ")
-        print("train_net = ", self.get())
+        print("Параметры обучения НС (L2):")
+        print("\tid_nn = ", self.id_nn)
+        print("\tid_learn = ", self.id_learn)
+        print("\tnum_epoch = ", self.num_epoch)
+        print("\tnum_layers = ", self.num_layers)
+        print("\tnum_neurons = ", self.num_neurons)
 
     def get_out(self):
         pass

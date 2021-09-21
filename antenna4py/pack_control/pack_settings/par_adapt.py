@@ -30,7 +30,6 @@ class Par_adapt:
 
     def get(self):
         res = []
-        res.append(self.id)
         res.append(self.alg_crit)
         res.append(self.alg_type)
         res.append(self.kalman_type)
@@ -41,16 +40,11 @@ class Par_adapt:
         return res
 
     def print(self):
-        print(" --- Параметры адаптации (L3) --- ")
-        print("id = ", self.id)
-        print("alg_crit = ", self.alg_crit)
-        print("alg_type = ", self.alg_type)
-        print("kalman_type = ", self.kalman_type)
-        print("kalman_coef = ", self.kalman_coef)
-        print("control_type = ", self.control_type)
-        print("control_stepphi = ", self.control_stepphi)
-        print("control_stepamp = ", self.control_stepamp)
-
-    def print_short(self):
-        print(" --- Параметры адаптации (L3) --- ")
-        print("par_adapt = ", self.get())
+        print("Параметры адаптации (L3):")
+        print("\talg_crit = ", self.alg_crit)
+        print("\talg_type = ", self.alg_type)
+        print("\tkalman_type = ", self.kalman_type)
+        print("\tkalman_coef = ", self.kalman_coef)
+        print("\tcontrol_type = ", self.control_type)
+        print("\tcontrol_stepphi = ", self.control_stepphi)
+        print("\tcontrol_stepamp = ", self.control_stepamp)
