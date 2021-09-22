@@ -15,7 +15,7 @@ class Signals:
         self.signals_norm = []
         self.signals_db = []
         self.signals_legend = []
-        self.str_axis = ["T", "Amp"]
+        self.str_axis = ["t, мс", "amp, В", "deg, град.", "band, Гц"]
         self.vec_col1 = []
         self.vec_lst1 = []
         self.vec_lwd1 = []
@@ -29,12 +29,12 @@ class Signals:
         self.signals_norm = init[7]
         self.signals_db = init[8]
         self.signals_legend = init[9]
-        self.vec_col1 = ['#000000', '#b22222', '#00008b', '#336600', '#996600']
+        self.vec_col1 = ['#000000', '#d1281f', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
-        self.vec_lwd1 = [1.0, 1.0, 1.0, 1.0, 1.0]
+        self.vec_lwd1 = [1.2, 1.2, 1.2, 1.2, 1.2]
         self.vec_col2 = ['#000000', '#000000', '#000000', '#000000', '#000000']
         self.vec_lst2 = ['-', '--', '-.', '-', '--']
-        self.vec_lwd2 = [1.0, 1.0, 1.0, 0.1, 0.1]
+        self.vec_lwd2 = [1.2, 1.2, 1.2, 0.1, 0.1]
 
     def get(self):
         res = []
@@ -56,40 +56,53 @@ class Signals:
         print("\tstr_axis = ", self.str_axis)
 
     def draw_time(self, x, y_amp, y_deg, y_band, signals_strleg):
-        plt.title("Графики сигналов и помех")
-        str = ["par", "deg"]
         # приведение типа к float
         x, y_amp, y_deg, y_band = self.get_float(x, y_amp, y_deg, y_band)
-        y = y_amp
-        # подписи графика
-        plt.ylabel(str[0])
-        plt.xlabel(str[1])
-        # выбор стиля графиков
-        vec_col, vec_lst = self.get_style()
-        # нормировка и единицы измерения графика
-        # max_y = np.amax(y)
-        # for i in range(len(x)):
-        #    if self.timefreq_norm == 1:
-        #        y[i] = y[i] / max_y
-        #    if self.timefreq_db == 1:
-        #        y[i] = 20 * np.log10(abs(y[i]))
-        max_y = np.amax(y)
+        # нормировка графиков
+        y_amp = self.get_norm(x, y_amp)
+        y_deg = self.get_norm(x, y_deg)
+        y_band = self.get_norm(x, y_band)
+        # приведение к децибеллам
+        y_amp = self.get_db(x, y_amp)
+        y_deg = self.get_db(x, y_deg)
+        y_band = self.get_db(x, y_band)
         # границы отрисовки графика
-        if self.signals_db == 1:
-            vec_axis = [x[0].min(), x[0].max(), -70, max_y]
-        else:
-            vec_axis = [x[0].min(), x[0].max(), 0, max_y * 1.1]
+        vec_axisamp = self.get_axes(x, y_amp)
+        vec_axisdeg = self.get_axes(x, y_deg)
+        vec_axisband = self.get_axes(x, y_band)
+        # выбор стиля графиков
+        vec_col, vec_lst, vec_lwd = self.get_style()
+        # создаём окно с областями
+        fig = plt.figure(figsize=(17, 5))
+        ax_1 = fig.add_subplot(1, 3, 1)
+        ax_2 = fig.add_subplot(1, 3, 2)
+        ax_3 = fig.add_subplot(1, 3, 3)
+        ax_1.set(title='График амплитуд', xlabel=self.str_axis[0], ylabel=self.str_axis[1])
+        ax_2.set(title='График углов', xlabel=self.str_axis[0], ylabel=self.str_axis[2])
+        ax_3.set(title='График полосы', xlabel=self.str_axis[0], ylabel=self.str_axis[3])
         # отрисовка графика
         for i in range(len(x)):
-            plt.plot(x[i], y[i], color=vec_col[i], linestyle='-', lw=0.7, label=signals_strleg[i])
+            ax_1.plot(x[i], y_amp[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=signals_strleg[i])
+            ax_2.plot(x[i], y_deg[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=signals_strleg[i])
+            ax_3.plot(x[i], y_band[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=signals_strleg[i])
             if self.signals_mean == 1:
-                plt.hlines(np.mean(y[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
+                ax_1.hlines(np.mean(y_amp[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
+                ax_2.hlines(np.mean(y_deg[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
+                ax_3.hlines(np.mean(y_band[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
         # отображение легенды
         if self.signals_legend == 1:
-            plt.legend(loc='lower right')
+            ax_1.legend(loc='lower right')
+            ax_2.legend(loc='lower right')
+            ax_3.legend(loc='lower right')
         # отображение графика
-        plt.axis(vec_axis)
-        plt.grid()
+        ax_1.axis(vec_axisamp)
+        ax_2.axis(vec_axisdeg)
+        ax_3.axis(vec_axisband)
+        # отображение сетки
+        ax_1.grid()
+        ax_2.grid()
+        ax_3.grid()
+        # вывод графика
         plt.show()
 
     def get_float(self, x, y_amp, y_deg, y_band):
@@ -103,7 +116,32 @@ class Signals:
     def get_style(self):
         # выбор стиля графиков
         if self.signals_style == 1:
-            vec_col, vec_lst = [self.vec_col1, self.vec_lst1]
+            vec_col, vec_lst, vec_lwd = [self.vec_col1, self.vec_lst1, self.vec_lwd1]
         else:
-            vec_col, vec_lst = [self.vec_col2, self.vec_lst2]
-        return [vec_col, vec_lst]
+            vec_col, vec_lst, vec_lwd = [self.vec_col2, self.vec_lst2, self.vec_lwd2]
+        return [vec_col, vec_lst, vec_lwd]
+
+    def get_norm(self, x, y):
+        # нормировка графика
+        max_y = y.max()
+        if self.signals_norm == 1:
+            for i in range(len(x)):
+                y[i] = y[i] / max_y
+        return y
+
+    def get_db(self, x, y):
+        # перевод шкалы y к децибеллам
+        if self.signals_db == 1:
+            for i in range(len(x)):
+                y[i] = 20 * np.log10(abs(y[i]))
+        return y
+
+    def get_axes(self, x, y):
+        max_x, min_x = x.max(), x.min()
+        max_y, min_y = y.max(), y.min()
+        # определение границ графика
+        if self.signals_db == 1:
+            vec_axis = [min_x, max_x, -70, max_y]
+        else:
+            vec_axis = [min_x, max_x, 0, max_y * 1.1]
+        return vec_axis

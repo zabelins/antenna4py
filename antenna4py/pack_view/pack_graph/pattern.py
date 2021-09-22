@@ -32,12 +32,12 @@ class Pattern:
         self.pattern_norm = init[2]
         self.pattern_db = init[3]
         self.pattern_legend = init[4]
-        self.vec_col1 = ['#000000', '#b22222', '#00008b', '#336600', '#996600']
+        self.vec_col1 = ['#000000', '#d1281f', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.0, 1.2, 1.0, 1.0, 1.0]
         self.vec_col2 = ['#000000', '#000000', '#000000', '#000000', '#000000']
         self.vec_lst2 = ['-', '--', '-.', '--', '-.']
-        self.vec_lwd2 = [1.0, 1.0, 1.0, 1.0, 1.0]
+        self.vec_lwd2 = [1.0, 1.2, 1.0, 1.0, 1.0]
 
     def get(self):
         res = []
@@ -63,24 +63,23 @@ class Pattern:
     def draw_pattern(self, x, y, deg_sig, deg_int, eqdeg_sig, eqdeg_int, str_legend):
         # приведение типа к float
         x, y = self.get_float(x, y)
-        # заголовок графика
-        plt.title("Диаграмма направленности ААР")
-        # подписи графика
-        plt.xlabel(self.str_axis[0])
-        plt.ylabel(self.str_axis[1])
+        # нормировка и приведение графиков к децибеллам
+        y = self.get_norm(x, y)
+        y = self.get_db(x, y)
+        # границы отрисовки графика
+        vec_axis = self.get_axes(x, y)
         # выбор стиля графиков
         vec_col, vec_lst, vec_lwd = self.get_style()
-        # нормировка и приведение к децибеллам
-        y, max_y = self.get_norm(x, y)
-        y, max_y = self.get_db(x, y)
-        # границы отрисовки графика
-        vec_axis = self.get_axes(max_y)
+        # создаём окно
+        fig = plt.figure(figsize=(8, 6))
+        ax = fig.add_subplot(1, 1, 1)
+        ax.set(title='Диаграмма направленности ААР', xlabel=self.str_axis[0], ylabel=self.str_axis[1])
         # отрисовка графика
         for i in range(len(x)):
-            plt.plot(x[i], y[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=str_legend[i])
+            ax.plot(x[i], y[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=str_legend[i])
             # отрисовка среднего уровня
             if self.pattern_mean == 1:
-                plt.hlines(np.mean(y[i]), vec_axis[0], vec_axis[1], color=vec_col[i], linestyle='--', lw=0.6)
+                ax.hlines(np.mean(y[i]), vec_axis[0], vec_axis[1], color=vec_col[i], linestyle='--', lw=0.6)
         # настройки отображения помех
         vec_mark = self.get_mark(vec_axis)
         # отображение помех
@@ -92,21 +91,21 @@ class Pattern:
                     for j in range(len(eqdeg_int[i])):
                         if (eqdeg_int[i][j] >= vec_axis[0]) and (eqdeg_int[i][j] <= vec_axis[1]):
                             if j == 0:
-                                plt.arrow(deg_int[i], vec_mark[0], 0, vec_mark[1], color='#000000', width=0.5, head_width=1.3)
-                                plt.vlines(deg_int[i], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
+                                ax.arrow(deg_int[i], vec_mark[0], 0, vec_mark[1], color='#000000', width=0.5, head_width=1.3)
+                                ax.vlines(deg_int[i], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
                             else:
-                                plt.arrow(eqdeg_int[i][j], vec_mark[2], 0, vec_mark[3], color='#000000', width=0.3, head_width=1.0)
-                                plt.vlines(eqdeg_int[i][j], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
+                                ax.arrow(eqdeg_int[i][j], vec_mark[2], 0, vec_mark[3], color='#000000', width=0.3, head_width=1.0)
+                                ax.vlines(eqdeg_int[i][j], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
                 else:
                     # реальные помехи
-                    plt.arrow(deg_int[i], vec_mark[0], 0, vec_mark[1], color='#000000', width=0.5, head_width=1.3)
-                    plt.vlines(deg_int[i], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
+                    ax.arrow(deg_int[i], vec_mark[0], 0, vec_mark[1], color='#000000', width=0.5, head_width=1.3)
+                    ax.vlines(deg_int[i], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
         # отображение легенды
         if self.pattern_legend == 1:
-            plt.legend(loc='lower left')
+            ax.legend(loc='lower left')
         # отображение графика
-        plt.axis(vec_axis)
-        plt.grid()
+        ax.axis(vec_axis)
+        ax.grid()
         plt.show()
 
     def get_float(self, x, y):
@@ -129,23 +128,23 @@ class Pattern:
         if self.pattern_norm == 1:
             for i in range(len(x)):
                 y[i] = y[i] / max_y
-        max_y = y[0].max()
-        return [y, max_y]
+        return y
 
     def get_db(self, x, y):
         # перевод шкалы y к децибеллам
         if self.pattern_db == 1:
             for i in range(len(x)):
                 y[i] = 20 * np.log10(abs(y[i]))
-        max_y = y[0].max()
-        return [y, max_y]
+        return y
 
-    def get_axes(self, max_y):
+    def get_axes(self, x, y):
         # определение границ графика
+        max_x, min_x = x.max(), x.min()
+        max_y, min_y = y.max(), y.min()
         if self.pattern_db == 1:
-            vec_axis = [-90, 90, -70, max_y]
+            vec_axis = [min_x, max_x, -70, max_y]
         else:
-            vec_axis = [-90, 90, 0, max_y]
+            vec_axis = [min_x, max_x, 0, max_y]
         return vec_axis
 
     def get_mark(self, vec_axis):
