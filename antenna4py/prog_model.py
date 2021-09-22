@@ -156,6 +156,10 @@ class Model_AAA:
         out_model = self.get_out()
         return [self.out_array2nd, self.out_proc2nd, out_model]
 
+    def calc_train(self):
+        # обучение нейронной сети
+        self.list_train.calc_out()
+
     def save_learn(self):
         # сохранение обучающей выборки
         vec_data = self.get_out2nd()

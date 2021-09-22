@@ -6,68 +6,63 @@ class Set_view:
 
     def __init__(self, id):
         self.id = id
+        # настройки графика диаграммы направленности
         self.pattern_style = 1
-        self.pattern_norm = 1
         self.pattern_mean = 0
+        self.pattern_norm = 1
         self.pattern_db = 1
         self.pattern_legend = 1
-        self.pattern_strleg = ["p1", "p2", "p3", "p4", "p5"]
-        self.charact_style = 1
-        self.charact_norm = 0
-        self.charact_mean = 0
-        self.charact_db = 0
-        self.charact_legend = 1
-        self.charact_strleg = ["c1", "c2", "c3", "c4", "c5"]
-        self.timefreq_style = 1
-        self.timefreq_norm = 0
-        self.timefreq_mean = 0
-        self.timefreq_db = 0
-        self.timefreq_legend = 1
-        self.timefreq_strleg = ["tf1", "tf2", "tf3", "tf4", "tf5"]
+        # настройки графика сигналов
+        self.signals_style = 1
+        self.signals_mean = 0
+        self.signals_norm = 0
+        self.signals_db = 0
+        self.signals_legend = 1
+        # настройки графика адаптации
+        self.adapt_style = 1
+        self.adapt_mean = 0
+        self.adapt_norm = 0
+        self.adapt_db = 0
+        self.adapt_legend = 1
+        # дополнительные настройки графики
         self.approx = 0
-        self.animation = 1
+        self.animation = 0
 
     def set(self, init):
         self.pattern_style = init[0]
-        self.pattern_norm = init[1]
-        self.pattern_mean = init[2]
+        self.pattern_mean = init[1]
+        self.pattern_norm = init[2]
         self.pattern_db = init[3]
         self.pattern_legend = init[4]
-        self.pattern_strleg = init[5]
-        self.charact_style = init[6]
-        self.charact_norm = init[7]
-        self.charact_mean = init[8]
-        self.charact_db = init[9]
-        self.charact_legend = init[10]
-        self.charact_strleg = init[11]
-        self.timefreq_style = init[12]
-        self.timefreq_norm = init[13]
-        self.timefreq_mean = init[14]
-        self.timefreq_db = init[15]
-        self.timefreq_legend = init[16]
-        self.timefreq_strleg = init[17]
-        self.approx = init[18]
-        self.animation = init[19]
+        self.signals_style = init[5]
+        self.signals_mean = init[6]
+        self.signals_norm = init[7]
+        self.signals_db = init[8]
+        self.signals_legend = init[9]
+        self.adapt_style = init[10]
+        self.adapt_mean = init[11]
+        self.adapt_norm = init[12]
+        self.adapt_db = init[13]
+        self.adapt_legend = init[14]
+        self.approx = init[15]
+        self.animation = init[16]
     def get(self):
         res = []
         res.append(self.pattern_style)
-        res.append(self.pattern_norm)
         res.append(self.pattern_mean)
+        res.append(self.pattern_norm)
         res.append(self.pattern_db)
         res.append(self.pattern_legend)
-        res.append(self.pattern_strleg)
-        res.append(self.charact_style)
-        res.append(self.charact_norm)
-        res.append(self.charact_mean)
-        res.append(self.charact_db)
-        res.append(self.charact_legend)
-        res.append(self.charact_strleg)
-        res.append(self.timefreq_style)
-        res.append(self.timefreq_norm)
-        res.append(self.timefreq_mean)
-        res.append(self.timefreq_db)
-        res.append(self.timefreq_legend)
-        res.append(self.timefreq_strleg)
+        res.append(self.signals_style)
+        res.append(self.signals_mean)
+        res.append(self.signals_norm)
+        res.append(self.signals_db)
+        res.append(self.signals_legend)
+        res.append(self.adapt_style)
+        res.append(self.adapt_mean)
+        res.append(self.adapt_norm)
+        res.append(self.adapt_db)
+        res.append(self.adapt_legend)
         res.append(self.approx)
         res.append(self.animation)
         return res
@@ -75,23 +70,20 @@ class Set_view:
     def print(self):
         print("Настройки вывода информации (L3):")
         print("\tpattern_style = ", self.pattern_style)
-        print("\tpattern_norm = ", self.pattern_norm)
         print("\tpattern_mean = ", self.pattern_mean)
+        print("\tpattern_norm = ", self.pattern_norm)
         print("\tpattern_db = ", self.pattern_db)
         print("\tpattern_legend = ", self.pattern_legend)
-        print("\tpattern_strleg = ", self.pattern_strleg)
-        print("\tcharact_style = ", self.charact_style)
-        print("\tcharact_norm = ", self.charact_norm)
-        print("\tcharact_mean = ", self.charact_mean)
-        print("\tcharact_db = ", self.charact_db)
-        print("\tcharact_legend = ", self.charact_legend)
-        print("\tcharact_strleg = ", self.charact_strleg)
-        print("\ttimefreq_style = ", self.timefreq_style)
-        print("\ttimefreq_norm = ", self.timefreq_norm)
-        print("\ttimefreq_mean = ", self.timefreq_mean)
-        print("\ttimefreq_db = ", self.timefreq_db)
-        print("\ttimefreq_legend = ", self.timefreq_legend)
-        print("\ttimefreq_strleg = ", self.timefreq_strleg)
+        print("\tsignals_style = ", self.signals_style)
+        print("\tsignals_mean = ", self.signals_mean)
+        print("\tsignals_norm = ", self.signals_norm)
+        print("\tsignals_db = ", self.signals_db)
+        print("\tsignals_legend = ", self.signals_legend)
+        print("\tadapt_style = ", self.adapt_style)
+        print("\tadapt_mean = ", self.adapt_mean)
+        print("\tadapt_norm = ", self.adapt_norm)
+        print("\tadapt_db = ", self.adapt_db)
+        print("\tadapt_legend = ", self.adapt_legend)
         print("\tapprox = ", self.approx)
         print("\tanimation = ", self.animation)
 

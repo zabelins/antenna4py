@@ -44,7 +44,7 @@ class Control:
 
     def mode_train(self):
         # обучение нейронной сети
-        pass
+        self.model.calc_train()
 
     def mode_print(self, id_set):
         # просмотр настроек и параметров

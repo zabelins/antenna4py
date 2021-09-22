@@ -90,7 +90,7 @@ class Env:
             self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([par_band])
         # создаём вектора изменения сигналов от времени
         self.vec_sigdeg = self.list_gen.get_vecdeg(vec_time, self.sig_deg, 0)
-        self.vec_sigamp = self.list_gen.get_vecamp(vec_time, self.sig_amp, freq_mod, 0)
+        self.vec_sigamp = self.list_gen.get_vecamp(vec_time, self.sig_amp, 0, 0)
         self.vec_sigband = self.list_gen.get_vecband(vec_time, self.sig_band, 0)
         # создаём вектора изменения помех от времени
         self.vec_intdeg = self.list_gen.get_vecdeg(vec_time, self.int_deg, id_intdeg)

@@ -58,8 +58,8 @@ class View:
         self.list_report.set(vec_setview)
         # инициализация параметров интерфейса уровня L3
         self.list_graph.list_pattern.set(vec_setview)
-        self.list_graph.list_charact.set(vec_setview)
-        self.list_graph.list_timefreq.set(vec_setview)
+        self.list_graph.list_signals.set(vec_setview)
+        self.list_graph.list_adapt.set(vec_setview)
 
     def print(self):
         print("Параметры модуля представления (L1):")
@@ -134,7 +134,8 @@ class View:
         self.show_mean()
 
     def mode_train(self):
-        print("\tрежим в разработке :(")
+        # обучение нейронной сети
+        self.controller.mode_train()
 
     def sync_model(self):
         # синхронизация с моделью
@@ -144,12 +145,12 @@ class View:
         self.vec_time = out_model[0][1]
         self.vec_var = out_model[0][2]
         # временные характеристики сигналов и помех
-        self.vec_sigdeg = out_model[1][0].T
-        self.vec_sigamp = out_model[1][1].T
-        self.vec_sigband = out_model[1][2].T
-        self.vec_intdeg = out_model[1][3].T
-        self.vec_intamp = out_model[1][4].T
-        self.vec_intband = out_model[1][5].T
+        self.vec_sigdeg = out_model[1][0]
+        self.vec_sigamp = out_model[1][1]
+        self.vec_sigband = out_model[1][2]
+        self.vec_intdeg = out_model[1][3]
+        self.vec_intamp = out_model[1][4]
+        self.vec_intband = out_model[1][5]
         self.vec_eqdegsig = out_model[2][1]
         self.vec_eqdegint = out_model[2][2]
         # временные характеристики адаптации

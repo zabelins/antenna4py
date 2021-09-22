@@ -40,5 +40,8 @@ class Train:
         print("\tnum_layers = ", self.num_layers)
         print("\tnum_neurons = ", self.num_neurons)
 
+    def calc_out(self):
+        print("\tрежим в разработке :(")
+
     def get_out(self):
         pass
