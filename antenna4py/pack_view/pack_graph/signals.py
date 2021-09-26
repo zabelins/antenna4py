@@ -55,7 +55,7 @@ class Signals:
         print("\tsignals_legend = ", self.signals_legend)
         print("\tstr_axis = ", self.str_axis)
 
-    def draw_time(self, x, y_amp, y_deg, y_band, signals_strleg):
+    def draw_graph(self, x, y_amp, y_deg, y_band, signals_strleg):
         # приведение типа к float
         x, y_amp, y_deg, y_band = self.get_float(x, y_amp, y_deg, y_band)
         # нормировка графиков

@@ -11,7 +11,7 @@ class Par_adapt:
         self.alg_crit = 1
         self.alg_type = 1
         # параметры фильтра Калмана
-        self.kalman_type = 1
+        self.kalman_type = 0
         self.kalman_coef = 1
         # тип управления (amp+phi, phi)
         self.control_type = 1

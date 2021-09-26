@@ -54,6 +54,9 @@ class Proc:
         # распаковка исходных данных
         vec_sig, vec_int, vec_nois = out_array2nd[0], out_array2nd[1], out_array2nd[2]
         matrix_sig, matrix_int, matrix_nois = out_array2nd[3], out_array2nd[4], out_array2nd[5]
+        # фильтр Калмана
+        buf = self.list_kalman.calc_matrix(matrix_sig, matrix_int, matrix_nois)
+        matrix_sig, matrix_int, matrix_nois = buf
         # вычисление векторов ВК
         self.calc_weights(vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois)
         # вычисление ОСШП

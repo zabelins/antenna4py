@@ -20,7 +20,7 @@ class Set_view:
         self.signals_legend = 1
         # настройки графика адаптации
         self.adapt_style = 1
-        self.adapt_mean = 0
+        self.adapt_mean = 1
         self.adapt_norm = 0
         self.adapt_db = 0
         self.adapt_legend = 1

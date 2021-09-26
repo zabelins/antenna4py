@@ -31,19 +31,18 @@ class Graph:
         self.list_signals.print()
         self.list_adapt.print()
 
-    def draw_pattern(self, vec):
+    def draw_pattern(self, vec, time):
         # распаковка исходных данных
         vec_pattern, vec_sigdeg, vec_intdeg = vec[0], vec[1], vec[2]
         vec_eqdegsig, vec_eqdegint = vec[3], vec[4]
         vec_inpattern, vec_outpattern = vec[5], vec[6]
         # формируем вектора x и y
-        t = 0
         x = np.array([vec_pattern, vec_pattern])
-        y = np.array([vec_inpattern[t], vec_outpattern[t]])
+        y = np.array([vec_inpattern[time], vec_outpattern[time]])
         # подписи графиков
         str_legend = ["исходная ДН", "оптимальная ДН"]
         # отрисовка графиков
-        self.list_pattern.draw_pattern(x, y, vec_sigdeg[t], vec_intdeg[t], vec_eqdegsig[t], vec_eqdegint[t], str_legend)
+        self.list_pattern.draw_graph(x, y, vec_sigdeg[time], vec_intdeg[time], vec_eqdegsig[time], vec_eqdegint[time], str_legend)
 
     def draw_signals(self, vec):
         # распаковка исходных данных
@@ -66,30 +65,26 @@ class Graph:
         # подписи графиков
         signals_strleg = ["сигнал 1", "сигнал 2", "сигнал 3", "сигнал 4", "сигнал 5"]
         # отрисовка графиков
-        self.list_signals.draw_time(x1, y1_amp, y1_deg, y1_band, signals_strleg)
-        #self.list_signals.draw_time(x2, y2_amp, y2_deg, y2_band, signals_strleg)
+        self.list_signals.draw_graph(x1, y1_amp, y1_deg, y1_band, signals_strleg)
+        #self.list_signals.draw_graph(x2, y2_amp, y2_deg, y2_band, signals_strleg)
 
     def draw_adapt(self, vec):
         # распаковка исходных данных
-        vec_time, vec_indepth, vec_inatten, vec_insnir = vec[0], vec[1], vec[2], vec[3]
-        vec_outdepth, vec_outatten, vec_outsnir = vec[4], vec[5], vec[6]
+        vec_time, vec_indepth, vec_inatten, vec_insnir = vec[0], vec[1].T, vec[2].T, vec[3]
+        vec_outdepth, vec_outatten, vec_outsnir = vec[4].T, vec[5].T, vec[6]
         # вывод графика характеристик адаптации
         len_sig, len_int, x1, x2, y_int, y_sig = vec_inatten.shape[0], vec_indepth.shape[0], [], [], [], []
         for i in range(len_int):
             x1.append(vec_time)
-            db_outdepth = 20 * np.log10(abs(vec_outdepth[i]))
-            db_indepth = 20 * np.log10(abs(vec_indepth[i]))
-            y_int.append(db_outdepth - db_indepth)
+            y_int.append(self.get_ras(vec_indepth[i], vec_outdepth[i]))
         for i in range(len_sig):
             x2.append(vec_time)
-            db_outatten = 20 * np.log10(abs(vec_outatten[i]))
-            db_inatten = 20 * np.log10(abs(vec_inatten[i]))
-            y_sig.append(db_outatten - db_inatten)
+            y_sig.append(self.get_ras(vec_inatten[i], vec_outatten[i]))
         # подписи графиков
         int_strleg = ["int1", "int2", "int3", "int4", "int5"]
         sig_strleg = ["sig1", "sig2", "sig3", "sig4", "sig5"]
         # отрисовка графиков
-        self.list_adapt.draw_charact(x1, y_int, x2, y_sig, int_strleg, sig_strleg, 0)
+        self.list_adapt.draw_graph(x1, y_int, x2, y_sig, int_strleg, sig_strleg, 0)
 
     def draw_mean(self, vec):
         # распаковка исходных данных
@@ -99,14 +94,10 @@ class Graph:
         x1, y_int, x2, y_sig = [], [], [], []
         # подавление помехи
         x1 = [vec_var]
-        db_outdepth = 20 * np.log10(vec_meanoutdepth)
-        db_indepth = 20 * np.log10(vec_meanindepth)
-        y_int = db_outdepth - db_indepth
+        y_int = self.get_ras(vec_meanindepth, vec_meanoutdepth)
         # ослабление сигнала
         x2 = [vec_var]
-        db_outatten = 20 * np.log10(vec_meanoutatten)
-        db_inatten = 20 * np.log10(vec_meaninatten)
-        y_sig = db_outatten - db_inatten
+        y_sig = self.get_ras(vec_meaninatten, vec_meanoutatten)
         # коррекция
         y_int = y_int.T
         y_sig = y_sig.T
@@ -114,5 +105,19 @@ class Graph:
         int_strleg = ["int1", "int2", "int3", "int4", "int5"]
         sig_strleg = ["sig1", "sig2", "sig3", "sig4", "sig5"]
         # отрисовка графиков
-        self.list_adapt.draw_charact(x1, y_int, x2, y_sig, int_strleg, sig_strleg, 1)
+        self.list_adapt.draw_graph(x1, y_int, x2, y_sig, int_strleg, sig_strleg, 1)
+
+    def get_one2db(self, num):
+        # перевод числа в дБ
+        return 20 * np.log10(abs(num))
+
+    def get_dbras(self, innum, outnum):
+        # разность децибелльных параметров
+        db_out = self.get_one2db(outnum)
+        db_in = self.get_one2db(innum)
+        return db_out - db_in
+
+    def get_ras(self, innum, outnum):
+        # разность параметров
+        return outnum - innum
 

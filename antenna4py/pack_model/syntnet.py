@@ -70,16 +70,11 @@ class Syntnet:
             self.vec_inatten[i] = self.calc_gain(vec_pattern, vec_degsig[i], vec_eqdegsig[i], i, 1)
             self.vec_outdeph[i] = self.calc_gain(vec_pattern, vec_degint[i], vec_eqdegint[i], i, 2)
             self.vec_outatten[i] = self.calc_gain(vec_pattern, vec_degsig[i], vec_eqdegsig[i], i, 2)
-            # вычисление усреднённых характеристик адаптации
-            self.mean_indeph = self.mean_indeph + self.vec_indeph[i]
-            self.mean_inatten = self.mean_inatten + self.vec_inatten[i]
-            self.mean_outdeph = self.mean_outdeph + self.vec_outdeph[i]
-            self.mean_outatten = self.mean_outatten + self.vec_outatten[i]
-        # деление на общее количество
-        self.mean_indeph = self.mean_indeph / len_time
-        self.mean_inatten = self.mean_inatten / len_time
-        self.mean_outdeph = self.mean_outdeph / len_time
-        self.mean_outatten = self.mean_outatten / len_time
+        # вычисление усреднённых характеристик адаптации
+        self.mean_indeph = np.mean(self.vec_indeph, axis=0)
+        self.mean_inatten = np.mean(self.vec_inatten, axis=0)
+        self.mean_outdeph = np.mean(self.vec_outdeph, axis=0)
+        self.mean_outatten = np.mean(self.vec_outatten, axis=0)
 
     def get_out(self):
         res = []
@@ -118,7 +113,6 @@ class Syntnet:
 
     def calc_gain(self, vec_pattern, vec_deg, vec_eqdeg, var_time, id_inout):
         # вычисление нормированного усиления по N реальным углам в 1 момент времени
-        max_inpattern = self.vec_inpattern[var_time].max()
         len_deg = vec_deg.shape[0]
         # инициализируем размер вектора
         out_gain = np.zeros(shape=[len_deg], dtype='float64')
@@ -127,12 +121,12 @@ class Syntnet:
         # цикл по сигналам
         for i in range(len_deg):
             out_gain[i] = self.calc_meangain(vec_pattern, vec_deg[i], vec_eqdeg[i], var_time, id_inout, id_eq)
-            out_gain[i] = out_gain[i] / max_inpattern
         return out_gain
 
     def calc_meangain(self, vec_pattern, var_deg, var_eqdeg, var_time, id_inout, id_eq):
         # вычисление нормированного усиления по 1 реальному углу в 1 момент времени
         pattern_step = abs(vec_pattern[1] - vec_pattern[0])
+        max_inpattern = self.vec_inpattern[var_time].max()
         vec_inout, id_sig = [], []
         # выбор ДН
         if (id_inout == 1):
@@ -144,8 +138,8 @@ class Syntnet:
         # выбор способа расчёта
         if (id_eq == 1):
             # усиление по реальным сигналам
-            id_sig = self.calc_deg2ind(var_deg, vec_pattern, pattern_step)
-            res = vec_inout[var_time][id_sig]
+            ind_sig = self.get_deg2ind(var_deg, vec_pattern, pattern_step)
+            res = self.get_one2db(vec_inout[var_time][ind_sig] / max_inpattern)
         if (id_eq == 2):
             # среднее усиление по эквивалентным сигналам
             len_eqdeg = var_eqdeg.shape[0]
@@ -153,14 +147,18 @@ class Syntnet:
             # цикл по эквивалентным помехам
             for i in range(len_eqdeg):
                 if (var_eqdeg[i] != 361):
-                    id_sig = self.calc_deg2ind(var_eqdeg[i], vec_pattern, pattern_step)
-                    res = res + vec_inout[var_time][id_sig]
+                    ind_sig = self.get_deg2ind(var_eqdeg[i], vec_pattern, pattern_step)
+                    res = res + self.get_one2db(vec_inout[var_time][ind_sig] / max_inpattern)
                 else:
                     div = div - 1
             res = res / div
         return res
 
-    def calc_deg2ind(self, var_deg, vec_pattern, pattern_step):
-        # вычисление индексов для угла заданного сигнала
+    def get_deg2ind(self, var_deg, vec_pattern, pattern_step):
+        # перевод индексов для угла заданного сигнала
         var_deg = round(var_deg / pattern_step) * pattern_step
         return np.where(vec_pattern == var_deg)
+
+    def get_one2db(self, num):
+        # перевод числа в дБ
+        return 20 * np.log10(abs(num))

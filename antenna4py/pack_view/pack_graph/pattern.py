@@ -16,7 +16,7 @@ class Pattern:
         self.pattern_db = []
         self.pattern_legend = []
         # скрытые настройки графики
-        self.str_axis = ["Θ, град.", "F(Θ)"]
+        self.str_axis = ["Θ, град.", "F(Θ), дБ"]
         self.show_eqint = 1
         # вектора стилей
         self.vec_col1 = []
@@ -60,7 +60,7 @@ class Pattern:
         print("\tshow_eqint = ", self.show_eqint)
         print("\tstr_axis = ", self.str_axis)
 
-    def draw_pattern(self, x, y, deg_sig, deg_int, eqdeg_sig, eqdeg_int, str_legend):
+    def draw_graph(self, x, y, deg_sig, deg_int, eqdeg_sig, eqdeg_int, str_legend):
         # приведение типа к float
         x, y = self.get_float(x, y)
         # нормировка и приведение графиков к децибеллам
@@ -91,14 +91,14 @@ class Pattern:
                     for j in range(len(eqdeg_int[i])):
                         if (eqdeg_int[i][j] >= vec_axis[0]) and (eqdeg_int[i][j] <= vec_axis[1]):
                             if j == 0:
-                                ax.arrow(deg_int[i], vec_mark[0], 0, vec_mark[1], color='#000000', width=0.5, head_width=1.3)
+                                ax.arrow(deg_int[i], vec_mark[0], 0, vec_mark[1], color=vec_col[i], width=0.5, head_width=1.3)
                                 ax.vlines(deg_int[i], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
                             else:
-                                ax.arrow(eqdeg_int[i][j], vec_mark[2], 0, vec_mark[3], color='#000000', width=0.3, head_width=1.0)
+                                ax.arrow(eqdeg_int[i][j], vec_mark[2], 0, vec_mark[3], color=vec_col[i], width=0.3, head_width=1.0)
                                 ax.vlines(eqdeg_int[i][j], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
                 else:
                     # реальные помехи
-                    ax.arrow(deg_int[i], vec_mark[0], 0, vec_mark[1], color='#000000', width=0.5, head_width=1.3)
+                    ax.arrow(deg_int[i], vec_mark[0], 0, vec_mark[1], color=vec_col[i], width=0.5, head_width=1.3)
                     ax.vlines(deg_int[i], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
         # отображение легенды
         if self.pattern_legend == 1:

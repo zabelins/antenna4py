@@ -15,7 +15,7 @@ class Adapt:
         self.adapt_norm = []
         self.adapt_db = []
         self.adapt_legend = []
-        self.str_axis = ["band", "depth", "atten"]
+        self.str_axis = ["band", "depth, дБ", "atten, дБ"]
         self.approx = []
         self.vec_col1 = []
         self.vec_lst1 = []
@@ -59,7 +59,7 @@ class Adapt:
         print("\tstr_axis = ", self.str_axis)
         print("\tapprox = ", self.approx)
 
-    def draw_charact(self, x_int, y_int, x_sig, y_sig, int_strleg, sig_strleg, app):
+    def draw_graph(self, x_int, y_int, x_sig, y_sig, int_strleg, sig_strleg, app):
         self.approx = app
         # приведение типа к float
         x_int, y_int, x_sig, y_sig = self.get_float(x_int, y_int, x_sig, y_sig)
@@ -103,7 +103,7 @@ class Adapt:
             else:
                 ax_1.plot(x_int[i], y_int[i], color=vec_col[i], linestyle='--', lw=0.7)
             if self.adapt_mean == 1:
-                ax_1.hlines(np.mean(y_int[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
+                ax_1.hlines(np.mean(y_int[i]), -90, 90, color=vec_col[i], linestyle='--', lw=0.6)
         # отрисовка графика 2
         for i in range(len(x_sig)):
             if is_approx != 1:
@@ -111,7 +111,7 @@ class Adapt:
             else:
                 ax_2.plot(x_sig[i], y_sig[i], color=vec_col[i], linestyle='--', lw=0.7)
             if self.adapt_mean == 1:
-                ax_2.hlines(np.mean(y_sig[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
+                ax_2.hlines(np.mean(y_sig[i]), -90, 90, color=vec_col[i], linestyle='--', lw=0.6)
         # отображение легенды
         if self.adapt_legend == 1:
             ax_1.legend(loc='lower right')
@@ -161,7 +161,12 @@ class Adapt:
         if self.adapt_db == 1:
             vec_axis = [min_x, max_x, -70, max_y]
         else:
-            vec_axis = [min_x, max_x, -70, 0.1]
+            # максимальная граница по y
+            if (max_y < 0):
+                max_y = 0
+            else:
+                max_y = max_y * 1.5
+            vec_axis = [min_x, max_x, min_y * 1.2, max_y]
         return vec_axis
 
     def get_approx(self, x, y):

@@ -101,6 +101,8 @@ class View:
         self.controller.mode_static()
         # синхронизация с моделью
         self.sync_model()
+        # вывод информации о ДН
+        self.info_pattern()
         # вывод графика ДН
         self.show_pattern()
 
@@ -112,6 +114,10 @@ class View:
         self.controller.mode_dynamic1nd(id_script)
         # синхронизация с моделью
         self.sync_model()
+        # вывод информации о ДН
+        self.info_pattern()
+        # вывод информации об адаптации
+        self.info_adapt()
         # вывод графика ДН
         self.show_pattern()
         # вывод графика характеристик сигналов и помех
@@ -124,6 +130,12 @@ class View:
         self.controller.mode_dynamic2nd()
         # синхронизация с моделью
         self.sync_model()
+        # вывод информации о ДН
+        self.info_pattern()
+        # вывод информации об адаптации
+        self.info_adapt()
+        # вывод информации об адаптации
+        self.info_mean()
         # вывод графика ДН
         self.show_pattern()
         # вывод графика характеристик сигналов и помех
@@ -157,11 +169,11 @@ class View:
         self.vec_insnir = out_model[3][0]
         self.vec_outsnir = out_model[3][1]
         self.vec_inpattern = out_model[4][0]
-        self.vec_indepth = out_model[4][1].T
-        self.vec_inatten = out_model[4][2].T
+        self.vec_indepth = out_model[4][1]
+        self.vec_inatten = out_model[4][2]
         self.vec_outpattern = out_model[4][3]
-        self.vec_outdepth = out_model[4][4].T
-        self.vec_outatten = out_model[4][5].T
+        self.vec_outdepth = out_model[4][4]
+        self.vec_outatten = out_model[4][5]
         # параметрические характеристики адаптации
         self.vec_meanindepth = out_model[5][0]
         self.vec_meaninatten = out_model[5][1]
@@ -173,7 +185,7 @@ class View:
     def show_pattern(self):
         # вывод графика диаграммы направленности
         vec = self.get_vecpattern()
-        self.list_graph.draw_pattern(vec)
+        self.list_graph.draw_pattern(vec, 0)
 
     def show_signals(self):
         # вывод графиков временных характеристик сигналов
@@ -189,6 +201,21 @@ class View:
         # вывод графиков усреднённых характеристик адаптации
         vec = self.get_vecmeanadapt()
         self.list_graph.draw_mean(vec)
+
+    def info_pattern(self):
+        # вывод информации о диаграмме направленности
+        vec_adapt = self.get_vecadapt()
+        self.list_report.info_pattern(vec_adapt, 0)
+
+    def info_adapt(self):
+        # вывод информации об адаптации
+        vec_meanadapt = self.get_vecmeanadapt()
+        self.list_report.info_adapt(vec_meanadapt)
+
+    def info_mean(self):
+        # вывод информации об адаптации
+        vec_meanadapt = self.get_vecmeanadapt()
+        self.list_report.info_mean(vec_meanadapt)
 
     def get_vecpattern(self):
         # получить вектора для диаграммы направленности
