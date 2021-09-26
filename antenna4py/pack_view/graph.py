@@ -17,7 +17,7 @@ class Graph:
         self.animation = []
 
     def set(self, init):
-        self.animation = init[16]
+        self.animation = init[12]
 
     def get(self):
         res = []
@@ -49,16 +49,19 @@ class Graph:
         vec_time, vec_sigdeg, vec_sigamp, vec_sigband = vec[0], vec[1].T, vec[2].T, vec[3].T
         vec_intdeg, vec_intamp, vec_intband = vec[4].T, vec[5].T, vec[6].T
         vec_eqdegsig, vec_eqdegint = vec[7], vec[8]
-        # формируем вектора x и y
+        # инициализируем вектора
         len_int, len_sig = vec_intamp.shape[0], vec_sigamp.shape[0]
         x1, y1_amp, y1_deg, y1_band = [], [], [], []
-        y2_amp, y2_deg, y2_band = [], [], []
+        x2, y2_amp, y2_deg, y2_band = [], [], [], []
+        # формируем вектора x и y для помех
         for i in range(len_int):
             x1.append(vec_time)
             y1_amp.append(vec_intamp[i])
             y1_deg.append(vec_intdeg[i])
             y1_band.append(vec_intband[i])
+        # формируем вектора x и y для сигналов
         for i in range(len_sig):
+            x2.append(vec_time)
             y2_amp.append(vec_sigamp[i])
             y2_deg.append(vec_sigdeg[i])
             y2_band.append(vec_sigband[i])
@@ -72,52 +75,51 @@ class Graph:
         # распаковка исходных данных
         vec_time, vec_indepth, vec_inatten, vec_insnir = vec[0], vec[1].T, vec[2].T, vec[3]
         vec_outdepth, vec_outatten, vec_outsnir = vec[4].T, vec[5].T, vec[6]
-        # вывод графика характеристик адаптации
-        len_sig, len_int, x1, x2, y_int, y_sig = vec_inatten.shape[0], vec_indepth.shape[0], [], [], [], []
+        # инициализируем вектора
+        len_sig, len_int = vec_inatten.shape[0], vec_indepth.shape[0]
+        x1, y_depth, x2, y_atten, x3, y_snir = [], [], [], [], [], []
+        # формируем вектора x и y для глубины подавления
         for i in range(len_int):
             x1.append(vec_time)
-            y_int.append(self.get_ras(vec_indepth[i], vec_outdepth[i]))
+            y_depth.append(vec_outdepth[i] - vec_indepth[i])
+        # формируем вектора x и y для ослабления сигнала
         for i in range(len_sig):
             x2.append(vec_time)
-            y_sig.append(self.get_ras(vec_inatten[i], vec_outatten[i]))
+            y_atten.append(vec_outatten[i] - vec_inatten[i])
+        # формируем вектора x и y для осшп
+        x3 = [vec_time, vec_time]
+        y_snir = [vec_insnir, vec_outsnir]
         # подписи графиков
-        int_strleg = ["int1", "int2", "int3", "int4", "int5"]
-        sig_strleg = ["sig1", "sig2", "sig3", "sig4", "sig5"]
+        leg_depth = ["int1", "int2", "int3", "int4", "int5"]
+        leg_atten = ["sig1", "sig2", "sig3", "sig4", "sig5"]
+        leg_snir = ["snir in", "snir out"]
         # отрисовка графиков
-        self.list_adapt.draw_graph(x1, y_int, x2, y_sig, int_strleg, sig_strleg, 0)
+        self.list_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 0)
 
     def draw_mean(self, vec):
         # распаковка исходных данных
         vec_var, vec_meanindepth, vec_meaninatten, vec_meaninsnir = vec[0], vec[1], vec[2], vec[3]
         vec_meanoutdepth, vec_meanoutatten, vec_meanoutsnir = vec[4], vec[5], vec[6]
-        # вывод графика характеристик адаптации
-        x1, y_int, x2, y_sig = [], [], [], []
         # подавление помехи
         x1 = [vec_var]
-        y_int = self.get_ras(vec_meanindepth, vec_meanoutdepth)
+        y_depth = vec_meanoutdepth - vec_meanindepth
         # ослабление сигнала
         x2 = [vec_var]
-        y_sig = self.get_ras(vec_meaninatten, vec_meanoutatten)
+        y_atten = vec_meanoutatten - vec_meaninatten
+        # осшп
+        x3 = [vec_var, vec_var]
+        y_snir = [vec_meaninsnir, vec_meanoutsnir]
         # коррекция
-        y_int = y_int.T
-        y_sig = y_sig.T
+        y_depth = y_depth.T
+        y_atten = y_atten.T
         # подписи графиков
-        int_strleg = ["int1", "int2", "int3", "int4", "int5"]
-        sig_strleg = ["sig1", "sig2", "sig3", "sig4", "sig5"]
+        leg_depth = ["int1", "int2", "int3", "int4", "int5"]
+        leg_atten = ["sig1", "sig2", "sig3", "sig4", "sig5"]
+        leg_snir = ["snir in", "snir out"]
         # отрисовка графиков
-        self.list_adapt.draw_graph(x1, y_int, x2, y_sig, int_strleg, sig_strleg, 1)
+        self.list_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 1)
 
     def get_one2db(self, num):
         # перевод числа в дБ
         return 20 * np.log10(abs(num))
-
-    def get_dbras(self, innum, outnum):
-        # разность децибелльных параметров
-        db_out = self.get_one2db(outnum)
-        db_in = self.get_one2db(innum)
-        return db_out - db_in
-
-    def get_ras(self, innum, outnum):
-        # разность параметров
-        return outnum - innum
 

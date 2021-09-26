@@ -12,10 +12,8 @@ class Adapt:
         self.id = id
         self.adapt_style = []
         self.adapt_mean = []
-        self.adapt_norm = []
-        self.adapt_db = []
         self.adapt_legend = []
-        self.str_axis = ["band", "depth, дБ", "atten, дБ"]
+        self.str_axis = ["time, мс", "band, ед.", "depth, дБ", "atten, дБ", "snir, ед."]
         self.approx = []
         self.vec_col1 = []
         self.vec_lst1 = []
@@ -25,12 +23,10 @@ class Adapt:
         self.vec_lwd2 = []
 
     def set(self, init):
-        self.adapt_style = init[10]
-        self.adapt_mean = init[11]
-        self.adapt_norm = init[12]
-        self.adapt_db = init[13]
-        self.adapt_legend = init[14]
-        self.approx = init[15]
+        self.adapt_style = init[8]
+        self.adapt_mean = init[9]
+        self.adapt_legend = init[10]
+        self.approx = init[11]
         self.vec_col1 = ['#000000', '#d1281f', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.2, 1.2, 1.2, 1.2, 1.2]
@@ -42,8 +38,6 @@ class Adapt:
         res = []
         res.append(self.adapt_style)
         res.append(self.adapt_mean)
-        res.append(self.adapt_norm)
-        res.append(self.adapt_db)
         res.append(self.adapt_legend)
         res.append(self.str_axis)
         res.append(self.approx)
@@ -53,83 +47,101 @@ class Adapt:
         print("Параметры отображения характеристик адаптации (L3):")
         print("\tadapt_style = ", self.adapt_style)
         print("\tadapt_mean = ", self.adapt_mean)
-        print("\tadapt_norm = ", self.adapt_norm)
-        print("\tadapt_db = ", self.adapt_db)
         print("\tadapt_legend = ", self.adapt_legend)
         print("\tstr_axis = ", self.str_axis)
         print("\tapprox = ", self.approx)
 
-    def draw_graph(self, x_int, y_int, x_sig, y_sig, int_strleg, sig_strleg, app):
-        self.approx = app
+    def draw_graph(self, x_depth, y_depth, x_atten, y_atten, x_snir, y_snir, leg_depth, leg_atten, leg_snir, mode):
         # приведение типа к float
-        x_int, y_int, x_sig, y_sig = self.get_float(x_int, y_int, x_sig, y_sig)
-        # нормировка графиков
-        y_int = self.get_norm(x_int, y_int)
-        y_sig = self.get_norm(x_sig, y_sig)
-        # приведение к децибеллам
-        y_int = self.get_db(x_int, y_int)
-        y_sig = self.get_db(x_sig, y_sig)
+        x_depth, y_depth = self.get_float(x_depth, y_depth)
+        x_atten, y_atten = self.get_float(x_atten, y_atten)
+        x_snir, y_snir = self.get_float(x_snir, y_snir)
         # границы отрисовки графика
-        vec_axisint = self.get_axes(x_int, y_int)
-        vec_axissig = self.get_axes(x_sig, y_sig)
+        vec_axisdepth = self.get_axes(x_depth, y_depth)
+        vec_axisatten = self.get_axes(x_atten, y_atten)
+        vec_axissnir = self.get_axes(x_snir, y_snir)
         # выбор стиля графиков
         vec_col, vec_lst, vec_lwd = self.get_style()
+        # выбор подписи оси x
+        if mode == 0:
+            str_buf = self.str_axis[0]
+        else:
+            str_buf = self.str_axis[1]
         # создаём окно с областями
-        fig = plt.figure(figsize=(12, 5))
-        ax_1 = fig.add_subplot(1, 2, 1)
-        ax_2 = fig.add_subplot(1, 2, 2)
-        ax_1.set(title='Подавление помех', xlabel=self.str_axis[0], ylabel=self.str_axis[1])
-        ax_2.set(title='Ослабление сигнала', xlabel=self.str_axis[0], ylabel=self.str_axis[2])
+        fig = plt.figure(figsize=(17, 5))
+        ax_1 = fig.add_subplot(1, 3, 1)
+        ax_2 = fig.add_subplot(1, 3, 2)
+        ax_3 = fig.add_subplot(1, 3, 3)
+        ax_1.set(title='Подавление помех', xlabel=str_buf, ylabel=self.str_axis[2])
+        ax_2.set(title='Ослабление сигнала', xlabel=str_buf, ylabel=self.str_axis[3])
+        ax_3.set(title='ОСШП', xlabel=str_buf, ylabel=self.str_axis[4])
         # аппроксимация МНК 1
-        is_approx = 0
-        if (self.approx != []) and (self.approx > 0):
-            is_approx = 1
-            for i in range(len(x_int)):
-                ax_1.scatter(x_int[i], y_int[i], color=vec_col[i])
-                x_i_new, y_i_new = self.get_approx(x_int[i], y_int[i])
-                ax_1.plot(x_i_new, y_i_new, color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=int_strleg[i])
+        is_approx1 = 0
+        if mode == 1:
+            is_approx1 = 1
+            for i in range(len(x_depth)):
+                ax_1.scatter(x_depth[i], y_depth[i], color=vec_col[i])
+                x_i_new, y_i_new = self.get_approx(x_depth[i], y_depth[i])
+                ax_1.plot(x_i_new, y_i_new, color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=leg_depth[i])
         # аппроксимация МНК 2
-        is_approx = 0
-        if (self.approx != []) and (self.approx > 0):
-            is_approx = 1
-            for i in range(len(x_sig)):
-                ax_2.scatter(x_sig[i], y_sig[i], color=vec_col[i])
-                x_i_new, y_i_new = self.get_approx(x_sig[i], y_sig[i])
-                ax_2.plot(x_i_new, y_i_new, color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=sig_strleg[i])
+        is_approx2 = 0
+        if mode == 1:
+            is_approx2 = 1
+            for i in range(len(x_atten)):
+                ax_2.scatter(x_atten[i], y_atten[i], color=vec_col[i])
+                x_i_new, y_i_new = self.get_approx(x_atten[i], y_atten[i])
+                ax_2.plot(x_i_new, y_i_new, color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=leg_atten[i])
+        # аппроксимация МНК 3
+        is_approx3 = 0
+        if mode == 1:
+            is_approx3 = 1
+            for i in range(len(x_snir)):
+                ax_3.scatter(x_snir[i], y_snir[i], color=vec_col[i])
+                x_i_new, y_i_new = self.get_approx(x_snir[i], y_snir[i])
+                ax_3.plot(x_i_new, y_i_new, color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=leg_snir[i])
         # отрисовка графика 1
-        for i in range(len(x_int)):
-            if is_approx != 1:
-                ax_1.plot(x_int[i], y_int[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=int_strleg[i])
+        for i in range(len(x_depth)):
+            if is_approx1 != 1:
+                ax_1.plot(x_depth[i], y_depth[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=leg_depth[i])
             else:
-                ax_1.plot(x_int[i], y_int[i], color=vec_col[i], linestyle='--', lw=0.7)
+                ax_1.plot(x_depth[i], y_depth[i], color=vec_col[i], linestyle='--', lw=0.7)
             if self.adapt_mean == 1:
-                ax_1.hlines(np.mean(y_int[i]), -90, 90, color=vec_col[i], linestyle='--', lw=0.6)
+                ax_1.hlines(np.mean(y_depth[i]), vec_axisdepth[0], vec_axisdepth[1], color=vec_col[i], linestyle='--', lw=0.6)
         # отрисовка графика 2
-        for i in range(len(x_sig)):
-            if is_approx != 1:
-                ax_2.plot(x_sig[i], y_sig[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=sig_strleg[i])
+        for i in range(len(x_atten)):
+            if is_approx2 != 1:
+                ax_2.plot(x_atten[i], y_atten[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=leg_atten[i])
             else:
-                ax_2.plot(x_sig[i], y_sig[i], color=vec_col[i], linestyle='--', lw=0.7)
+                ax_2.plot(x_atten[i], y_atten[i], color=vec_col[i], linestyle='--', lw=0.7)
             if self.adapt_mean == 1:
-                ax_2.hlines(np.mean(y_sig[i]), -90, 90, color=vec_col[i], linestyle='--', lw=0.6)
+                ax_2.hlines(np.mean(y_atten[i]), vec_axisatten[0], vec_axisatten[1], color=vec_col[i], linestyle='--', lw=0.6)
+        # отрисовка графика 3
+        for i in range(len(x_snir)):
+            if is_approx3 != 1:
+                ax_3.plot(x_snir[i], y_snir[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=leg_snir[i])
+            else:
+                ax_3.plot(x_snir[i], y_snir[i], color=vec_col[i], linestyle='--', lw=0.7)
+            if self.adapt_mean == 1:
+                ax_3.hlines(np.mean(y_snir[i]), vec_axissnir[0], vec_axissnir[1], color=vec_col[i], linestyle='--', lw=0.6)
         # отображение легенды
         if self.adapt_legend == 1:
             ax_1.legend(loc='lower right')
             ax_2.legend(loc='lower right')
+            ax_3.legend(loc='lower right')
         # отображение графика
-        ax_1.axis(vec_axisint)
-        ax_2.axis(vec_axissig)
+        ax_1.axis(vec_axisdepth)
+        ax_2.axis(vec_axisatten)
+        ax_3.axis(vec_axissnir)
         ax_1.grid()
         ax_2.grid()
+        ax_3.grid()
         plt.show()
 
-    def get_float(self, x1, y_int, x2, y_sig):
+    def get_float(self, x, y):
         # преобразование типа к float
-        x1 = np.array(x1, dtype='float64')
-        y_int = np.array(y_int, dtype='float64')
-        x2 = np.array(x2, dtype='float64')
-        y_sig = np.array(y_sig, dtype='float64')
-        return [x1, y_int, x2, y_sig]
+        x = np.array(x, dtype='float64')
+        y = np.array(y, dtype='float64')
+        return [x, y]
 
     def get_style(self):
         # выбор стиля графиков
@@ -139,34 +151,21 @@ class Adapt:
             vec_col, vec_lst, vec_lwd = [self.vec_col2, self.vec_lst2, self.vec_lwd2]
         return [vec_col, vec_lst, vec_lwd]
 
-    def get_norm(self, x, y):
-        # нормировка графика
-        max_y = y.max()
-        if self.adapt_norm == 1:
-            for i in range(len(x)):
-                y[i] = y[i] / max_y
-        return y
-
-    def get_db(self, x, y):
-        # перевод шкалы y к децибеллам
-        if self.adapt_db == 1:
-            for i in range(len(x)):
-                y[i] = 20 * np.log10(abs(y[i]))
-        return y
-
     def get_axes(self, x, y):
+        # определение границ графика
         max_x, min_x = x.max(), x.min()
         max_y, min_y = y.max(), y.min()
-        # определение границ графика
-        if self.adapt_db == 1:
-            vec_axis = [min_x, max_x, -70, max_y]
+        # коррекция верхней границы
+        if max_y <= 0:
+            max_y = 0.001
         else:
-            # максимальная граница по y
-            if (max_y < 0):
-                max_y = 0
-            else:
-                max_y = max_y * 1.5
-            vec_axis = [min_x, max_x, min_y * 1.2, max_y]
+            max_y = max_y * 1.2
+        # коррекция нижней границы
+        if min_y >= 0:
+            min_y = -0.001
+        else:
+            min_y = min_y * 1.2
+        vec_axis = [min_x, max_x, min_y, max_y]
         return vec_axis
 
     def get_approx(self, x, y):
@@ -174,7 +173,7 @@ class Adapt:
         step = (x_i[1] - x_i[0]) / 10
         x_i_new = np.arange(min(x_i), max(x_i) + step, step)
         # аппроксимация
-        y_i_new = cl.approx(5, x_i_new, x_i, y_i)
+        y_i_new = cl.approx(self.approx, x_i_new, x_i, y_i)
         # интерполяция
         # coef = np.polyfit(x_i, y_i, self.approx)
         # y_i_new = np.polyval(coef, x_i_new)

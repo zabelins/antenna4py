@@ -12,8 +12,6 @@ class Signals:
         self.id = id
         self.signals_style = []
         self.signals_mean = []
-        self.signals_norm = []
-        self.signals_db = []
         self.signals_legend = []
         self.str_axis = ["t, мс", "amp, В", "deg, град.", "band, Гц"]
         self.vec_col1 = []
@@ -26,9 +24,7 @@ class Signals:
     def set(self, init):
         self.signals_style = init[5]
         self.signals_mean = init[6]
-        self.signals_norm = init[7]
-        self.signals_db = init[8]
-        self.signals_legend = init[9]
+        self.signals_legend = init[7]
         self.vec_col1 = ['#000000', '#d1281f', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.2, 1.2, 1.2, 1.2, 1.2]
@@ -40,8 +36,6 @@ class Signals:
         res = []
         res.append(self.signals_style)
         res.append(self.signals_mean)
-        res.append(self.signals_norm)
-        res.append(self.signals_db)
         res.append(self.signals_legend)
         res.append(self.str_axis)
         return res
@@ -50,22 +44,12 @@ class Signals:
         print("Параметры отображения характеристик сигналов и помех (L3):")
         print("\tsignals_style = ", self.signals_style)
         print("\tsignals_mean = ", self.signals_mean)
-        print("\tsignals_norm = ", self.signals_norm)
-        print("\tsignals_db = ", self.signals_db)
         print("\tsignals_legend = ", self.signals_legend)
         print("\tstr_axis = ", self.str_axis)
 
     def draw_graph(self, x, y_amp, y_deg, y_band, signals_strleg):
         # приведение типа к float
         x, y_amp, y_deg, y_band = self.get_float(x, y_amp, y_deg, y_band)
-        # нормировка графиков
-        y_amp = self.get_norm(x, y_amp)
-        y_deg = self.get_norm(x, y_deg)
-        y_band = self.get_norm(x, y_band)
-        # приведение к децибеллам
-        y_amp = self.get_db(x, y_amp)
-        y_deg = self.get_db(x, y_deg)
-        y_band = self.get_db(x, y_band)
         # границы отрисовки графика
         vec_axisamp = self.get_axes(x, y_amp)
         vec_axisdeg = self.get_axes(x, y_deg)
@@ -79,16 +63,16 @@ class Signals:
         ax_3 = fig.add_subplot(1, 3, 3)
         ax_1.set(title='График амплитуд', xlabel=self.str_axis[0], ylabel=self.str_axis[1])
         ax_2.set(title='График углов', xlabel=self.str_axis[0], ylabel=self.str_axis[2])
-        ax_3.set(title='График полосы', xlabel=self.str_axis[0], ylabel=self.str_axis[3])
+        ax_3.set(title='График полос', xlabel=self.str_axis[0], ylabel=self.str_axis[3])
         # отрисовка графика
         for i in range(len(x)):
             ax_1.plot(x[i], y_amp[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=signals_strleg[i])
             ax_2.plot(x[i], y_deg[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=signals_strleg[i])
             ax_3.plot(x[i], y_band[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=signals_strleg[i])
             if self.signals_mean == 1:
-                ax_1.hlines(np.mean(y_amp[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
-                ax_2.hlines(np.mean(y_deg[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
-                ax_3.hlines(np.mean(y_band[i]), -90, 90, color='#666666', linestyle='-', lw=0.6)
+                ax_1.hlines(np.mean(y_amp[i]), vec_axisamp[0], vec_axisamp[1], color='#666666', linestyle='-', lw=0.6)
+                ax_2.hlines(np.mean(y_deg[i]), vec_axisdeg[0], vec_axisdeg[1], color='#666666', linestyle='-', lw=0.6)
+                ax_3.hlines(np.mean(y_band[i]), vec_axisband[0], vec_axisband[1], color='#666666', linestyle='-', lw=0.6)
         # отображение легенды
         if self.signals_legend == 1:
             ax_1.legend(loc='lower right')
@@ -121,27 +105,19 @@ class Signals:
             vec_col, vec_lst, vec_lwd = [self.vec_col2, self.vec_lst2, self.vec_lwd2]
         return [vec_col, vec_lst, vec_lwd]
 
-    def get_norm(self, x, y):
-        # нормировка графика
-        max_y = y.max()
-        if self.signals_norm == 1:
-            for i in range(len(x)):
-                y[i] = y[i] / max_y
-        return y
-
-    def get_db(self, x, y):
-        # перевод шкалы y к децибеллам
-        if self.signals_db == 1:
-            for i in range(len(x)):
-                y[i] = 20 * np.log10(abs(y[i]))
-        return y
-
     def get_axes(self, x, y):
         max_x, min_x = x.max(), x.min()
         max_y, min_y = y.max(), y.min()
-        # определение границ графика
-        if self.signals_db == 1:
-            vec_axis = [min_x, max_x, -70, max_y]
+        # коррекция верхней границы
+        if max_y <= 0:
+            max_y = 0.001
         else:
-            vec_axis = [min_x, max_x, 0, max_y * 1.1]
+            max_y = max_y * 1.2
+        # коррекция нижней границы
+        if min_y >= 0:
+            min_y = -0.001
+        else:
+            min_y = min_y * 1.2
+        # определение границ графика
+        vec_axis = [min_x, max_x, min_y, max_y * 1.1]
         return vec_axis
