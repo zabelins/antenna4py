@@ -20,6 +20,7 @@ class Model_AAA:
         self.list_test = pack_model.test.Test(1)
         self.list_file = pack_model.file_io.File_IO(1)
         self.f_cen = []
+        self.id_script = []
         self.out_set = []
         self.out_env = []
         self.out_array1nd = []
@@ -71,6 +72,7 @@ class Model_AAA:
         self.list_file.print()
 
     def calc_out(self, id_script):
+        self.id_script = id_script
         # создание векторов изменения параметров
         self.list_settings.calc_out(id_script)
         self.out_set = self.list_settings.get_out()
@@ -153,12 +155,27 @@ class Model_AAA:
 
     def get_out2nd(self):
         # получить вектора для обучения НС
-        out_model = self.get_out()
+        out_model = self.get_info()
         return [self.out_array2nd, self.out_proc2nd, out_model]
+
+    def get_info(self):
+        # получить параметры ААР
+        res = []
+        res.append(self.list_array.array_N)
+        res.append(self.list_proc.alg_type)
+        res.append(self.list_proc.control_type)
+        res.append(self.id_script)
+        buf1 = self.vec_meanoutdepth.mean(axis=0) - self.vec_meanindepth.mean(axis=0)
+        buf2 = self.vec_meanoutatten.mean(axis=0) - self.vec_meaninatten.mean(axis=0)
+        res.append(buf1.sum())
+        res.append(buf2.sum())
+        res.append(self.vec_meanoutsnir.mean())
+        return res
 
     def calc_train(self):
         # обучение нейронной сети
-        self.list_train.calc_out()
+        var_data = self.list_file.load_files()
+        self.list_train.calc_out(var_data)
 
     def save_learn(self):
         # сохранение обучающей выборки
