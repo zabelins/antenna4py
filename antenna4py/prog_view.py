@@ -17,7 +17,7 @@ class View:
         self.list_report = pack_view.report.Report(1)
         # вывод и сохранение результатов
         self.id_print = 1
-        self.id_save = 1
+        self.id_save = 0
         # координатная сетка для графиков
         self.vec_pattern = []
         self.vec_time = []

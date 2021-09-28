@@ -1,10 +1,11 @@
 import numpy as np
+import pack_calc.calc_list as cl
 
 if __name__ == "__main__":
-    print("Вы запустили модуль обучения НС (L2)")
+    print("Вы запустили модуль формирования обучающей выборки (L2)")
 
 class Train:
-    """Класс обучения НС"""
+    """Класс формирования обучающей выборки"""
 
     def __init__(self, id):
         self.id = id
@@ -40,9 +41,10 @@ class Train:
         print("\tnum_layers = ", self.num_layers)
         print("\tnum_neurons = ", self.num_neurons)
 
-    def calc_out(self, var_data):
-        print("Режим в разработке :(")
-        #print("\tvar_data.len = ", len(var_data))
+    def calc_out(self, out_sampling):
+        print("инициализация НС...")
+        print(len(out_sampling))
 
-    def get_out(self):
+    def print_out(self):
         pass
+
