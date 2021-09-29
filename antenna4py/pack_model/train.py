@@ -12,6 +12,7 @@ class Train:
 
     def __init__(self, id):
         self.list_sampling = pn.sampling.Sampling(1)
+        self.list_network = pn.network.Network(1)
         self.id = id
         self.id_nn = []
         self.id_learn = []
@@ -52,9 +53,9 @@ class Train:
         # формирование обучающих выборок
         self.list_sampling.calc_out(out_data)
         out_sampling = self.list_sampling.get_out()
-        # печать результатов
+        # обучение НС
         print("инициализация НС...")
-        print(len(out_sampling))
+        self.list_network.calc_out(out_sampling)
 
     def print_out(self):
         pass
