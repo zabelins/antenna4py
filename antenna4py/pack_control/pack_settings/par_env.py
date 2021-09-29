@@ -18,6 +18,8 @@ class Par_env:
         self.int_band = [5 * math.pow(10, 8), 5 * math.pow(10, 8)] # [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)]
         # параметры шума
         self.nois_amp = [1]
+        # общий параметр
+        self.shift = [math.pi / 4]
 
     def set(self, init):
         self.sig_deg = init[0]
@@ -27,6 +29,7 @@ class Par_env:
         self.int_amp = init[4]
         self.int_band = init[5]
         self.nois_amp = init[6]
+        self.shift = init[7]
 
     def get(self):
         res = []
@@ -37,6 +40,7 @@ class Par_env:
         res.append(self.int_amp)
         res.append(self.int_band)
         res.append(self.nois_amp)
+        res.append(self.shift)
         return res
 
     def print(self):
@@ -48,4 +52,5 @@ class Par_env:
         print("\tint_amp = ", self.int_amp)
         print("\tint_band = ", self.int_band)
         print("\tnois_amp = ", self.nois_amp)
+        print("\tshift = ", self.shift)
 

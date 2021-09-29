@@ -24,6 +24,8 @@ class Env:
         self.int_band = []
         # параметры шума
         self.nois_amp = []
+        # общий параметр
+        self.shift = []
         # врменные вектора сигналов
         self.vec_sigdeg = []
         self.vec_sigamp = []
@@ -43,6 +45,7 @@ class Env:
         self.int_amp = np.array(init[4])
         self.int_band = np.array(init[5])
         self.nois_amp = np.array(init[6])
+        self.shift = np.array(init[7])
 
     def get(self):
         res = []
@@ -53,6 +56,7 @@ class Env:
         res.append(self.int_amp)
         res.append(self.int_band)
         res.append(self.nois_amp)
+        res.append(self.shift)
         return res
 
     def print(self):
@@ -64,6 +68,7 @@ class Env:
         print("\tint_amp = ", self.int_amp)
         print("\tint_band = ", self.int_band)
         print("\tnois_amp = ", self.nois_amp)
+        print("\tshift = ", self.shift)
         self.list_gen.print()
 
     def calc_out(self, out_set, f_cen, par_band, id_script):
@@ -90,14 +95,14 @@ class Env:
             self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([par_band])
         # создаём вектора изменения сигналов от времени
         self.vec_sigdeg = self.list_gen.get_vecdeg(vec_time, self.sig_deg, 0)
-        self.vec_sigamp = self.list_gen.get_vecamp(vec_time, self.sig_amp, 0, 0)
+        self.vec_sigamp = self.list_gen.get_vecamp(vec_time, self.sig_amp, 0, 0, 0)
         self.vec_sigband = self.list_gen.get_vecband(vec_time, self.sig_band, 0)
         # создаём вектора изменения помех от времени
         self.vec_intdeg = self.list_gen.get_vecdeg(vec_time, self.int_deg, id_intdeg)
-        self.vec_intamp = self.list_gen.get_vecamp(vec_time, self.int_amp, freq_mod, id_intamp)
+        self.vec_intamp = self.list_gen.get_vecamp(vec_time, self.int_amp, freq_mod, id_intamp, self.shift)
         self.vec_intband = self.list_gen.get_vecband(vec_time, self.int_band, id_intband)
         # создаём вектора изменения шума от времени
-        self.vec_noisamp = self.list_gen.get_vecamp(vec_time, self.nois_amp, freq_mod, 0)
+        self.vec_noisamp = self.list_gen.get_vecamp(vec_time, self.nois_amp, freq_mod, 0, 0)
 
     def get_out(self):
         res = []

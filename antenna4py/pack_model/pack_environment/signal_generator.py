@@ -40,7 +40,7 @@ class Generator:
         vec_deg = cl.ones_modul(vec_mod, var_deg)
         return vec_deg
 
-    def get_vecamp(self, vec_time, var_amp, var_freq, id_modulation):
+    def get_vecamp(self, vec_time, var_amp, var_freq, id_modulation, dynamic_shift):
         # вычисление вектора изменения амплитуд
         len_amp, len_time = var_amp.shape[0], vec_time.shape[0]
         vec_mod = []
@@ -49,13 +49,16 @@ class Generator:
             vec_mod = np.ones(shape=[len_amp, len_time])
         if (id_modulation == 1):
             # синусоидальный сигнал
-            vec_mod = self.get_ampsin(len_amp, var_freq, vec_time, 0)
+            static_shift = -dynamic_shift
+            vec_mod = self.get_ampsin(len_amp, var_freq, vec_time, static_shift, dynamic_shift)
         if (id_modulation == 2):
             # прямоугольные импульсы
-            vec_mod = self.get_amppulse(len_amp, var_freq, vec_time, 0)
+            static_shift = -dynamic_shift
+            vec_mod = self.get_amppulse(len_amp, var_freq, vec_time, static_shift, dynamic_shift)
         if (id_modulation == 3):
             # короткие импульсы
-            vec_mod = self.get_ampshort(len_amp, var_freq, vec_time, 0)
+            static_shift = -dynamic_shift
+            vec_mod = self.get_ampshort(len_amp, var_freq, vec_time, static_shift, dynamic_shift)
         if (id_modulation == 4):
             # рандомное изменение амплитуд
             vec_mod = self.get_amprand(len_amp, len_time)
@@ -95,15 +98,12 @@ class Generator:
                 vec_mod[i][j] = np.random.uniform(-1, 1)
         return vec_mod
 
-    def get_ampsin(self, len_amp, var_freq, vec_time, shift):
+    def get_ampsin(self, len_amp, var_freq, vec_time, static_shift, dynamic_shift):
         # синусоида амплитудой от 0 до 1
         len_time = vec_time.shape[0]
         vec_mod = np.ones(shape=[len_amp, len_time])
         # круговые частоты и фазы
         freq = 2 * math.pi * var_freq
-        shift = 2 * math.pi * shift
-        # индикатор инверсии
-        buf_sign = math.pi / 2
         # цикл по сигналам
         for i in range(len_amp):
             # цикл по времени
@@ -111,11 +111,11 @@ class Generator:
                 # время 1 ед = 1 мс
                 var_time = vec_time[j] * math.pow(10, -6)
                 # итоговая модуляция
-                vec_mod[i][j] = np.sin(freq * var_time + shift + buf_sign) * 0.5 + 0.5
-            buf_sign = buf_sign * (-1)
+                vec_mod[i][j] = np.sin(freq * var_time + static_shift + dynamic_shift) * 0.5 + 0.5
+            dynamic_shift = dynamic_shift * (-1)
         return vec_mod
 
-    def get_amppulse(self, len_amp, var_freq, vec_time, shift):
+    def get_amppulse(self, len_amp, var_freq, vec_time, static_shift, dynamic_shift):
         # импульсы амплитудой от 0 до 1
         len_time = vec_time.shape[0]
         vec_mod = np.ones(shape=[len_amp, len_time])
@@ -123,27 +123,24 @@ class Generator:
         vec_time = vec_time * math.pow(10, -6)
         # круговые частоты и фазы
         freq = 2 * math.pi * var_freq
-        shift = 2 * math.pi * shift - math.pi / 2
-        # индикатор инверсии
-        buf_sign = math.pi / 2
         # цикл по сигналам
         for i in range(len_amp):
             # итоговая модуляция
-            vec_mod[i] = sg.square(freq * vec_time + shift + buf_sign) * 0.5 + 0.5
-            buf_sign = buf_sign * (-1)
+            vec_mod[i] = sg.square(freq * vec_time + static_shift + dynamic_shift) * 0.5 + 0.5
+            dynamic_shift = dynamic_shift * (-1)
         return vec_mod
 
-    def get_ampshort(self, len_amp, var_freq, vec_time, shift):
+    def get_ampshort(self, len_amp, var_freq, vec_time, static_shift, dynamic_shift):
         # короткие импульсы амплитудой от 0 до 1
         len_time = vec_time.shape[0]
         vec_mod = np.ones(shape=[len_amp, len_time])
         # индикатор инверсии
-        buf_sign = 1
+        static_shift = math.pi / 2
         for i in range(len_amp):
-            vec_mod1 = self.get_amppulse(1, var_freq, vec_time, 0)
-            vec_mod2 = self.get_amppulse(1, var_freq*2, vec_time, 0)
-            vec_mod3 = self.get_amppulse(1, var_freq/2, vec_time, 0.25 * buf_sign)
-            buf_sign = buf_sign * (-1)
+            vec_mod1 = self.get_amppulse(1, var_freq, vec_time, 0, 0)
+            vec_mod2 = self.get_amppulse(1, var_freq*2, vec_time, 0, 0)
+            vec_mod3 = self.get_amppulse(1, var_freq/2, vec_time, static_shift, 0)
+            static_shift = static_shift * (-1)
             # импульсы длительностью 1/4 периода через один
             vec_mod[i] = vec_mod1 * vec_mod2 * vec_mod3
         return vec_mod
