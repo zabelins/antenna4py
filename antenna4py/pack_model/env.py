@@ -79,7 +79,8 @@ class Env:
         if (id_script >= 1) and (id_script <= 3):
             # если амплитудная модуляция
             id_intamp = id_script
-            freq_mod = f_cen * 2 / math.pow(10, 3)
+            # 1 КГц
+            freq_mod = 1 * math.pow(10, 3)
         elif (id_script == 4):
             # если изменение углов
             id_intdeg = 1

@@ -109,7 +109,7 @@ class Generator:
             # цикл по времени
             for j in range(len_time):
                 # время 1 ед = 1 мс
-                var_time = vec_time[j] * math.pow(10, -6)
+                var_time = vec_time[j] * math.pow(10, -3)
                 # итоговая модуляция
                 vec_mod[i][j] = np.sin(freq * var_time + static_shift + dynamic_shift) * 0.5 + 0.5
             dynamic_shift = dynamic_shift * (-1)
@@ -120,7 +120,7 @@ class Generator:
         len_time = vec_time.shape[0]
         vec_mod = np.ones(shape=[len_amp, len_time])
         # время 1 ед = 1 мс
-        vec_time = vec_time * math.pow(10, -6)
+        vec_time = vec_time * math.pow(10, -3)
         # круговые частоты и фазы
         freq = 2 * math.pi * var_freq
         # цикл по сигналам

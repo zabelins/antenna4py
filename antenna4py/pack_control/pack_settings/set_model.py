@@ -10,10 +10,10 @@ class Set_model:
         self.pattern_line = [-90, 90]
         self.pattern_step = 0.25
         # диапазон времени, 1 ед = 1 мс
-        self.time_line = [0, 1]
-        self.time_step = 0.005
-        # для Калмана T=0.1, T/2=0.05, T/4=0.025
-        # по умолчанию 0.005
+        self.time_line = [0, 10]
+        self.time_step = 0.05
+        # для Калмана T=1, T/2=0.5, T/4=0.25
+        # по умолчанию 0.05
         # диапазон параметров, 1 ед
         self.var_line = [0, 0.1]
         self.var_step = 0.01
