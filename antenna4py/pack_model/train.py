@@ -46,10 +46,14 @@ class Train:
         print("\tnum_neurons = ", self.num_neurons)
 
     def calc_out(self, out_data):
-        print("инициализация НС...")
+        # проверка исходных данных
+        if len(out_data) == 0:
+            return []
         # формирование обучающих выборок
         self.list_sampling.calc_out(out_data)
         out_sampling = self.list_sampling.get_out()
+        # печать результатов
+        print("инициализация НС...")
         print(len(out_sampling))
 
     def print_out(self):

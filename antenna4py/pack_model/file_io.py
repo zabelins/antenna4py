@@ -53,9 +53,13 @@ class File_IO:
 
     def load_files(self):
         # проверка списка доступных файлов
-        file_list = os.listdir(self.name_dir + '/')
-        len_files = len(file_list)
+        if os.path.exists(self.name_dir + '/'):
+            file_list = os.listdir(self.name_dir + '/')
+        else:
+            print("Файлы с обучающими выборками не найдены")
+            return []
         # вывод числа доступных файлов
+        len_files = len(file_list)
         print("Найдено файлов с обучающими выборками:", len_files)
         # запуск цикла по файлам
         for i in range(len_files):
