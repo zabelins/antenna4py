@@ -16,7 +16,6 @@ class Model_AAA:
         self.list_array = pack_model.array.Array(1)
         self.list_proc = pack_model.proc.Proc(1)
         self.list_syntnet = pack_model.syntnet.Syntnet(1)
-        self.list_sampling = pack_model.sampling.Sampling(1)
         self.list_train = pack_model.train.Train(1)
         self.list_test = pack_model.test.Test(1)
         self.list_file = pack_model.file_io.File_IO(1)
@@ -46,7 +45,6 @@ class Model_AAA:
         self.list_array.set(obj_set.list_pararray.get())
         self.list_proc.set(obj_set.list_paradapt.get())
         self.list_syntnet.set(obj_set.list_paradapt.get())
-        self.list_sampling.set(obj_set.list_settrain.get())
         self.list_train.set(obj_set.list_settrain.get())
         self.list_test.set(obj_set.list_settest.get())
         # инициализация параметров уровня L3
@@ -177,11 +175,8 @@ class Model_AAA:
     def calc_train(self):
         # загрузка файлов с обучающими выборками
         out_data = self.list_file.load_files()
-        # формирование обучающих выборок
-        self.list_sampling.calc_out(out_data)
-        out_sampling = self.list_sampling.get_out()
         # запуск обучения нейронной сети
-        self.list_train.calc_out(out_sampling)
+        self.list_train.calc_out(out_data)
 
     def save_learn(self):
         # сохранение обучающей выборки

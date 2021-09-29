@@ -2,7 +2,7 @@ import numpy as np
 import pack_calc.calc_list as cl
 
 if __name__ == "__main__":
-    print("Вы запустили модуль формирования обучающей выборки (L2)")
+    print("Вы запустили модуль формирования обучающей выборки (L3)")
 
 class Sampling:
     """Класс формирования обучающей выборки"""
@@ -27,7 +27,7 @@ class Sampling:
         return res
 
     def print(self):
-        print("Параметры формирования обучающей выборки (L2):")
+        print("Параметры формирования обучающей выборки (L3):")
         print("\t-")
 
     def calc_out(self, out_data):

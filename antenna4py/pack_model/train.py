@@ -1,13 +1,17 @@
 import numpy as np
 import pack_calc.calc_list as cl
+import pack_model.pack_neuro as pn
+from pack_model.pack_neuro import *
 
 if __name__ == "__main__":
     print("Вы запустили модуль формирования обучающей выборки (L2)")
+
 
 class Train:
     """Класс формирования обучающей выборки"""
 
     def __init__(self, id):
+        self.list_sampling = pn.sampling.Sampling(1)
         self.id = id
         self.id_nn = []
         self.id_learn = []
@@ -41,10 +45,12 @@ class Train:
         print("\tnum_layers = ", self.num_layers)
         print("\tnum_neurons = ", self.num_neurons)
 
-    def calc_out(self, out_sampling):
+    def calc_out(self, out_data):
         print("инициализация НС...")
+        # формирование обучающих выборок
+        self.list_sampling.calc_out(out_data)
+        out_sampling = self.list_sampling.get_out()
         print(len(out_sampling))
 
     def print_out(self):
         pass
-
