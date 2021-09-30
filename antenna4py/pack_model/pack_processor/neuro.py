@@ -13,7 +13,7 @@ class Neuro_alg:
 
     def set(self, init):
         self.alg_crit = init[0]
-        self.control_type = init[4]
+        self.control_type = init[5]
 
     def get(self):
         res = []

@@ -19,8 +19,8 @@ class Kalman:
         self.matrix_nois = []
 
     def set(self, init):
-        self.kalman_type = init[2]
-        self.kalman_coef = init[3]
+        self.kalman_type = init[3]
+        self.kalman_coef = init[4]
 
     def get(self):
         res = []

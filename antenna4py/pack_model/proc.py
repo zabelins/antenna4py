@@ -18,6 +18,7 @@ class Proc:
         # номера критерия и алгоритма адаптации
         self.alg_crit = []
         self.alg_type = []
+        self.alg_delay = []
         # тип управления
         self.control_type = []
         # вектора весов и осшп
@@ -32,7 +33,8 @@ class Proc:
     def set(self, init):
         self.alg_crit = init[0]
         self.alg_type = init[1]
-        self.control_type = init[4]
+        self.alg_delay = init[2]
+        self.control_type = init[5]
 
     def get(self):
         res = []
@@ -59,6 +61,8 @@ class Proc:
         matrix_sig, matrix_int, matrix_nois = buf
         # вычисление векторов ВК
         self.calc_weights(vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois)
+        # учёт задержки на вычисления
+        self.calc_delay()
         # вычисление ОСШП
         self.calc_snir(matrix_sig, matrix_int, matrix_nois)
 
@@ -135,6 +139,22 @@ class Proc:
         self.mean_insnir = self.mean_insnir / len_time
         self.mean_outsnir = self.mean_outsnir / len_time
 
+    def calc_delay(self):
+        # вычисление задержки по времени на вычисления
+        if self.alg_delay == 1:
+            # если есть задержка на 1 такт
+            len_time, len_num = self.vec_outweight.shape[0], self.vec_outweight.shape[1]
+            buf_outweight = np.ones(shape=[len_time, len_num], dtype=complex)
+            # округление до целого
+            self.alg_delay = int(self.alg_delay)
+            # цикл по времени
+            for i in range(len_time):
+                if i == 0:
+                    buf_outweight[i] = self.vec_inweight
+                else:
+                    buf_outweight[i] = self.vec_outweight[i-1]
+            # перезапись оптимальных весов
+            self.vec_outweight = buf_outweight
 
 
 

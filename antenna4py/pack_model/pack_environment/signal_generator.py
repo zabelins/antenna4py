@@ -40,7 +40,7 @@ class Generator:
         vec_deg = cl.ones_modul(vec_mod, var_deg)
         return vec_deg
 
-    def get_vecamp(self, vec_time, var_amp, var_freq, id_modulation, dynamic_shift):
+    def get_vecamp(self, vec_time, var_amp, var_freq, id_modulation, static_shift, dynamic_shift):
         # вычисление вектора изменения амплитуд
         len_amp, len_time = var_amp.shape[0], vec_time.shape[0]
         vec_mod = []
@@ -49,15 +49,12 @@ class Generator:
             vec_mod = np.ones(shape=[len_amp, len_time])
         if (id_modulation == 1):
             # синусоидальный сигнал
-            static_shift = -dynamic_shift
             vec_mod = self.get_ampsin(len_amp, var_freq, vec_time, static_shift, dynamic_shift)
         if (id_modulation == 2):
             # прямоугольные импульсы
-            static_shift = -dynamic_shift
             vec_mod = self.get_amppulse(len_amp, var_freq, vec_time, static_shift, dynamic_shift)
         if (id_modulation == 3):
             # короткие импульсы
-            static_shift = -dynamic_shift
             vec_mod = self.get_ampshort(len_amp, var_freq, vec_time, static_shift, dynamic_shift)
         if (id_modulation == 4):
             # рандомное изменение амплитуд
