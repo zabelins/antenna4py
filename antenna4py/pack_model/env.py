@@ -1,5 +1,5 @@
-import pack_model.pack_environment as pe
-from pack_model.pack_environment import *
+import pack_model.pack_env as pe
+from pack_model.pack_env import *
 import pack_calc.calc_list as cl
 import numpy as np
 import math

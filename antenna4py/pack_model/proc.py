@@ -1,5 +1,5 @@
-import pack_model.pack_processor as pp
-from pack_model.pack_processor import *
+import pack_model.pack_proc as pp
+from pack_model.pack_proc import *
 import pack_calc.calc_list as cl
 import numpy as np
 
