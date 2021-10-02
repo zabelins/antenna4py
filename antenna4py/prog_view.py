@@ -151,7 +151,7 @@ class View:
 
     def sync_model(self):
         # синхронизация с моделью
-        out_model = self.model.get_out1nd()
+        out_model = self.model.get_model1nd()
         # координатные сетки
         self.vec_pattern = out_model[0][0]
         self.vec_time = out_model[0][1]

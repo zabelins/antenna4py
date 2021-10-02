@@ -117,7 +117,7 @@ class Syntnet:
         # инициализируем размер вектора
         out_gain = np.zeros(shape=[len_deg], dtype='float64')
         # номер учёта эквивалентных углов (1=реал, 2=экв)
-        id_eq = 2
+        id_eq = 1
         # цикл по сигналам
         for i in range(len_deg):
             out_gain[i] = self.calc_meangain(vec_pattern, vec_deg[i], vec_eqdeg[i], var_time, id_inout, id_eq)

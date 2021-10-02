@@ -11,7 +11,7 @@ class Par_adapt:
         # задержка на такт вычсления
         self.alg_crit = 1
         self.alg_type = 1
-        self.alg_delay = 1
+        self.alg_delay = 0
         # параметры фильтра Калмана
         self.kalman_type = 0
         self.kalman_coef = 1

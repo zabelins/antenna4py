@@ -40,6 +40,7 @@ class Proc:
         res = []
         res.append(self.alg_crit)
         res.append(self.alg_type)
+        res.append(self.alg_delay)
         res.append(self.control_type)
         return res
 
@@ -47,6 +48,7 @@ class Proc:
         print("Параметры модели сигнального процессора (L2):")
         print("\talg_crit = ", self.alg_crit)
         print("\talg_type = ", self.alg_type)
+        print("\talg_delay = ", self.alg_delay)
         print("\tcontrol_type = ", self.control_type)
         self.list_trad.print()
         self.list_neuro.print()

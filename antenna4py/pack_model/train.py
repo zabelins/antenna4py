@@ -14,37 +14,40 @@ class Train:
         self.list_sampling = pt.sampling.Sampling(1)
         self.list_network = pt.network.Network(1)
         self.id = id
-        self.id_nn = []
-        self.id_learn = []
-        self.num_epoch = []
-        self.num_layers = []
-        self.num_neurons = []
+        # параметры нейронной сети
+        self.net_type = []
+        self.net_layers = []
+        self.net_nodes = []
+        # параметры обучения
+        self.learn_type = []
+        self.learn_epoch = []
+        # выборки
         self.matrix_learn = []
         self.matrix_test = []
 
     def set(self, init):
-        self.id_nn = init[0]
-        self.id_learn = init[1]
-        self.num_epoch = init[2]
-        self.num_layers = init[3]
-        self.num_neurons = init[4]
+        self.net_type = init[0]
+        self.net_layers = init[1]
+        self.net_nodes = init[2]
+        self.learn_type = init[3]
+        self.learn_epoch = init[4]
 
     def get(self):
         res = []
-        res.append(self.id_nn)
-        res.append(self.id_learn)
-        res.append(self.num_epoch)
-        res.append(self.num_layers)
-        res.append(self.num_neurons)
+        res.append(self.net_type)
+        res.append(self.net_layers)
+        res.append(self.net_nodes)
+        res.append(self.learn_type)
+        res.append(self.learn_epoch)
         return res
 
     def print(self):
         print("Параметры обучения НС (L2):")
-        print("\tid_nn = ", self.id_nn)
-        print("\tid_learn = ", self.id_learn)
-        print("\tnum_epoch = ", self.num_epoch)
-        print("\tnum_layers = ", self.num_layers)
-        print("\tnum_neurons = ", self.num_neurons)
+        print("\tnet_type = ", self.net_type)
+        print("\tnet_layers = ", self.net_layers)
+        print("\tnet_nodes = ", self.net_nodes)
+        print("\tlearn_type = ", self.learn_type)
+        print("\tlearn_epoch = ", self.learn_epoch)
 
     def calc_out(self, out_data):
         # проверка исходных данных

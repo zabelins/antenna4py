@@ -1,5 +1,4 @@
 import numpy as np
-import tensorflow as tf
 
 if __name__ == "__main__":
     print("Вы запустили модуль обучения НС (L3)")

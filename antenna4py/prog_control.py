@@ -17,7 +17,7 @@ class Control:
         self.id_save = []
 
     def set(self, id_print, id_save):
-        self.model.set(self.list_set)
+        self.model.set_model(self.list_set)
         self.id_print = id_print
         self.id_save = id_save
 
@@ -28,22 +28,23 @@ class Control:
 
     def mode_static(self):
         # расчёт диаграммы направленности
-        self.model.calc_out(0)
+        self.model.calc_model(0)
         self.print_calc()
 
     def mode_dynamic1nd(self, id_script):
         # расчёт временных характеристик
-        self.model.calc_out(id_script)
+        self.model.calc_model(id_script)
         self.print_calc()
         self.save_learn()
 
     def mode_dynamic2nd(self):
         # расчёт усреднённых характеристик
-        self.model.calc_out(6)
+        self.model.calc_model(6)
         self.print_calc()
 
     def mode_train(self):
         # обучение нейронной сети
+        self.model.set_train(self.list_set)
         self.model.calc_train()
 
     def mode_print(self, id_set):
@@ -53,12 +54,13 @@ class Control:
             self.list_set.print()
         if id_set == 2:
             # просмотр параметров модели
+            self.model.set_train(self.list_set)
             self.model.print()
 
     def print_calc(self):
         # вывод служебной информации для графика
         if self.id_print == 1:
-            self.model.print_calc()
+            self.model.print_modelcalc()
 
     def save_learn(self):
         # сохранение обучающей выборки
