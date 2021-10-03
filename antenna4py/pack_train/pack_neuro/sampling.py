@@ -33,6 +33,7 @@ class Sampling:
     def calc_out(self, out_data):
         # подготовка обучающей выборки
         self.get_learnarray(out_data)
+        self.get_norm()
         # вывод информации
         self.print_out()
 
@@ -84,9 +85,9 @@ class Sampling:
                 matrix_in[id_buf] = self.get_matrixin(matrix_sig[i][j], matrix_int[i][j], matrix_nois[i][j])
                 id_buf = id_buf + 1
         # разделение на амплитуды и фазы
-        self.vec_inamp, self.vec_inphi = self.get_float(vec_in)
-        self.vec_outamp, self.vec_outphi = self.get_float(vec_out)
-        self.matrix_inamp, self.matrix_inphi = self.get_float(matrix_in)
+        self.vec_inamp, self.vec_inphi = self.get_ampphi(vec_in)
+        self.vec_outamp, self.vec_outphi = self.get_ampphi(vec_out)
+        self.matrix_inamp, self.matrix_inphi = self.get_ampphi(matrix_in)
 
     def get_sumtime(self, vec):
         # вычисление общего размера обучающей выборки
@@ -114,10 +115,17 @@ class Sampling:
         matrix_in = matrix_in + matrix_nois
         return matrix_in
 
-    def get_float(self, vec):
+    def get_ampphi(self, vec):
         # разделение на амплитудную и фазовую составляющую
         # фазы - угол относительно оси Re
         vec_amp = np.abs(vec)
         vec_phi = np.angle(vec)
         return [vec_amp, vec_phi]
+
+    def get_norm(self):
+        # нормировка выборки
+        self.vec_inamp = self.vec_inamp / 4
+        self.vec_outamp = self.vec_outamp / 4
+        self.vec_inphi = (self.vec_inphi + np.pi) / (2 * np.pi)
+        self.vec_outphi = (self.vec_outphi + np.pi) / (2 * np.pi)
 

@@ -109,10 +109,10 @@ class Proc:
         # вычисление оптимальных векторов
         if (self.alg_type == 1):
             # алгоритм прямого обращения матрицы
-            self.vec_outweight = self.list_trad.get_invers(vec_sig, matrix_sig, matrix_int, matrix_nois)
+            self.vec_outweight = self.list_trad.calc_out(vec_sig, matrix_sig, matrix_int, matrix_nois)
         if (self.alg_type == 2):
             # нейросетевой алгоритм вычисления ВК
-            self.vec_outweight = np.ones(shape=[len_time, len_num], dtype=complex)
+            self.vec_outweight = self.list_neuro.calc_out(vec_sig, vec_int, vec_nois)
 
     def calc_snir(self, matrix_sig, matrix_int, matrix_nois):
         # вычисление осшп

@@ -29,7 +29,7 @@ class Trad_alg:
         print("\talg_crit = ", self.alg_crit)
         print("\tcontrol_type = ", self.control_type)
 
-    def get_invers(self, vec_sig, matrix_sig, matrix_int, matrix_nois):
+    def calc_out(self, vec_sig, matrix_sig, matrix_int, matrix_nois):
         # алгоритм прямого обращения матрицы
         len_time, len_num = [vec_sig.shape[0], vec_sig.shape[2]]
         res = np.zeros(shape=[len_time, len_num], dtype=complex)
