@@ -9,8 +9,9 @@ if __name__ == "__main__":
 class View:
     """Класс вывода информации для пользователя"""
 
-    def __init__(self, model, controller):
-        self.model = model
+    def __init__(self, model_antenna, model_train, controller):
+        self.model_antenna = model_antenna
+        self.model_train = model_train
         self.controller = controller
         self.list_graph = pack_view.graph.Graph(1)
         self.list_client = pack_view.client.Client(1)
@@ -151,7 +152,7 @@ class View:
 
     def sync_model(self):
         # синхронизация с моделью
-        out_model = self.model.get_model1nd()
+        out_model = self.model_antenna.get_out1nd()
         # координатные сетки
         self.vec_pattern = out_model[0][0]
         self.vec_time = out_model[0][1]

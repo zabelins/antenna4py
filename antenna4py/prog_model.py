@@ -16,7 +16,6 @@ class Model_AAA:
         self.list_array = pack_model.array.Array(1)
         self.list_proc = pack_model.proc.Proc(1)
         self.list_syntnet = pack_model.syntnet.Syntnet(1)
-        self.list_train = pack_model.train.Train(1)
         self.list_test = pack_model.test.Test(1)
         self.list_file = pack_model.file_io.File_IO(1)
         self.f_cen = []
@@ -35,7 +34,7 @@ class Model_AAA:
         self.vec_meanoutatten = []
         self.vec_meanoutsnir = []
 
-    def set_model(self, obj_set):
+    def set(self, obj_set):
         # инициализация параметров модели уровня L1
         par_array = obj_set.list_pararray.get()
         self.f_cen = par_array[0]
@@ -66,11 +65,10 @@ class Model_AAA:
         self.list_array.print()
         self.list_proc.print()
         self.list_syntnet.print()
-        self.list_train.print()
         self.list_test.print()
         self.list_file.print()
 
-    def calc_model(self, id_script):
+    def calc_out(self, id_script):
         # динамическое моделирование ААР
         self.id_script = id_script
         # создание векторов изменения параметров
@@ -114,7 +112,7 @@ class Model_AAA:
             self.vec_meanoutatten[i] = self.out_syntnet[9]
             self.vec_meanoutsnir[i] = self.out_proc1nd[3]
 
-    def get_model(self):
+    def get_out(self):
         # получить усреднённые характеристики
         res = []
         res.append(self.vec_meanindepth)
@@ -125,17 +123,17 @@ class Model_AAA:
         res.append(self.vec_meanoutsnir)
         return res
 
-    def get_model1nd(self):
+    def get_out1nd(self):
         # получить вектора для представления
-        out_model = self.get_model()
+        out_model = self.get_out()
         return [self.out_set, self.out_env, self.out_array1nd, self.out_proc1nd, self.out_syntnet, out_model]
 
-    def get_model2nd(self):
+    def get_out2nd(self):
         # получить вектора для обучения НС
-        out_model = self.get_modelinfo()
+        out_model = self.get_info()
         return [self.out_array2nd, self.out_proc2nd, out_model]
 
-    def print_model(self):
+    def print_out(self):
         # проверка типа векторов на ndarray
         bool_res1 = cl.is_ndarray([self.vec_meanindepth, self.vec_meaninatten, self.vec_meaninsnir])
         bool_res2 = cl.is_ndarray([self.vec_meanoutdepth, self.vec_meanoutatten, self.vec_meanoutsnir])
@@ -149,16 +147,16 @@ class Model_AAA:
             print("\tvec_meanoutatten.shape = ", self.vec_meanoutatten.shape)
             print("\tvec_meanoutsnir.shape = ", self.vec_meanoutsnir.shape)
 
-    def print_modelcalc(self):
+    def print_calc(self):
         # вывод информации о ходе вычислений
         self.list_settings.print_out()
         self.list_env.print_out()
         self.list_array.print_out()
         self.list_proc.print_out()
         self.list_syntnet.print_out()
-        self.print_model()
+        self.print_out()
 
-    def get_modelinfo(self):
+    def get_info(self):
         # получить параметры ААР
         res = []
         res.append(self.list_array.array_N)
@@ -172,19 +170,9 @@ class Model_AAA:
         res.append(self.vec_meanoutsnir.mean())
         return res
 
-    def set_train(self, obj_set):
-        # инициализация параметров обучения НС уровня L2
-        self.list_train.set(obj_set.list_settrain.get())
-
-    def calc_train(self):
-        # загрузка файлов с обучающими выборками
-        out_data = self.list_file.load_files()
-        # запуск обучения нейронной сети
-        self.list_train.calc_out(out_data)
-
     def save_learn(self):
         # сохранение обучающей выборки
-        vec_data = self.get_model2nd()
+        vec_data = self.get_out2nd()
         self.list_file.save_file(vec_data)
 
     def init_vecmean(self, len_var, len_sig, len_int):

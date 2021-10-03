@@ -1,18 +1,15 @@
-import numpy as np
-import pack_calc.calc_list as cl
-import pack_model.pack_train as pt
-from pack_model.pack_train import *
+import pack_train.pack_neuro as pn
+from pack_train.pack_neuro import *
 
 if __name__ == "__main__":
     print("Вы запустили модуль формирования обучающей выборки (L2)")
-
 
 class Train:
     """Класс формирования обучающей выборки"""
 
     def __init__(self, id):
-        self.list_sampling = pt.sampling.Sampling(1)
-        self.list_network = pt.network.Network(1)
+        self.list_sampling = pn.sampling.Sampling(1)
+        self.list_network = pn.network.Network(1)
         self.id = id
         # параметры нейронной сети
         self.net_type = []
