@@ -72,13 +72,13 @@ class Factor:
     def get_dist(self, num_var):
         # АФР для заданного элемента антенной решётки
         res = []
-        if (self.array_dist == 1):
+        if self.array_dist == 1:
             # равномерное распределение
             res = 1.0
-        if (self.array_dist == 2):
+        if self.array_dist == 2:
             # косинусное распределение
             res = 0.4 + 0.6 * math.cos(math.pi * (num_var-1) / (self.array_N-1) - math.pi/2)
-        if (self.array_dist == 3):
+        if self.array_dist == 3:
             # распределение чебышева
             res = 1.0
             # нужно использовать Chebyshev()
@@ -87,7 +87,7 @@ class Factor:
     def get_randamp(self):
         # амплитудные ошибки сигнала
         res = []
-        if (self.error_distamp == 1):
+        if self.error_distamp == 1:
             # гауссовское распределение ошибок
             res = np.random.normal(loc=1.0, scale=self.error_maxamp)
         return res
@@ -95,10 +95,10 @@ class Factor:
     def get_randphi(self):
         # фазовые ошибки сигнала
         res = []
-        if (self.error_distphi == 1):
+        if self.error_distphi == 1:
             # равномерное распределение ошибок
             res = np.random.uniform(-self.error_maxphi, self.error_maxphi)
-        if (self.error_distphi == 2):
+        if self.error_distphi == 2:
             # гауссовское распределение ошибок
             res = np.random.normal(loc=0.0, scale=self.error_maxphi)
         return res

@@ -74,7 +74,7 @@ class Graph:
     def draw_adapt(self, vec):
         # распаковка исходных данных
         vec_time, vec_indepth, vec_inatten, vec_insnir = vec[0], vec[1].T, vec[2].T, vec[3]
-        vec_outdepth, vec_outatten, vec_outsnir = vec[4].T, vec[5].T, vec[6]
+        vec_outdepth, vec_outatten, vec_outsnir, vec_snir = vec[4].T, vec[5].T, vec[6], vec[7]
         # инициализируем вектора
         len_sig, len_int = vec_inatten.shape[0], vec_indepth.shape[0]
         x1, y_depth, x2, y_atten, x3, y_snir = [], [], [], [], [], []
@@ -90,9 +90,9 @@ class Graph:
         x3 = [vec_time, vec_time]
         y_snir = [vec_insnir, vec_outsnir]
         # подписи графиков
-        leg_depth = ["int1", "int2", "int3", "int4", "int5"]
-        leg_atten = ["sig1", "sig2", "sig3", "sig4", "sig5"]
-        leg_snir = ["snir in", "snir out"]
+        leg_depth = ["помеха 1", "помеха 2", "помеха 3", "помеха 4", "помеха 5"]
+        leg_atten = ["сигнал 1", "сигнал 2", "сигнал 3", "сигнал 4", "сигнал 5"]
+        leg_snir = ["осшп исх.", "осшп опт."]
         # отрисовка графиков
         self.list_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 0)
 
@@ -113,13 +113,17 @@ class Graph:
         y_depth = y_depth.T
         y_atten = y_atten.T
         # подписи графиков
-        leg_depth = ["int1", "int2", "int3", "int4", "int5"]
-        leg_atten = ["sig1", "sig2", "sig3", "sig4", "sig5"]
-        leg_snir = ["snir in", "snir out"]
+        leg_depth = ["помеха 1", "помеха 2", "помеха 3", "помеха 4", "помеха 5"]
+        leg_atten = ["сигнал 1", "сигнал 2", "сигнал 3", "сигнал 4", "сигнал 5"]
+        leg_snir = ["осшп исх.", "осшп опт."]
         # отрисовка графиков
         self.list_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 1)
 
-    def get_one2db(self, num):
-        # перевод числа в дБ
+    def get_amp2db(self, num):
+        # перевод амплитуды в децибеллы
         return 20 * np.log10(abs(num))
+
+    def get_pow2db(self, num):
+        # перевод мощности в децибеллы
+        return 10 * np.log10(abs(num))
 

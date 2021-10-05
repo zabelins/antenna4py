@@ -133,8 +133,8 @@ class Proc:
             power_outint = self.list_trad.calc_power(self.vec_outweight[i], matrix_int[i])
             power_outnois = self.list_trad.calc_power(self.vec_outweight[i], matrix_nois[i])
             # вычисление осшп
-            self.vec_insnir[i] = abs(power_insig) / (abs(power_inint) + abs(power_innois))
-            self.vec_outsnir[i] = abs(power_outsig) / (abs(power_outint) + abs(power_outnois))
+            self.vec_insnir[i] = self.get_pow2db(abs(power_insig)/(abs(power_inint)+abs(power_innois)))
+            self.vec_outsnir[i] = self.get_pow2db(abs(power_outsig) / (abs(power_outint) + abs(power_outnois)))
             self.mean_insnir = self.mean_insnir + self.vec_insnir[i]
             self.mean_outsnir = self.mean_outsnir + self.vec_outsnir[i]
         # деление на общее количество
@@ -157,6 +157,10 @@ class Proc:
                     buf_outweight[i] = self.vec_outweight[i-1]
             # перезапись оптимальных весов
             self.vec_outweight = buf_outweight
+
+    def get_pow2db(self, num):
+        # перевод мощности в децибеллы
+        return 10 * np.log10(abs(num))
 
 
 

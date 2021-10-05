@@ -49,6 +49,7 @@ class View:
         self.vec_meanoutdepth = []
         self.vec_meanoutatten = []
         self.vec_meanoutsnir = []
+        self.vec_meansnir = []
 
     def set(self):
         # инициализация контроллера и модели
@@ -184,6 +185,7 @@ class View:
         self.vec_meanoutdepth = out_model[5][3]
         self.vec_meanoutatten = out_model[5][4]
         self.vec_meanoutsnir = out_model[5][5]
+        self.vec_meansnir = out_model[5][6]
 
     def show_pattern(self):
         # вывод графика диаграммы направленности
@@ -269,6 +271,7 @@ class View:
         res.append(self.vec_meanoutdepth)
         res.append(self.vec_meanoutatten)
         res.append(self.vec_meanoutsnir)
+        res.append(self.vec_meansnir)
         return res
 
 

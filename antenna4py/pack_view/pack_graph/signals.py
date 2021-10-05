@@ -13,7 +13,7 @@ class Signals:
         self.signals_style = []
         self.signals_mean = []
         self.signals_legend = []
-        self.str_axis = ["t, мс", "amp, В", "deg, град.", "band, Гц"]
+        self.str_axis = ["time [ms]", "amp [V]", "angle [deg]", "band [Hz]"]
         self.vec_col1 = []
         self.vec_lst1 = []
         self.vec_lwd1 = []

@@ -16,7 +16,7 @@ class Pattern:
         self.pattern_db = []
         self.pattern_legend = []
         # скрытые настройки графики
-        self.str_axis = ["Θ, град.", "F(Θ), дБ"]
+        self.str_axis = ["Θ [deg]", "G [dB]"]
         self.show_eqint = 1
         # вектора стилей
         self.vec_col1 = []
@@ -65,7 +65,7 @@ class Pattern:
         x, y = self.get_float(x, y)
         # нормировка и приведение графиков к децибеллам
         y = self.get_norm(x, y)
-        y = self.get_db(x, y)
+        y = self.get_amp2db(x, y)
         # границы отрисовки графика
         vec_axis = self.get_axes(x, y)
         # выбор стиля графиков
@@ -130,10 +130,11 @@ class Pattern:
                 y[i] = y[i] / max_y
         return y
 
-    def get_db(self, x, y):
+    def get_amp2db(self, x, y):
         # перевод шкалы y к децибеллам
         if self.pattern_db == 1:
             for i in range(len(x)):
+                # для амплитудной ДН
                 y[i] = 20 * np.log10(abs(y[i]))
         return y
 
@@ -142,7 +143,7 @@ class Pattern:
         max_x, min_x = x.max(), x.min()
         max_y, min_y = y.max(), y.min()
         if self.pattern_db == 1:
-            vec_axis = [min_x, max_x, -70, max_y]
+            vec_axis = [min_x, max_x, -90, max_y]
         else:
             vec_axis = [min_x, max_x, 0, max_y]
         return vec_axis

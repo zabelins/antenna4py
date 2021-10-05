@@ -14,7 +14,7 @@ class Par_env:
         self.sig_band = [0]
         # параметры помех
         self.int_deg = [30, 70]
-        self.int_amp = [1, 1]
+        self.int_amp = [1/4, 1/4]
         self.int_band = [5 * math.pow(10, 8), 5 * math.pow(10, 8)] # [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)]
         # параметры модуляции
         self.shift_dynamic = [math.pi / 4]

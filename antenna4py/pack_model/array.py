@@ -74,6 +74,7 @@ class Array:
         res.append(self.vec_eqdegsig)
         res.append(self.vec_eqdegint)
         res.append(self.vec_snir)
+        res.append(self.mean_snir)
         return res
 
     def get_out2nd(self):
@@ -150,12 +151,7 @@ class Array:
         for i in range(len_int):
             maxlen_eqint[i] = buf[i].max()
         # инициализируем вектора и матрицы
-        self.vec_sig = np.zeros(shape=[len_time, gmaxlen_eqsig, self.array_N], dtype=complex)
-        self.vec_int = np.zeros(shape=[len_time, gmaxlen_eqint, self.array_N], dtype=complex)
-        self.vec_nois = np.zeros(shape=[len_time, 1, self.array_N], dtype=complex)
-        self.matrix_sig = np.zeros(shape=[len_time, self.array_N, self.array_N], dtype=complex)
-        self.matrix_int = np.zeros(shape=[len_time, self.array_N, self.array_N], dtype=complex)
-        self.matrix_nois = np.zeros(shape=[len_time, self.array_N, self.array_N], dtype=complex)
+        self.init_vecmatrix(len_time, gmaxlen_eqsig, gmaxlen_eqint)
         vec_coefsig = np.zeros(shape=[len_time, gmaxlen_eqsig])
         vec_coefint = np.zeros(shape=[len_time, gmaxlen_eqint])
         # запускаем цикл по времени
@@ -253,6 +249,15 @@ class Array:
             var_sig[i] = var_sig[i] * math.sqrt(var_coefsig[i])
         return var_sig
 
+    def init_vecmatrix(self, len_time, gmaxlen_eqsig, gmaxlen_eqint):
+        # инициализация векторов и матриц
+        self.vec_sig = np.zeros(shape=[len_time, gmaxlen_eqsig, self.array_N], dtype=complex)
+        self.vec_int = np.zeros(shape=[len_time, gmaxlen_eqint, self.array_N], dtype=complex)
+        self.vec_nois = np.zeros(shape=[len_time, 1, self.array_N], dtype=complex)
+        self.matrix_sig = np.zeros(shape=[len_time, self.array_N, self.array_N], dtype=complex)
+        self.matrix_int = np.zeros(shape=[len_time, self.array_N, self.array_N], dtype=complex)
+        self.matrix_nois = np.zeros(shape=[len_time, self.array_N, self.array_N], dtype=complex)
+
     def calc_snir(self, vec_sigamp, vec_intamp):
         # вычислить временную зависимость осшп
         len_time = vec_sigamp.shape[0]
@@ -267,7 +272,10 @@ class Array:
             pow_sig = pow_sig.sum()
             pow_int = pow_int.sum()
             # вычисление осшп
-            self.vec_snir[i] = pow_sig / (pow_int + pow_nois)
+            self.vec_snir[i] = self.get_pow2db(pow_sig/(pow_int+pow_nois))
         # вычисление среднего осшп
         self.mean_snir = self.vec_snir.mean()
-        print("mean_snir = ", self.mean_snir)
+
+    def get_pow2db(self, num):
+        # перевод мощности в децибеллы
+        return 10 * np.log10(abs(num))

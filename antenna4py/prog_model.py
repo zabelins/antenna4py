@@ -105,6 +105,7 @@ class Model_AAA:
             self.vec_meanoutdepth[i] = self.out_syntnet[8]
             self.vec_meanoutatten[i] = self.out_syntnet[9]
             self.vec_meanoutsnir[i] = self.out_proc1nd[3]
+            self.vec_meansnir[i] = self.out_array1nd[4]
 
     def get_out(self):
         # получить усреднённые характеристики
@@ -115,6 +116,7 @@ class Model_AAA:
         res.append(self.vec_meanoutdepth)
         res.append(self.vec_meanoutatten)
         res.append(self.vec_meanoutsnir)
+        res.append(self.vec_meansnir)
         return res
 
     def get_out1nd(self):
@@ -129,7 +131,7 @@ class Model_AAA:
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res1 = cl.is_ndarray([self.vec_meanindepth, self.vec_meaninatten, self.vec_meaninsnir])
+        bool_res1 = cl.is_ndarray([self.vec_meanindepth, self.vec_meaninatten, self.vec_meaninsnir, self.vec_meansnir])
         bool_res2 = cl.is_ndarray([self.vec_meanoutdepth, self.vec_meanoutatten, self.vec_meanoutsnir])
         # вывод размерностей векторов
         if (bool_res1 == True) and (bool_res2 == True):
@@ -140,6 +142,7 @@ class Model_AAA:
             print("\tvec_meanoutdepth.shape = ", self.vec_meanoutdepth.shape)
             print("\tvec_meanoutatten.shape = ", self.vec_meanoutatten.shape)
             print("\tvec_meanoutsnir.shape = ", self.vec_meanoutsnir.shape)
+            print("\tvec_meansnir.shape = ", self.vec_meansnir.shape)
 
     def print_calc(self):
         # вывод информации о ходе вычислений
@@ -177,6 +180,7 @@ class Model_AAA:
         self.vec_meanoutdepth = np.zeros(shape=[len_var, len_int])
         self.vec_meanoutatten = np.zeros(shape=[len_var, len_sig])
         self.vec_meanoutsnir = np.zeros(shape=[len_var])
+        self.vec_meansnir = np.zeros(shape=[len_var])
 
     def get_varpar(self, id_script, i):
         # выдать значение текущей частотной полосы

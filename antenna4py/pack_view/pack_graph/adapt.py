@@ -13,7 +13,7 @@ class Adapt:
         self.adapt_style = []
         self.adapt_mean = []
         self.adapt_legend = []
-        self.str_axis = ["time, мс", "band, ед.", "depth, дБ", "atten, дБ", "snir, ед."]
+        self.str_axis = ["time [ms]", "band [%]", "depth [dB]", "atten [dB]", "snir [dB]"]
         self.approx = []
         self.vec_col1 = []
         self.vec_lst1 = []

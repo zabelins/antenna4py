@@ -15,7 +15,7 @@ class Par_array:
         self.array_beta = 1
         self.array_dist = 1
         self.array_effect = 1
-        self.array_nois = 1
+        self.array_nois = 1/8
         # параметры элементов решётки
         self.elem_type = 1
         # параметры амплитудных и фазовых ошибок

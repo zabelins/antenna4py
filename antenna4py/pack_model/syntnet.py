@@ -50,16 +50,7 @@ class Syntnet:
         len_time, len_pattern = vec_time.shape[0], vec_pattern.shape[0]
         len_sig, len_int = vec_degsig.shape[1], vec_degint.shape[1]
         # инициализируем размеры векторов
-        self.vec_inpattern = np.zeros(shape=[len_time, len_pattern])
-        self.vec_indeph = np.zeros(shape=[len_time, len_int])
-        self.vec_inatten = np.zeros(shape=[len_time, len_sig])
-        self.vec_outpattern = np.zeros(shape=[len_time, len_pattern])
-        self.vec_outdeph = np.zeros(shape=[len_time, len_int])
-        self.vec_outatten = np.zeros(shape=[len_time, len_sig])
-        self.mean_indeph = np.zeros(shape=[len_int])
-        self.mean_inatten = np.zeros(shape=[len_sig])
-        self.mean_outdeph = np.zeros(shape=[len_int])
-        self.mean_outatten = np.zeros(shape=[len_sig])
+        self.init_vecmean(len_time, len_pattern, len_sig, len_int)
         # запускаем цикл по времени
         for i in range(len_time):
             # вычисление диаграмм направленности
@@ -162,3 +153,16 @@ class Syntnet:
     def get_one2db(self, num):
         # перевод числа в дБ
         return 20 * np.log10(abs(num))
+
+    def init_vecmean(self, len_time, len_pattern, len_sig, len_int):
+        # инициализируем вектора и средние величины
+        self.vec_inpattern = np.zeros(shape=[len_time, len_pattern])
+        self.vec_indeph = np.zeros(shape=[len_time, len_int])
+        self.vec_inatten = np.zeros(shape=[len_time, len_sig])
+        self.vec_outpattern = np.zeros(shape=[len_time, len_pattern])
+        self.vec_outdeph = np.zeros(shape=[len_time, len_int])
+        self.vec_outatten = np.zeros(shape=[len_time, len_sig])
+        self.mean_indeph = np.zeros(shape=[len_int])
+        self.mean_inatten = np.zeros(shape=[len_sig])
+        self.mean_outdeph = np.zeros(shape=[len_int])
+        self.mean_outatten = np.zeros(shape=[len_sig])

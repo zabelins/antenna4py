@@ -63,7 +63,7 @@ class Report:
         id_par = -1
         # распаковка исходных данных
         vec_meanindepth, vec_meaninatten, vec_meaninsnir = vec[1], vec[2], vec[3]
-        vec_meanoutdepth, vec_meanoutatten, vec_meanoutsnir = vec[4], vec[5], vec[6]
+        vec_meanoutdepth, vec_meanoutatten, vec_meanoutsnir, vec_meansnir = vec[4], vec[5], vec[6], vec[7]
         # инициализация параметров
         len_int, len_sig = vec_meanindepth.shape[1], vec_meaninatten.shape[1]
         time_depthint, time_depthsum = np.zeros(shape=[len_int]), 0
@@ -77,8 +77,8 @@ class Report:
             time_attensig[i] = self.get_ras(vec_meaninatten[id_par][i], vec_meanoutatten[id_par][i])
             time_attensum = time_attensum + time_attensig[i]
         # расчёт осшп
-        time_snirio = np.array([vec_meaninsnir[id_par], vec_meanoutsnir[id_par]])
-        time_snirdif = time_snirio[1] - time_snirio[0]
+        time_snirio = np.array([vec_meansnir[id_par], vec_meaninsnir[id_par], vec_meanoutsnir[id_par]])
+        time_snirdif = time_snirio[2] - time_snirio[1]
         # округление до сотых
         time_depthint = self.get_round(time_depthint)
         time_depthsum = self.get_round(time_depthsum)
@@ -101,7 +101,7 @@ class Report:
     def info_mean(self, vec):
         # распаковка исходных данных
         vec_meanindepth, vec_meaninatten, vec_meaninsnir = vec[1], vec[2], vec[3]
-        vec_meanoutdepth, vec_meanoutatten, vec_meanoutsnir = vec[4], vec[5], vec[6]
+        vec_meanoutdepth, vec_meanoutatten, vec_meanoutsnir, vec_meansnir = vec[4], vec[5], vec[6], vec[7]
         # инициализация параметров
         len_int, len_sig = vec_meanindepth.shape[1], vec_meaninatten.shape[1]
         par_depthint, par_depthsum = np.zeros(shape=[len_int]), 0
@@ -117,8 +117,8 @@ class Report:
             par_attensig[i] = self.get_ras(np.mean(buf1[i]), np.mean(buf2[i]))
             par_attensum = par_attensum + par_attensig[i]
         # расчёт осшп
-        par_snirio = np.array([np.mean(vec_meaninsnir), np.mean(vec_meanoutsnir)])
-        par_snirdif = par_snirio[1] - par_snirio[0]
+        par_snirio = np.array([np.mean(vec_meansnir), np.mean(vec_meaninsnir), np.mean(vec_meanoutsnir)])
+        par_snirdif = par_snirio[2] - par_snirio[1]
         # округление до сотых
         par_depthint = self.get_round(par_depthint)
         par_depthsum = self.get_round(par_depthsum)
