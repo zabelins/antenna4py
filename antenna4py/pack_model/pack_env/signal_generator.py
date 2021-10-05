@@ -23,53 +23,56 @@ class Generator:
         print("Параметры генератора сигналов (L3):")
         print("\t-")
 
-    def get_vecdeg(self, vec_time, var_deg, id_modulation):
+    def get_vecdeg(self, vec_time, var_deg, mode_deg):
         # вычисление вектора изменения углов
         len_deg, len_time = var_deg.shape[0], vec_time.shape[0]
         vec_mod = []
-        if (id_modulation == 0):
+        # выбор режима
+        if mode_deg == 0:
             # углы без изменений
             vec_mod = np.ones(shape=[len_deg, len_time])
-        if (id_modulation == 1):
+        if mode_deg == 1:
             # линейное изменение углов
             vec_mod = self.get_degline(len_deg, len_time)
-        if (id_modulation == 2):
+        if mode_deg == 2:
             # рандомное изменение углов
             vec_mod = self.get_degrand(len_deg, len_time)
         # вектора после модуляции
         vec_deg = cl.ones_modul(vec_mod, var_deg)
         return vec_deg
 
-    def get_vecamp(self, vec_time, var_amp, var_freq, id_modulation, static_shift, dynamic_shift):
+    def get_vecamp(self, vec_time, var_amp, mode_amp, freq_amp, static_shift, dynamic_shift):
         # вычисление вектора изменения амплитуд
         len_amp, len_time = var_amp.shape[0], vec_time.shape[0]
         vec_mod = []
-        if (id_modulation == 0):
+        # выбор режима
+        if mode_amp == 0:
             # амплитуды без изменений
             vec_mod = np.ones(shape=[len_amp, len_time])
-        if (id_modulation == 1):
+        if mode_amp == 1:
             # синусоидальный сигнал
-            vec_mod = self.get_ampsin(len_amp, var_freq, vec_time, static_shift, dynamic_shift)
-        if (id_modulation == 2):
+            vec_mod = self.get_ampsin(len_amp, freq_amp, vec_time, static_shift, dynamic_shift)
+        if mode_amp == 2:
             # прямоугольные импульсы
-            vec_mod = self.get_amppulse(len_amp, var_freq, vec_time, static_shift, dynamic_shift)
-        if (id_modulation == 3):
+            vec_mod = self.get_amppulse(len_amp, freq_amp, vec_time, static_shift, dynamic_shift)
+        if mode_amp == 3:
             # короткие импульсы
-            vec_mod = self.get_ampshort(len_amp, var_freq, vec_time, static_shift, dynamic_shift)
-        if (id_modulation == 4):
+            vec_mod = self.get_ampshort(len_amp, freq_amp, vec_time, static_shift, dynamic_shift)
+        if mode_amp == 4:
             # рандомное изменение амплитуд
             vec_mod = self.get_amprand(len_amp, len_time)
         vec_amp = cl.ones_modul(vec_mod, var_amp)
         return vec_amp
 
-    def get_vecband(self, vec_time, var_band, id_modulation):
+    def get_vecband(self, vec_time, var_band, mode_band):
         # вычисление вектора изменения частотных полос
         len_band, len_time = var_band.shape[0], vec_time.shape[0]
         vec_mod = []
-        if (id_modulation == 0):
+        # выбор режима
+        if mode_band == 0:
             # частотные полосы без изменений
             vec_mod = np.ones(shape=[len_band, len_time])
-        if (id_modulation == 1):
+        if mode_band == 1:
             # рандомное изменение частотных полос
             vec_mod = self.get_bandrand(len_band, len_time)
         vec_band = cl.ones_modul(vec_mod, var_band)

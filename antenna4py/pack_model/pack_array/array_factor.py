@@ -31,10 +31,10 @@ class Factor:
         self.array_beta = np.array(init[2])
         self.array_dist = np.array(init[3])
         self.array_effect = np.array(init[4])
-        self.error_distphi = np.array(init[6])
-        self.error_distamp = np.array(init[7])
-        self.error_maxphi = np.array(init[8])
-        self.error_maxamp = np.array(init[9])
+        self.error_distphi = np.array(init[7])
+        self.error_distamp = np.array(init[8])
+        self.error_maxphi = np.array(init[9])
+        self.error_maxamp = np.array(init[10])
 
     def get(self):
         res = []

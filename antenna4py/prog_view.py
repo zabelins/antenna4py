@@ -32,6 +32,7 @@ class View:
         self.vec_intband = []
         self.vec_eqdegsig = []
         self.vec_eqdegint = []
+        self.vec_snir = []
         # временные характеристики адаптации
         self.vec_inpattern = []
         self.vec_indepth = []
@@ -99,7 +100,7 @@ class View:
 
     def mode_static(self):
         # режим расчёта диаграммы направленности
-        self.controller.mode_static()
+        self.controller.mode_static(0)
         # синхронизация с моделью
         self.sync_model()
         # вывод информации о ДН
@@ -128,7 +129,7 @@ class View:
 
     def mode_dynamic2nd(self):
         # режим расчёта временных характеристик ААР (N параметров)
-        self.controller.mode_dynamic2nd()
+        self.controller.mode_dynamic2nd(6)
         # синхронизация с моделью
         self.sync_model()
         # вывод информации о ДН
@@ -166,6 +167,7 @@ class View:
         self.vec_intband = out_model[1][5]
         self.vec_eqdegsig = out_model[2][1]
         self.vec_eqdegint = out_model[2][2]
+        self.vec_snir = out_model[2][3]
         # временные характеристики адаптации
         self.vec_insnir = out_model[3][0]
         self.vec_outsnir = out_model[3][1]
@@ -254,6 +256,7 @@ class View:
         res.append(self.vec_outdepth)
         res.append(self.vec_outatten)
         res.append(self.vec_outsnir)
+        res.append(self.vec_snir)
         return res
 
     def get_vecmeanadapt(self):

@@ -16,7 +16,7 @@ class Element:
 
     def set(self, init):
         self.f_cen = np.array(init[0])
-        self.elem_type = np.array(init[5])
+        self.elem_type = np.array(init[6])
 
     def get(self):
         res = []

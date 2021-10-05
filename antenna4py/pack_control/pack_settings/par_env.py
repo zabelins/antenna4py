@@ -13,11 +13,9 @@ class Par_env:
         self.sig_amp = [1]
         self.sig_band = [0]
         # параметры помех
-        self.int_deg = [65]
-        self.int_amp = [1]
-        self.int_band = [5 * math.pow(10, 8)] # [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)]
-        # параметры шума
-        self.nois_amp = [1]
+        self.int_deg = [30, 70]
+        self.int_amp = [1, 1]
+        self.int_band = [5 * math.pow(10, 8), 5 * math.pow(10, 8)] # [5 * math.pow(10, 8), 2.5 * math.pow(10, 8)]
         # параметры модуляции
         self.shift_dynamic = [math.pi / 4]
         self.shift_static = [-math.pi / 4 + math.pi / 4]
@@ -29,9 +27,8 @@ class Par_env:
         self.int_deg = init[3]
         self.int_amp = init[4]
         self.int_band = init[5]
-        self.nois_amp = init[6]
-        self.shift_dynamic = init[7]
-        self.shift_static = init[8]
+        self.shift_dynamic = init[6]
+        self.shift_static = init[7]
 
     def get(self):
         res = []
@@ -41,7 +38,6 @@ class Par_env:
         res.append(self.int_deg)
         res.append(self.int_amp)
         res.append(self.int_band)
-        res.append(self.nois_amp)
         res.append(self.shift_dynamic)
         res.append(self.shift_static)
         return res
@@ -54,7 +50,6 @@ class Par_env:
         print("\tint_deg = ", self.int_deg)
         print("\tint_amp = ", self.int_amp)
         print("\tint_band = ", self.int_band)
-        print("\tnois_amp = ", self.nois_amp)
         print("\tshift_dynamic = ", self.shift_dynamic)
         print("\tshift_static = ", self.shift_static)
 

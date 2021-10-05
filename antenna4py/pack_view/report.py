@@ -24,7 +24,7 @@ class Report:
     def info_pattern(self, vec, time):
         # распаковка исходных данных
         vec_indepth, vec_inatten, vec_insnir = vec[1], vec[2], vec[3]
-        vec_outdepth, vec_outatten, vec_outsnir = vec[4], vec[5], vec[6]
+        vec_outdepth, vec_outatten, vec_outsnir, vec_snir = vec[4], vec[5], vec[6], vec[7]
         # инициализация параметров
         len_int, len_sig = vec_indepth.shape[1], vec_inatten.shape[1]
         pattern_depthint, pattern_depthsum = np.zeros(shape=[len_int]), 0
@@ -38,8 +38,8 @@ class Report:
             pattern_attensig[i] = self.get_ras(vec_inatten[time][i], vec_outatten[time][i])
             pattern_attensum = pattern_attensum + pattern_attensig[i]
         # расчёт осшп
-        pattern_snirio = np.array([vec_insnir[time], vec_outsnir[time]])
-        pattern_snirdif = pattern_snirio[1] - pattern_snirio[0]
+        pattern_snirio = np.array([vec_snir[time], vec_insnir[time], vec_outsnir[time]])
+        pattern_snirdif = pattern_snirio[2] - pattern_snirio[1]
         # округление до сотых
         pattern_depthint = self.get_round(pattern_depthint)
         pattern_depthsum = self.get_round(pattern_depthsum)

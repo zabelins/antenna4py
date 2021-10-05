@@ -33,6 +33,7 @@ class Model_AAA:
         self.vec_meanoutdepth = []
         self.vec_meanoutatten = []
         self.vec_meanoutsnir = []
+        self.vec_meansnir = []
 
     def set(self, obj_set):
         # инициализация параметров модели уровня L1
@@ -77,17 +78,10 @@ class Model_AAA:
         # запускаем цикл по параметру (частотной полосе)
         len_var = self.out_set[2].shape[0]
         for i in range(len_var):
-            # вычисление параметра
-            if id_script == 6:
-                var_band = self.out_set[2][i]
-                print("var_band = ", var_band)
-            elif id_script == 4:
-                var_band = 0.1
-            else:
-                var_band = 0
-            par_band = self.f_cen * var_band
+            # получение текущей частотной полосы
+            par_band = self.get_varpar(id_script, i)
             # создание векторов изменения сигналов и помех от времени
-            self.list_env.calc_out(self.out_set, self.f_cen, par_band, id_script)
+            self.list_env.calc_out(self.out_set, id_script, par_band)
             self.out_env = self.list_env.get_out()
             # вычисление сигналов с антенной решётки
             self.list_array.calc_out(self.out_set, self.out_env)
@@ -183,3 +177,19 @@ class Model_AAA:
         self.vec_meanoutdepth = np.zeros(shape=[len_var, len_int])
         self.vec_meanoutatten = np.zeros(shape=[len_var, len_sig])
         self.vec_meanoutsnir = np.zeros(shape=[len_var])
+
+    def get_varpar(self, id_script, i):
+        # выдать значение текущей частотной полосы
+        if id_script == 4:
+            # временной режим по углам
+            par_band = self.f_cen * 0.1
+        elif id_script == 5:
+            # временной рандомный режим
+            par_band = self.f_cen * 0.1
+        elif id_script == 6:
+            # параметрический режим
+            par_band = self.f_cen * self.out_set[2][i]
+            print("var_band = ", self.out_set[2][i])
+        else:
+            par_band = 0
+        return par_band

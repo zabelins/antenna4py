@@ -28,9 +28,9 @@ class Control:
         self.list_set.print()
         self.list_file.print()
 
-    def mode_static(self):
+    def mode_static(self, id_script):
         # расчёт диаграммы направленности
-        self.model_antenna.calc_out(0)
+        self.model_antenna.calc_out(id_script)
         self.print_calc()
 
     def mode_dynamic1nd(self, id_script):
@@ -39,9 +39,9 @@ class Control:
         self.print_calc()
         self.save_learn()
 
-    def mode_dynamic2nd(self):
+    def mode_dynamic2nd(self, id_script):
         # расчёт усреднённых характеристик
-        self.model_antenna.calc_out(6)
+        self.model_antenna.calc_out(id_script)
         self.print_calc()
 
     def mode_train(self):

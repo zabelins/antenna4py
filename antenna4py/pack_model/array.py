@@ -19,11 +19,15 @@ class Array:
         self.f_cen = []
         # параметры множителя решётки
         self.array_N = []
+        self.array_nois = []
         # тестовый вектор
         self.vec_test = []
-        # вектора эквивалентных углов
+        # временные вектора эквивалентных углов
         self.vec_eqdegsig = []
         self.vec_eqdegint = []
+        # временной вектор осшп
+        self.vec_snir = []
+        self.mean_snir = []
         # входные комплексные вектора
         self.vec_sig = []
         self.vec_int = []
@@ -36,6 +40,7 @@ class Array:
     def set(self, init):
         self.f_cen = np.array(init[0])
         self.array_N = np.array(init[1])
+        self.array_nois = np.array(init[5])
 
     def get(self):
         res = []
@@ -55,11 +60,12 @@ class Array:
         vec_pattern = out_set[0]
         vec_sigdeg, vec_sigamp, vec_sigband = out_env[0], out_env[1], out_env[2]
         vec_intdeg, vec_intamp, vec_intband = out_env[3], out_env[4], out_env[5]
-        vec_noisamp = out_env[6]
         # вычисление входного комплексного сигнала по элементам и углам
         self.calc_testsig(vec_pattern, vec_sigamp)
         # вычисление входных сигналов и помех от времени
-        self.calc_realsig(vec_sigdeg, vec_sigamp, vec_sigband, vec_intdeg, vec_intamp, vec_intband, vec_noisamp)
+        self.calc_realsig(vec_sigdeg, vec_sigamp, vec_sigband, vec_intdeg, vec_intamp, vec_intband)
+        # вычисление входного осшп
+        self.calc_snir(vec_sigamp, vec_intamp)
 
     def get_out1nd(self):
         # получить вектора для отрисовки ДН
@@ -67,6 +73,7 @@ class Array:
         res.append(self.vec_test)
         res.append(self.vec_eqdegsig)
         res.append(self.vec_eqdegint)
+        res.append(self.vec_snir)
         return res
 
     def get_out2nd(self):
@@ -84,13 +91,14 @@ class Array:
         # проверка типа векторов и матриц на ndarray и list
         bool_res1 = cl.is_list([self.vec_eqdegsig, self.vec_eqdegint])
         bool_res2 = cl.is_ndarray([self.vec_test, self.vec_sig, self.vec_int, self.vec_nois])
-        bool_res3 = cl.is_ndarray([self.matrix_sig, self.matrix_int, self.matrix_nois])
+        bool_res3 = cl.is_ndarray([self.vec_snir, self.matrix_sig, self.matrix_int, self.matrix_nois])
         # вывод размерностей векторов
         if (bool_res1 == True) and (bool_res2 == True) and (bool_res3 == True):
             print("Размерности векторов и матриц от антенной решётки:")
             print("\tvec_test.shape = ", self.vec_test.shape)
             print("\tvec_eqdegsig.shape = ", len(self.vec_eqdegsig))
             print("\tvec_eqdegint.shape = ", len(self.vec_eqdegint))
+            print("\tvec_snir.shape = ", self.vec_snir.shape)
             print("\tvec_sig.shape = ", self.vec_sig.shape)
             print("\tvec_int.shape = ", self.vec_int.shape)
             print("\tvec_nois.shape = ", self.vec_nois.shape)
@@ -122,7 +130,7 @@ class Array:
                 buf[j] = self.list_factor.get_signal(amp, deg, num, deg_rand)
             self.vec_test[i] = buf
 
-    def calc_realsig(self, vec_sigdeg, vec_sigamp, vec_sigband, vec_intdeg, vec_intamp, vec_intband, vec_noisamp):
+    def calc_realsig(self, vec_sigdeg, vec_sigamp, vec_sigband, vec_intdeg, vec_intamp, vec_intband):
         # вычисление векторов входных сигналов и помех в зависимости от времени для заданных углов прихода
         len_time, len_sig, len_int = [vec_sigdeg.shape[0], vec_sigdeg.shape[1], vec_intdeg.shape[1]]
         # расчёт вектора и параметров эквивалентных сигналов
@@ -162,8 +170,8 @@ class Array:
             self.vec_sig[i] = self.edit_vector(self.vec_sig[i], vec_coefsig[i], gmaxlen_eqsig)
             self.vec_int[i] = self.edit_vector(self.vec_int[i], vec_coefint[i], gmaxlen_eqint)
             # вычисление вектора и матрицы для шума (!!! vec_nois должен быть рандомным !!!)
-            self.vec_nois[i] = np.ones(shape=[1, self.array_N], dtype=complex) * vec_noisamp[i]
-            self.matrix_nois[i] = np.eye(self.array_N, dtype=complex) * math.pow(vec_noisamp[i], 2)
+            self.vec_nois[i] = np.ones(shape=[1, self.array_N], dtype=complex) * self.array_nois
+            self.matrix_nois[i] = np.eye(self.array_N, dtype=complex) * math.pow(self.array_nois, 2)
 
     def calc_vector(self, var_amp, var_eqdeg, len_eqsig, maxlen_eqsig):
         # вычисление вектора сигнала для одного момента времени
@@ -244,3 +252,22 @@ class Array:
         for i in range(gmaxlen_eqsig):
             var_sig[i] = var_sig[i] * math.sqrt(var_coefsig[i])
         return var_sig
+
+    def calc_snir(self, vec_sigamp, vec_intamp):
+        # вычислить временную зависимость осшп
+        len_time = vec_sigamp.shape[0]
+        self.vec_snir = np.zeros(shape=[len_time])
+        pow_nois = np.square(self.array_nois)
+        # запускаем цикл по времени
+        for i in range(len_time):
+            # перевод в мощности
+            pow_sig = np.square(vec_sigamp[i])
+            pow_int = np.square(vec_intamp[i])
+            # суммирование
+            pow_sig = pow_sig.sum()
+            pow_int = pow_int.sum()
+            # вычисление осшп
+            self.vec_snir[i] = pow_sig / (pow_int + pow_nois)
+        # вычисление среднего осшп
+        self.mean_snir = self.vec_snir.mean()
+        print("mean_snir = ", self.mean_snir)

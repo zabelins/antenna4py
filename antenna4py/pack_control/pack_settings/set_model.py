@@ -11,7 +11,7 @@ class Set_model:
         self.pattern_step = 0.25
         # диапазон времени, 1 ед = 1 мс
         self.time_line = [0, 10]
-        self.time_step = 0.01
+        self.time_step = 0.05
         # для Калмана T=1, T/2=0.5, T/4=0.25
         # по умолчанию 0.05
         # диапазон параметров, 1 ед = 10%
