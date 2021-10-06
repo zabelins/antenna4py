@@ -46,12 +46,14 @@ class Array:
         res = []
         res.append(self.f_cen)
         res.append(self.array_N)
+        res.append(self.array_nois)
         return res
 
     def print(self):
         print("Параметры модели антенной решётки (L2):")
         print("\tf_cen = ", self.f_cen)
         print("\tarray_N = ", self.array_N)
+        print("\tarray_nois = ", self.array_nois)
         self.list_factor.print()
         self.list_element.print()
 
@@ -133,7 +135,7 @@ class Array:
 
     def calc_realsig(self, vec_sigdeg, vec_sigamp, vec_sigband, vec_intdeg, vec_intamp, vec_intband):
         # вычисление векторов входных сигналов и помех в зависимости от времени для заданных углов прихода
-        len_time, len_sig, len_int = [vec_sigdeg.shape[0], vec_sigdeg.shape[1], vec_intdeg.shape[1]]
+        len_time, len_sig, len_int = vec_sigdeg.shape[0], vec_sigdeg.shape[1], vec_intdeg.shape[1]
         # расчёт вектора и параметров эквивалентных сигналов
         buf = self.list_factor.get_eqvec(vec_sigdeg, vec_sigband)
         self.vec_eqdegsig, len_eqsig, sumlen_eqsig, l0_maxsig, f_otnsig = buf

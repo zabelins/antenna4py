@@ -44,7 +44,7 @@ class Neuro_alg:
         print("\talg_crit = ", self.alg_crit)
         print("\tcontrol_type = ", self.control_type)
 
-    def calc_out(self, vec_sig, vec_int, vec_nois):
+    def calc_out(self, vec_in):
         # вычисление с помощью НС
         if os.path.exists(self.name_dir):
             # отключение предупреждений
@@ -54,10 +54,10 @@ class Neuro_alg:
             net_loaded = keras.models.load_model(self.name_dir)
         else:
             print("Сохранённая НС не обнаружена")
-            len_time, len_num = [vec_sig.shape[0], vec_sig.shape[2]]
+            len_time, len_num = [vec_in.shape[0], vec_in.shape[2]]
             return np.ones(shape=[len_time, len_num], dtype=complex)
         # преобразование входных векторов во входы НС
-        self.create_in(vec_sig, vec_int, vec_nois)
+        self.create_in(vec_in)
         # проверка значений
         len_time, len_num = self.x_in.shape[0], self.x_in.shape[1]
         self.y_out = np.zeros(shape=[len_time, len_num])
@@ -70,14 +70,8 @@ class Neuro_alg:
         # возврат вектора ВК ААР
         return self.vec_outweight
 
-    def create_in(self, vec_sig, vec_int, vec_nois):
+    def create_in(self, vec_in):
         # преобразование входных векторов во входы НС
-        # вычислить ВК
-        len_time, len_num = vec_sig.shape[0], vec_sig.shape[2]
-        vec_in = np.zeros(shape=[len_time, len_num], dtype=complex)
-        # суммируем вектора для каждого момента времени
-        for i in range(len_time):
-            vec_in[i] = self.get_vecin(vec_sig[i], vec_int[i], vec_nois[i])
         # разбиение на амплитуды и фазы
         self.calc_ampphi(vec_in)
         # нормировка

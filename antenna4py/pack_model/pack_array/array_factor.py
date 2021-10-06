@@ -106,9 +106,9 @@ class Factor:
     def get_eqvec(self, vec_deg, vec_fband):
         # вычисление временного вектора эквивалентных углов сигнала
         len_time, len_sig = vec_deg.shape[0], vec_deg.shape[1]
-        vec_eqdegsig = []
         len_eqsig, sumlen_eqsig = np.zeros([len_time, len_sig]), np.zeros([len_time])
         l0_maxsig, f_otnsig = np.zeros([len_time, len_sig]), np.zeros([len_time, len_sig])
+        vec_eqdegsig = []
         for i in range(len_time):
             buf_eqdeg = []
             for j in range(len_sig):

@@ -99,11 +99,11 @@ class Model_AAA:
                 len_sig, len_int = self.out_env[0].shape[1], self.out_env[3].shape[1]
                 self.init_vecmean(len_var, len_sig, len_int)
             # сохранение усреднённых параметров
-            self.vec_meanindepth[i] = self.out_syntnet[6]
-            self.vec_meaninatten[i] = self.out_syntnet[7]
+            self.vec_meanindepth[i] = self.out_syntnet[8]
+            self.vec_meaninatten[i] = self.out_syntnet[9]
             self.vec_meaninsnir[i] = self.out_proc1nd[2]
-            self.vec_meanoutdepth[i] = self.out_syntnet[8]
-            self.vec_meanoutatten[i] = self.out_syntnet[9]
+            self.vec_meanoutdepth[i] = self.out_syntnet[10]
+            self.vec_meanoutatten[i] = self.out_syntnet[11]
             self.vec_meanoutsnir[i] = self.out_proc1nd[3]
             self.vec_meansnir[i] = self.out_array1nd[4]
 
