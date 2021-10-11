@@ -13,11 +13,12 @@ class Graph:
         self.id = id
         self.list_pattern = pg.pattern.Pattern(1)
         self.list_signals = pg.signals.Signals(1)
+        self.list_output = pg.output.Output(1)
         self.list_adapt = pg.adapt.Adapt(1)
         self.animation = []
 
     def set(self, init):
-        self.animation = init[12]
+        self.animation = init[15]
 
     def get(self):
         res = []
@@ -29,6 +30,7 @@ class Graph:
         print("\tanimation = ", self.animation)
         self.list_pattern.print()
         self.list_signals.print()
+        self.list_output.print()
         self.list_adapt.print()
 
     def draw_pattern(self, vec, time):
@@ -66,7 +68,7 @@ class Graph:
             y2_deg.append(vec_sigdeg[i])
             y2_band.append(vec_sigband[i])
         # подписи графиков
-        signals_strleg = ["сигнал 1", "сигнал 2", "сигнал 3", "сигнал 4", "сигнал 5"]
+        signals_strleg = ["помеха 1", "помеха 2", "помеха 3", "помеха 4", "помеха 5"]
         # отрисовка графиков
         self.list_signals.draw_graph(x1, y1_amp, y1_deg, y1_band, signals_strleg)
         #self.list_signals.draw_graph(x2, y2_amp, y2_deg, y2_band, signals_strleg)
@@ -92,9 +94,20 @@ class Graph:
         # подписи графиков
         leg_depth = ["помеха 1", "помеха 2", "помеха 3", "помеха 4", "помеха 5"]
         leg_atten = ["сигнал 1", "сигнал 2", "сигнал 3", "сигнал 4", "сигнал 5"]
-        leg_snir = ["осшп исх.", "осшп опт."]
+        leg_snir = ["до оптимизации", "после оптимизации"]
         # отрисовка графиков
         self.list_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 0)
+
+    def draw_output(self, vec):
+        # распаковка исходных данных
+        vec_time, vec_insignal, vec_outsignal = vec[0], vec[1], vec[2]
+        # выходные сигналы
+        x_1 = [vec_time, vec_time]
+        y_1 = [np.abs(vec_insignal ** 2), np.abs(vec_outsignal ** 2)]
+        # подписи графиков
+        output_strleg = ["до", "после"]
+        # отрисовка графиков
+        self.list_output.draw_graph(x_1, y_1, output_strleg)
 
     def draw_mean(self, vec):
         # распаковка исходных данных

@@ -64,6 +64,7 @@ class View:
         # инициализация параметров интерфейса уровня L3
         self.list_graph.list_pattern.set(vec_setview)
         self.list_graph.list_signals.set(vec_setview)
+        self.list_graph.list_output.set(vec_setview)
         self.list_graph.list_adapt.set(vec_setview)
 
     def print(self):
@@ -129,6 +130,8 @@ class View:
         self.show_signals()
         # вывод графика характеристик адаптации
         self.show_adapt()
+        # вывод графика характеристик выходного сигнала
+        self.show_output()
 
     def mode_dynamic2nd(self):
         # режим расчёта временных характеристик ААР (N параметров)
@@ -147,6 +150,8 @@ class View:
         self.show_signals()
         # вывод графика характеристик адаптации
         self.show_adapt()
+        # вывод графика характеристик выходного сигнала
+        self.show_output()
         # вывод графика усреднённых характеристик адаптации
         self.show_mean()
 
@@ -172,24 +177,24 @@ class View:
         self.vec_eqdegint = out_model[2][2]
         self.vec_snir = out_model[2][3]
         # временные характеристики адаптации
-        self.vec_insnir = out_model[3][0]
-        self.vec_outsnir = out_model[3][1]
         self.vec_inpattern = out_model[4][0]
         self.vec_indepth = out_model[4][1]
         self.vec_inatten = out_model[4][2]
+        self.vec_insnir = out_model[3][0]
         self.vec_insignal = out_model[4][3]
         self.vec_outpattern = out_model[4][4]
         self.vec_outdepth = out_model[4][5]
         self.vec_outatten = out_model[4][6]
+        self.vec_outsnir = out_model[3][1]
         self.vec_outsignal = out_model[4][7]
         # параметрические характеристики адаптации
-        self.vec_meanindepth = out_model[5][0]
-        self.vec_meaninatten = out_model[5][1]
-        self.vec_meaninsnir = out_model[5][2]
-        self.vec_meanoutdepth = out_model[5][3]
-        self.vec_meanoutatten = out_model[5][4]
-        self.vec_meanoutsnir = out_model[5][5]
-        self.vec_meansnir = out_model[5][6]
+        self.vec_meansnir = out_model[5][0]
+        self.vec_meanindepth = out_model[5][1]
+        self.vec_meaninatten = out_model[5][2]
+        self.vec_meaninsnir = out_model[5][3]
+        self.vec_meanoutdepth = out_model[5][4]
+        self.vec_meanoutatten = out_model[5][5]
+        self.vec_meanoutsnir = out_model[5][6]
 
     def show_pattern(self):
         # вывод графика диаграммы направленности
@@ -198,7 +203,7 @@ class View:
 
     def show_signals(self):
         # вывод графиков временных характеристик сигналов
-        vec = self.get_vectime()
+        vec = self.get_vecsignals()
         self.list_graph.draw_signals(vec)
 
     def show_adapt(self):
@@ -206,9 +211,15 @@ class View:
         vec = self.get_vecadapt()
         self.list_graph.draw_adapt(vec)
 
+    def show_output(self):
+        # вывод графиков характеристик выходного сигнала
+        pass
+        vec = self.get_vecoutput()
+        self.list_graph.draw_output(vec)
+
     def show_mean(self):
         # вывод графиков усреднённых характеристик адаптации
-        vec = self.get_vecmeanadapt()
+        vec = self.get_vecmean()
         self.list_graph.draw_mean(vec)
 
     def info_pattern(self):
@@ -218,13 +229,13 @@ class View:
 
     def info_adapt(self):
         # вывод информации об адаптации
-        vec_meanadapt = self.get_vecmeanadapt()
-        self.list_report.info_adapt(vec_meanadapt)
+        vec_mean = self.get_vecmean()
+        self.list_report.info_adapt(vec_mean)
 
     def info_mean(self):
         # вывод информации об адаптации
-        vec_meanadapt = self.get_vecmeanadapt()
-        self.list_report.info_mean(vec_meanadapt)
+        vec_mean = self.get_vecmean()
+        self.list_report.info_mean(vec_mean)
 
     def get_vecpattern(self):
         # получить вектора для диаграммы направленности
@@ -238,7 +249,7 @@ class View:
         res.append(self.vec_outpattern)
         return res
 
-    def get_vectime(self):
+    def get_vecsignals(self):
         # получить вектора для временных характеристик сигналов
         res = []
         res.append(self.vec_time)
@@ -265,7 +276,15 @@ class View:
         res.append(self.vec_snir)
         return res
 
-    def get_vecmeanadapt(self):
+    def get_vecoutput(self):
+        # получить вектора для характеристик выходного сигнала
+        res = []
+        res.append(self.vec_time)
+        res.append(self.vec_insignal)
+        res.append(self.vec_outsignal)
+        return res
+
+    def get_vecmean(self):
         # получить вектора для усреднённых характеристик адаптации
         res = []
         res.append(self.vec_var)

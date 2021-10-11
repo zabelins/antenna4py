@@ -7,7 +7,7 @@ if __name__ == "__main__":
     print("Вы запустили модуль динамической модели ААР (L1)")
     print("Модуль использует пакет:", pack_model.NAME)
 
-class Model_AAA:
+class Model_antenna:
     """Класс динамического моделирования адаптивной антенны"""
 
     def __init__(self):
@@ -27,13 +27,13 @@ class Model_AAA:
         self.out_proc1nd = []
         self.out_proc2nd = []
         self.out_syntnet = []
+        self.vec_meansnir = []
         self.vec_meanindepth = []
         self.vec_meaninatten = []
         self.vec_meaninsnir = []
         self.vec_meanoutdepth = []
         self.vec_meanoutatten = []
         self.vec_meanoutsnir = []
-        self.vec_meansnir = []
 
     def set(self, obj_set):
         # инициализация параметров модели уровня L1
@@ -99,24 +99,24 @@ class Model_AAA:
                 len_sig, len_int = self.out_env[0].shape[1], self.out_env[3].shape[1]
                 self.init_vecmean(len_var, len_sig, len_int)
             # сохранение усреднённых параметров
+            self.vec_meansnir[i] = self.out_array1nd[4]
             self.vec_meanindepth[i] = self.out_syntnet[8]
             self.vec_meaninatten[i] = self.out_syntnet[9]
             self.vec_meaninsnir[i] = self.out_proc1nd[2]
             self.vec_meanoutdepth[i] = self.out_syntnet[10]
             self.vec_meanoutatten[i] = self.out_syntnet[11]
             self.vec_meanoutsnir[i] = self.out_proc1nd[3]
-            self.vec_meansnir[i] = self.out_array1nd[4]
 
     def get_out(self):
         # получить усреднённые характеристики
         res = []
+        res.append(self.vec_meansnir)
         res.append(self.vec_meanindepth)
         res.append(self.vec_meaninatten)
         res.append(self.vec_meaninsnir)
         res.append(self.vec_meanoutdepth)
         res.append(self.vec_meanoutatten)
         res.append(self.vec_meanoutsnir)
-        res.append(self.vec_meansnir)
         return res
 
     def get_out1nd(self):
@@ -131,18 +131,18 @@ class Model_AAA:
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res1 = cl.is_ndarray([self.vec_meanindepth, self.vec_meaninatten, self.vec_meaninsnir, self.vec_meansnir])
+        bool_res1 = cl.is_ndarray([self.vec_meansnir, self.vec_meanindepth, self.vec_meaninatten, self.vec_meaninsnir])
         bool_res2 = cl.is_ndarray([self.vec_meanoutdepth, self.vec_meanoutatten, self.vec_meanoutsnir])
         # вывод размерностей векторов
         if (bool_res1 == True) and (bool_res2 == True):
             print("Размерности векторов модели ААР:")
+            print("\tvec_meansnir.shape = ", self.vec_meansnir.shape)
             print("\tvec_meanindepth.shape = ", self.vec_meanindepth.shape)
             print("\tvec_meaninatten.shape = ", self.vec_meaninatten.shape)
             print("\tvec_meaninsnir.shape = ", self.vec_meaninsnir.shape)
             print("\tvec_meanoutdepth.shape = ", self.vec_meanoutdepth.shape)
             print("\tvec_meanoutatten.shape = ", self.vec_meanoutatten.shape)
             print("\tvec_meanoutsnir.shape = ", self.vec_meanoutsnir.shape)
-            print("\tvec_meansnir.shape = ", self.vec_meansnir.shape)
 
     def print_calc(self):
         # вывод информации о ходе вычислений

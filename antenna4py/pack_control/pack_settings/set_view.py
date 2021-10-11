@@ -16,6 +16,10 @@ class Set_view:
         self.signals_style = 1
         self.signals_mean = 0
         self.signals_legend = 1
+        # настройки графика сигналов
+        self.output_style = 1
+        self.output_mean = 0
+        self.output_legend = 1
         # настройки графика адаптации
         self.adapt_style = 1
         self.adapt_mean = 1
@@ -33,11 +37,14 @@ class Set_view:
         self.signals_style = init[5]
         self.signals_mean = init[6]
         self.signals_legend = init[7]
-        self.adapt_style = init[8]
-        self.adapt_mean = init[9]
-        self.adapt_legend = init[10]
-        self.approx = init[11]
-        self.animation = init[12]
+        self.output_style = init[8]
+        self.output_mean = init[9]
+        self.output_legend = init[10]
+        self.adapt_style = init[11]
+        self.adapt_mean = init[12]
+        self.adapt_legend = init[13]
+        self.approx = init[14]
+        self.animation = init[15]
     def get(self):
         res = []
         res.append(self.pattern_style)
@@ -48,6 +55,9 @@ class Set_view:
         res.append(self.signals_style)
         res.append(self.signals_mean)
         res.append(self.signals_legend)
+        res.append(self.output_style)
+        res.append(self.output_mean)
+        res.append(self.output_legend)
         res.append(self.adapt_style)
         res.append(self.adapt_mean)
         res.append(self.adapt_legend)

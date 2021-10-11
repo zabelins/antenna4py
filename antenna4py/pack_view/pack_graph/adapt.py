@@ -23,10 +23,10 @@ class Adapt:
         self.vec_lwd2 = []
 
     def set(self, init):
-        self.adapt_style = init[8]
-        self.adapt_mean = init[9]
-        self.adapt_legend = init[10]
-        self.approx = init[11]
+        self.adapt_style = init[11]
+        self.adapt_mean = init[12]
+        self.adapt_legend = init[13]
+        self.approx = init[14]
         self.vec_col1 = ['#000000', '#d1281f', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.2, 1.2, 1.2, 1.2, 1.2]

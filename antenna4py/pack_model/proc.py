@@ -140,11 +140,9 @@ class Proc:
             # вычисление осшп
             self.vec_insnir[i] = self.get_pow2db(abs(power_insig)/(abs(power_inint)+abs(power_innois)))
             self.vec_outsnir[i] = self.get_pow2db(abs(power_outsig) / (abs(power_outint) + abs(power_outnois)))
-            self.mean_insnir = self.mean_insnir + self.vec_insnir[i]
-            self.mean_outsnir = self.mean_outsnir + self.vec_outsnir[i]
-        # деление на общее количество
-        self.mean_insnir = self.mean_insnir / len_time
-        self.mean_outsnir = self.mean_outsnir / len_time
+        # вычисление среднего осшп
+        self.mean_insnir = self.vec_insnir.mean()
+        self.mean_outsnir = self.vec_outsnir.mean()
 
     def calc_delay(self):
         # вычисление задержки по времени на вычисления
