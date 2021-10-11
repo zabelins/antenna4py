@@ -89,12 +89,12 @@ class Graph:
             x2.append(vec_time)
             y_atten.append(vec_outatten[i] - vec_inatten[i])
         # формируем вектора x и y для осшп
-        x3 = [vec_time, vec_time]
-        y_snir = [vec_insnir, vec_outsnir]
+        x3 = [vec_time, vec_time, vec_time]
+        y_snir = [vec_snir, vec_insnir, vec_outsnir]
         # подписи графиков
         leg_depth = ["помеха 1", "помеха 2", "помеха 3", "помеха 4", "помеха 5"]
         leg_atten = ["сигнал 1", "сигнал 2", "сигнал 3", "сигнал 4", "сигнал 5"]
-        leg_snir = ["до оптимизации", "после оптимизации"]
+        leg_snir = ["env","W_0", "W_opt"]
         # отрисовка графиков
         self.list_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 0)
 

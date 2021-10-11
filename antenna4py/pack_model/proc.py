@@ -91,15 +91,13 @@ class Proc:
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res1 = cl.is_ndarray([self.vec_insnir, self.vec_outsnir, self.mean_insnir, self.mean_outsnir])
+        bool_res1 = cl.is_ndarray([self.vec_insnir, self.vec_outsnir])
         bool_res2 = cl.is_ndarray([self.vec_inweight, self.vec_outweight])
         # вывод размерностей векторов
         if (bool_res1 == True) and (bool_res2 == True):
             print("Размерности векторов ВК:")
             print("\tvec_insnir.shape = ", self.vec_insnir.shape)
             print("\tvec_outsnir.shape = ", self.vec_outsnir.shape)
-            print("\tmean_insnir.shape = ", self.mean_insnir.shape)
-            print("\tmean_outsnir.shape = ", self.mean_outsnir.shape)
             print("\tvec_inweight.shape = ", self.vec_inweight.shape)
             print("\tvec_outweight.shape = ", self.vec_outweight.shape)
         else:
@@ -141,8 +139,8 @@ class Proc:
             self.vec_insnir[i] = self.get_pow2db(abs(power_insig)/(abs(power_inint)+abs(power_innois)))
             self.vec_outsnir[i] = self.get_pow2db(abs(power_outsig) / (abs(power_outint) + abs(power_outnois)))
         # вычисление среднего осшп
-        self.mean_insnir = self.vec_insnir.mean()
-        self.mean_outsnir = self.vec_outsnir.mean()
+        self.mean_insnir = np.mean(self.vec_insnir)
+        self.mean_outsnir = np.mean(self.vec_outsnir)
 
     def calc_delay(self):
         # вычисление задержки по времени на вычисления

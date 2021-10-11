@@ -168,7 +168,7 @@ class Array:
             self.vec_sig[i] = self.edit_vector(self.vec_sig[i], vec_coefsig[i], gmaxlen_eqsig)
             self.vec_int[i] = self.edit_vector(self.vec_int[i], vec_coefint[i], gmaxlen_eqint)
             # вычисление вектора и матрицы для шума (!!! vec_nois должен быть рандомным !!!)
-            self.vec_nois[i] = np.ones(shape=[1, self.array_N], dtype=complex) * self.array_nois
+            self.vec_nois[i] = np.zeros(shape=[1, self.array_N], dtype=complex) * self.array_nois
             self.matrix_nois[i] = np.eye(self.array_N, dtype=complex) * math.pow(self.array_nois, 2)
 
     def calc_vector(self, var_amp, var_eqdeg, len_eqsig, maxlen_eqsig):
