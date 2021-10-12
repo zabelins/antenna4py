@@ -96,7 +96,7 @@ class Array:
         bool_res2 = cl.is_ndarray([self.vec_test, self.vec_sig, self.vec_int, self.vec_nois])
         bool_res3 = cl.is_ndarray([self.vec_snir, self.matrix_sig, self.matrix_int, self.matrix_nois])
         # вывод размерностей векторов
-        if (bool_res1 == True) and (bool_res2 == True) and (bool_res3 == True):
+        if bool_res1 == True and bool_res2 == True and bool_res3 == True:
             print("Размерности векторов и матриц от антенной решётки:")
             print("\tvec_test.shape = ", self.vec_test.shape)
             print("\tvec_eqdegsig.shape = ", len(self.vec_eqdegsig))
@@ -186,7 +186,7 @@ class Array:
                 # запускаем цикл по элементам АР
                 vec_buf = np.zeros(shape=[self.array_N], dtype=complex)
                 for k in range(self.array_N):
-                    if (var_eqdeg[i][j] != 361.0):
+                    if var_eqdeg[i][j] != 361.0:
                         # вычисление текущего номера элемента
                         num = k + 1
                         # амплитуды для заданного элемента
@@ -222,7 +222,7 @@ class Array:
             for j in range(int(l0_max[i])+1):
                 # вычисление коэффициена дискретного разложения Фурье
                 coef_fourier = self.list_factor.get_eqamp(self.array_N, l0_max[i], j, f_otn[i])
-                if (j == 0):
+                if j == 0:
                     # расчёт корреляционной матрицы реального сигнала
                     var_vec = vec[index].T
                     matrix_buf = coef_fourier * np.outer(np.conj(var_vec), var_vec.T)

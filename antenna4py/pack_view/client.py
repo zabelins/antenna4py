@@ -54,7 +54,7 @@ class Client:
                 # ввод номера действия
                 input_buf = int(input("Введите номер действия: "))
                 # проверка наличия действия
-                if (input_buf < 0) or (input_buf > 4):
+                if input_buf < 0 or input_buf > 4:
                     print("\tтакого действия нет")
                 else:
                     # обработка выхода из программы
@@ -79,7 +79,7 @@ class Client:
                 # ввод номера действия
                 input_buf = int(input("Введите номер действия: "))
                 # проверка наличия действия
-                if (input_buf < 0) or (input_buf > 4):
+                if input_buf < 0 or input_buf > 4:
                     print("\tтакого действия нет")
                 else:
                     res = 1
@@ -94,19 +94,19 @@ class Client:
 
     def print_namemode(self, id_mode):
         # вывод в консоль названия действия
-        if (id_mode == 1):
+        if id_mode == 1:
             print(NAME_MODE1)
-        if (id_mode == 2):
+        elif id_mode == 2:
             print(NAME_MODE2)
-        if (id_mode == 3):
+        elif id_mode == 3:
             print(NAME_MODE3)
-        if (id_mode == 4):
+        elif id_mode == 4:
             print(NAME_MODE4)
-        if (id_mode == 5):
+        elif id_mode == 5:
             print(NAME_MODE5)
-        if (id_mode == 6):
+        elif id_mode == 6:
             print(NAME_MODE6)
-        if (id_mode == 7):
+        elif id_mode == 7:
             print(NAME_MODE7)
 
     def input_script(self):

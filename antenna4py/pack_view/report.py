@@ -48,7 +48,7 @@ class Report:
         pattern_snirio = self.get_round(pattern_snirio)
         pattern_snirdif = self.get_round(pattern_snirdif)
         # вывод результатов
-        if (self.is_title == 0):
+        if self.is_title == 0:
             print("\nРЕЗУЛЬТАТЫ РАСЧЁТА МОДЕЛИ ААР")
             self.is_title = 1
         print("Для диаграммы направленности:")
@@ -87,7 +87,7 @@ class Report:
         time_snirio = self.get_round(time_snirio)
         time_snirdif = self.get_round(time_snirdif)
         # вывод результатов
-        if (self.is_title == 0):
+        if self.is_title == 0:
             print("\nРЕЗУЛЬТАТЫ РАСЧЁТА МОДЕЛИ ААР")
             self.is_title = 1
         print("Для временных характеристик адаптации:")
@@ -127,7 +127,7 @@ class Report:
         par_snirio = self.get_round(par_snirio)
         par_snirdif = self.get_round(par_snirdif)
         # вывод результатов
-        if (self.is_title == 0):
+        if self.is_title == 0:
             print("\nРЕЗУЛЬТАТЫ РАСЧЁТА МОДЕЛИ ААР")
             self.is_title = 1
         print("Для параметрических характеристик адаптации:")

@@ -97,7 +97,7 @@ class Env:
         bool_res1 = cl.is_ndarray([self.vec_sigdeg, self.vec_sigamp, self.vec_sigband])
         bool_res2 = cl.is_ndarray([self.vec_intdeg, self.vec_intamp, self.vec_intband])
         # вывод размерностей векторов
-        if (bool_res1 == True) and (bool_res2 == True):
+        if bool_res1 == True and bool_res2 == True:
             print("Размерности векторов сигналов и помех от времени:")
             print("\tvec_sigdeg.shape = ", self.vec_sigdeg.shape)
             print("\tvec_sigamp.shape = ", self.vec_sigamp.shape)
@@ -111,15 +111,15 @@ class Env:
     def get_modegen(self, id_script, par_band):
         # выдать номера режимов для генератора
         mode_amp, mode_deg, mode_band, freq_amp = 0, 0, 0, 0
-        if (id_script >= 1) and (id_script <= 3):
+        if id_script >= 1 and id_script <= 3:
             # если амплитудная модуляция, 1 КГц
             mode_amp = id_script
             freq_amp = 1 * math.pow(10, 3)
-        elif (id_script == 5):
+        elif id_script == 5:
             # если рандомные помехи, максимальная полоса 10%
             mode_amp, mode_deg, mode_band = 4, 2, 1
             self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([par_band])
-        elif (id_script == 4) or (id_script == 6):
+        elif id_script == 4 or id_script == 6:
             # если изменение углов
             mode_deg = 1
             self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([par_band])

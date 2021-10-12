@@ -94,7 +94,7 @@ class Graph:
         # подписи графиков
         leg_depth = ["помеха 1", "помеха 2", "помеха 3", "помеха 4", "помеха 5"]
         leg_atten = ["сигнал 1", "сигнал 2", "сигнал 3", "сигнал 4", "сигнал 5"]
-        leg_snir = ["env","W_0", "W_opt"]
+        leg_snir = ["на входе ААР", "исходные ВК", "оптимальные ВК"]
         # отрисовка графиков
         self.list_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 0)
 
@@ -105,7 +105,7 @@ class Graph:
         x_1 = [vec_time, vec_time]
         y_1 = [np.abs(vec_insignal ** 2), np.abs(vec_outsignal ** 2)]
         # подписи графиков
-        output_strleg = ["до", "после"]
+        output_strleg = ["исходные ВК", "оптимальные ВК"]
         # отрисовка графиков
         self.list_output.draw_graph(x_1, y_1, output_strleg)
 
@@ -128,7 +128,7 @@ class Graph:
         # подписи графиков
         leg_depth = ["помеха 1", "помеха 2", "помеха 3", "помеха 4", "помеха 5"]
         leg_atten = ["сигнал 1", "сигнал 2", "сигнал 3", "сигнал 4", "сигнал 5"]
-        leg_snir = ["осшп исх.", "осшп опт."]
+        leg_snir = ["исходные ВК", "оптимальные ВК"]
         # отрисовка графиков
         self.list_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 1)
 

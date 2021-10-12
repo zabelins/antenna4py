@@ -145,7 +145,7 @@ class Factor:
         # обозначение выходящих за пределы ДН углов числом 361
         range_show = [-90, 90]
         for i in range(vec_eqdeg.shape[0]):
-            if (vec_eqdeg[i] < range_show[0]) or (vec_eqdeg[i] > range_show[1]):
+            if vec_eqdeg[i] < range_show[0] or vec_eqdeg[i] > range_show[1]:
                 vec_eqdeg[i] = 361
         return [vec_eqdeg, len_eqsig, l0_max, f_otn]
 
@@ -153,7 +153,7 @@ class Factor:
         # вычисление множителя дискретного разложения Фурье для эквивалентных сигналов
         l0_maxreal = round(num_all / 2)
         coef_fourier = 0.0
-        if (int(l0_max) != 0):
+        if int(l0_max) != 0:
             for k in range(int(l0_maxreal)+1):
                 arg_func1 = (f_otn * k * self.array_beta * math.pi) / 2
                 arg_func2 = (2 * math.pi * k * l_var) / (l0_maxreal + 1)
@@ -165,7 +165,7 @@ class Factor:
 
     def get_freqdist(self, x_var):
         # форма распределения частот входного сигнала
-        if (x_var != 0.0):
+        if x_var != 0.0:
             # соответствует прямоугольному импульсу
             res = np.sin(x_var) / x_var
         else:

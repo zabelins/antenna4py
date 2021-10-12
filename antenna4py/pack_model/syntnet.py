@@ -94,7 +94,7 @@ class Syntnet:
         bool_res2 = cl.is_ndarray([self.vec_outpattern, self.vec_outdeph, self.vec_outatten, self.vec_outsignal])
         bool_res3 = cl.is_ndarray([self.mean_indeph, self.mean_inatten, self.mean_outdeph, self.mean_outatten])
         # вывод размерностей векторов
-        if (bool_res1 == True) and (bool_res2 == True) and (bool_res3 == True):
+        if bool_res1 == True and bool_res2 == True and bool_res3 == True:
             print("Размерности векторов ДОС:")
             print("\tvec_inpattern.shape = ", self.vec_inpattern.shape)
             print("\tvec_indeph.shape = ", self.vec_indeph.shape)

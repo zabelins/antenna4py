@@ -213,7 +213,6 @@ class View:
 
     def show_output(self):
         # вывод графиков характеристик выходного сигнала
-        pass
         vec = self.get_vecoutput()
         self.list_graph.draw_output(vec)
 

@@ -52,11 +52,11 @@ class Model:
 
     def calc_out(self, id_script):
         # один временной отсчёт для статического режима
-        if (id_script == 0):
+        if id_script == 0:
             self.time_line = [0, 0]
             self.time_step = 1
         # один параметрический отсчёт для статического и временного режимов
-        if (id_script >= 0) and (id_script <= 5):
+        if id_script >= 0 and id_script <= 5:
             self.var_line = [0, 0]
             self.var_step = 1
         # определяем диапазон изменения параметров
@@ -79,7 +79,7 @@ class Model:
         # проверка типа векторов на ndarray
         bool_res = cl.is_ndarray([self.vec_time, self.vec_pattern, self.vec_var])
         # вывод размерностей векторов
-        if (bool_res == True):
+        if bool_res == True:
             print("Размерности векторов динамических параметров:")
             print("\tvec_pattern.shape = ", self.vec_pattern.shape)
             print("\tvec_time.shape = ", self.vec_time.shape)

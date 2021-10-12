@@ -94,7 +94,7 @@ class Proc:
         bool_res1 = cl.is_ndarray([self.vec_insnir, self.vec_outsnir])
         bool_res2 = cl.is_ndarray([self.vec_inweight, self.vec_outweight])
         # вывод размерностей векторов
-        if (bool_res1 == True) and (bool_res2 == True):
+        if bool_res1 == True and bool_res2 == True:
             print("Размерности векторов ВК:")
             print("\tvec_insnir.shape = ", self.vec_insnir.shape)
             print("\tvec_outsnir.shape = ", self.vec_outsnir.shape)

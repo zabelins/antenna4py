@@ -32,10 +32,10 @@ class Element:
     def get_gain(self, deg):
         # усиление сигнала для заданного угла обзора
         res = []
-        if (self.elem_type == 1):
+        if self.elem_type == 1:
             # изотропный излучатель, КНД=1.00 dBi
             res = 1.0
-        if (self.elem_type == 2):
+        if self.elem_type == 2:
             # дипольный излучатель, КНД=2.15 dBi
             res = 1.28 * abs(math.cos(deg))
         return res

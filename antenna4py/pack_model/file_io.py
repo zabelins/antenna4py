@@ -102,7 +102,7 @@ class File_IO:
         # проверка типа на ndarray
         res = self.check_type(vec_sig, vec_int, vec_nois, matrix_sig,
                               matrix_int, matrix_nois, vec_inweight, vec_outweight)
-        if (res != True):
+        if res != True:
             return "Ошибка проверки типа данных"
         # сохранение
         np.savez(name_file, vec_sig=vec_sig, vec_int=vec_int, vec_nois=vec_nois,
@@ -118,7 +118,7 @@ class File_IO:
         # проверка типа на ndarray
         res = self.check_type(vec_sig, vec_int, vec_nois, matrix_sig,
                               matrix_int, matrix_nois, vec_inweight, vec_outweight)
-        if (res != True):
+        if res != True:
             print("Ошибка проверки типа данных")
             return
         # возврат данных
