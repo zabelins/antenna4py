@@ -139,7 +139,7 @@ class Output:
         # цикл по сигналам
         for i in range(len_signal):
             # сетка частот
-            vec_freq.append(np.arange(-freq_sample/2 + freq_step, freq_sample/2 + freq_step, freq_step))
+            vec_freq.append(np.arange(-freq_sample/2 + freq_step/2, freq_sample/2, freq_step))
             # преобразование Фурье
             vec_spec = np.fft.fft(signal[i])
             vec_spec = np.fft.fftshift(vec_spec)

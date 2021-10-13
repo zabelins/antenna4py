@@ -38,9 +38,10 @@ class Kalman:
         self.matrix_sig, self.matrix_int, self.matrix_nois = matrix_sig, matrix_int, matrix_nois
         # рабочий режим фильтра Калмана
         if self.kalman_type == 1:
-            x_sig = self.get_matrix(self.matrix_sig)
+            #x_sig = self.get_matrix(self.matrix_sig)
+            x_sig = self.matrix_sig
             x_int = self.get_matrix(self.matrix_int)
-            x_nois = self.get_matrix(self.matrix_nois)
+            x_nois = self.matrix_nois
             self.matrix_sig, self.matrix_int, self.matrix_nois = x_sig, x_int, x_nois
         return [self.matrix_sig, self.matrix_int, self.matrix_nois]
 

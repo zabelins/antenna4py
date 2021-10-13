@@ -39,7 +39,7 @@ class Report:
             pattern_attensum = pattern_attensum + pattern_attensig[i]
         # расчёт осшп
         pattern_snirio = np.array([vec_snir[time], vec_insnir[time], vec_outsnir[time]])
-        pattern_snirdif = pattern_snirio[2] - pattern_snirio[1]
+        pattern_snirdif = pattern_snirio[2] - pattern_snirio[0]
         # округление до сотых
         pattern_depthint = self.get_round(pattern_depthint)
         pattern_depthsum = self.get_round(pattern_depthsum)
@@ -78,7 +78,7 @@ class Report:
             time_attensum = time_attensum + time_attensig[i]
         # расчёт осшп
         time_snirio = np.array([vec_meansnir[id_par], vec_meaninsnir[id_par], vec_meanoutsnir[id_par]])
-        time_snirdif = time_snirio[2] - time_snirio[1]
+        time_snirdif = time_snirio[2] - time_snirio[0]
         # округление до сотых
         time_depthint = self.get_round(time_depthint)
         time_depthsum = self.get_round(time_depthsum)
@@ -118,7 +118,7 @@ class Report:
             par_attensum = par_attensum + par_attensig[i]
         # расчёт осшп
         par_snirio = np.array([np.mean(vec_meansnir), np.mean(vec_meaninsnir), np.mean(vec_meanoutsnir)])
-        par_snirdif = par_snirio[2] - par_snirio[1]
+        par_snirdif = par_snirio[2] - par_snirio[0]
         # округление до сотых
         par_depthint = self.get_round(par_depthint)
         par_depthsum = self.get_round(par_depthsum)
