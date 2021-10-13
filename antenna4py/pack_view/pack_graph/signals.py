@@ -61,9 +61,9 @@ class Signals:
         ax_1 = fig.add_subplot(1, 3, 1)
         ax_2 = fig.add_subplot(1, 3, 2)
         ax_3 = fig.add_subplot(1, 3, 3)
-        ax_1.set(title='График амплитуд', xlabel=self.str_axis[0], ylabel=self.str_axis[1])
-        ax_2.set(title='График углов', xlabel=self.str_axis[0], ylabel=self.str_axis[2])
-        ax_3.set(title='График полос', xlabel=self.str_axis[0], ylabel=self.str_axis[3])
+        ax_1.set(title='Амплитуды помех', xlabel=self.str_axis[0], ylabel=self.str_axis[1])
+        ax_2.set(title='Углы помех', xlabel=self.str_axis[0], ylabel=self.str_axis[2])
+        ax_3.set(title='Полосы помех', xlabel=self.str_axis[0], ylabel=self.str_axis[3])
         # отрисовка графика
         for i in range(len(x)):
             ax_1.plot(x[i], y_amp[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=signals_strleg[i])

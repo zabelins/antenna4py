@@ -64,8 +64,8 @@ class Output:
         fig = plt.figure(figsize=(12, 5))
         ax_1 = fig.add_subplot(1, 2, 1)
         ax_2 = fig.add_subplot(1, 2, 2)
-        ax_1.set(title='Временной график', xlabel=self.str_axis[0], ylabel=self.str_axis[2])
-        ax_2.set(title='Частотный график', xlabel=self.str_axis[1], ylabel=self.str_axis[2])
+        ax_1.set(title='Выходной сигнал с ААР', xlabel=self.str_axis[0], ylabel=self.str_axis[2])
+        ax_2.set(title='Спектр выходного сигнала с ААР', xlabel=self.str_axis[1], ylabel=self.str_axis[2])
         # отрисовка графика 1
         for i in range(len(x_1)):
             ax_1.plot(x_1[i], y_1[i], color=vec_col[i], linestyle=vec_lst[i], lw=vec_lwd[i], label=output_strleg[i])
@@ -80,7 +80,7 @@ class Output:
         # отображение легенды
         if self.output_legend == 1:
             ax_1.legend(loc='lower right')
-            ax_2.legend(loc='lower right')
+            ax_2.legend(loc='upper right')
         # отображение графика
         ax_1.axis(vec_axis1)
         ax_2.axis(vec_axis2)
@@ -111,12 +111,12 @@ class Output:
         if max_y <= 0:
             max_y = 0.001
         else:
-            max_y = max_y * 1.2
+            max_y = max_y * 1.1
         # коррекция нижней границы
         if min_y >= 0:
             min_y = -0.001
         else:
-            min_y = min_y * 1.2
+            min_y = min_y * 1.1
         # определение границ графика
         vec_axis = [min_x, max_x, min_y, max_y * 1.1]
         return vec_axis
@@ -139,9 +139,10 @@ class Output:
         # цикл по сигналам
         for i in range(len_signal):
             # сетка частот
-            vec_freq.append(np.arange(0, freq_sample, freq_step))
+            vec_freq.append(np.arange(-freq_sample/2 + freq_step, freq_sample/2 + freq_step, freq_step))
             # преобразование Фурье
             vec_spec = np.fft.fft(signal[i])
+            vec_spec = np.fft.fftshift(vec_spec)
             vec_specamp.append(np.abs(vec_spec) / num_sample)
         # вывод параметров Фурье
         id_print = 0
