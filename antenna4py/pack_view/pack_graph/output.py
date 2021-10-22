@@ -83,7 +83,8 @@ class Output:
             ax_2.legend(loc='upper right')
         # отображение графика
         ax_1.axis(vec_axis1)
-        ax_2.axis(vec_axis2)
+        #ax_2.axis(vec_axis2)
+        ax_2.semilogy()
         # отображение сетки
         ax_1.grid()
         ax_2.grid()
