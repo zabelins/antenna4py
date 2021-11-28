@@ -33,7 +33,7 @@ class Trad_alg:
         # алгоритм прямого обращения матрицы
         len_time, len_num = [vec_sig.shape[0], vec_sig.shape[2]]
         res = np.zeros(shape=[len_time, len_num], dtype=complex)
-        if self.alg_crit == 1:
+        if self.alg_crit == 0:
             # критерий адаптации без ограничений
             for i in range(len_time):
                 mu = abs(matrix_nois[i][0][0])
@@ -41,7 +41,7 @@ class Trad_alg:
                 vector_in = np.array(vec_sig[i][0])
                 vector_cj = np.conj(vector_in)
                 res[i] = mu * matrix_in.dot(vector_cj)
-        if self.alg_crit == 2:
+        if self.alg_crit == 1:
             # критерий с ограничениями
             for i in range(len_time):
                 mu = abs(len_num * matrix_sig[i][0][0])

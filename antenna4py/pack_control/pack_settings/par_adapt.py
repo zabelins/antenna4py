@@ -6,17 +6,17 @@ class Par_adapt:
 
     def __init__(self, id):
         self.id = id
-        # номера критерия адаптации (ограничения есть или нет)
-        # номера алгоритма (прямое обращение матрицы, нейросеть)
-        # задержка на такт вычсления
-        self.alg_crit = 1
-        self.alg_type = 1
-        self.alg_delay = 1
-        # параметры фильтра Калмана
+        # номера критерия адаптации (0=максОСШП, 1=минШУМ)
+        # номера алгоритма (0=обрат_матрица, 1=нейросеть)
+        # задержка на такт вычсления (0=выкл, 1=вкл)
+        self.alg_crit = 0
+        self.alg_type = 0
+        self.alg_delay = 0
+        # параметры фильтра Калмана (0=выкл_ФК, 1=вкл_ФК)
         self.kalman_type = 0
         self.kalman_sigma = 1
         # тип управления (amp+phi, phi)
-        self.control_type = 1
+        self.control_type = 0
         # дискретность управления
         self.control_stepphi = 0
         self.control_stepamp = 1

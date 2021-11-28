@@ -110,10 +110,10 @@ class Proc:
         self.vec_inweight = np.ones(shape=[len_num], dtype=complex)
         self.vec_outweight = np.ones(shape=[len_time, len_num], dtype=complex)
         # вычисление оптимальных векторов
-        if self.alg_type == 1:
+        if self.alg_type == 0:
             # алгоритм прямого обращения матрицы
             self.vec_outweight = self.list_trad.calc_out(vec_sig, matrix_sig, matrix_int, matrix_nois)
-        if self.alg_type == 2:
+        if self.alg_type == 1:
             # нейросетевой алгоритм вычисления ВК
             self.vec_outweight = self.list_neuro.calc_out(self.vec_in)
 

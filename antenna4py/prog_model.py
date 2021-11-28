@@ -16,8 +16,8 @@ class Model_antenna:
         self.list_array = pack_model.array.Array(1)
         self.list_proc = pack_model.proc.Proc(1)
         self.list_syntnet = pack_model.syntnet.Syntnet(1)
-        self.list_test = pack_model.test.Test(1)
         self.list_file = pack_model.file_io.File_IO(1)
+        self.list_test = pack_model.test.Test(1)
         self.f_cen = []
         self.id_script = []
         self.out_set = []
@@ -36,22 +36,27 @@ class Model_antenna:
         self.vec_meanoutsnir = []
 
     def set(self, obj_set):
-        # инициализация параметров модели уровня L1
+        # формирование векторов параметров и настроек
+        set_model = obj_set.list_setmodel.get()
+        par_env = obj_set.list_parenv.get()
         par_array = obj_set.list_pararray.get()
+        par_adapt = obj_set.list_paradapt.get()
+        set_test =obj_set.list_settest.get()
+        # инициализация параметров модели уровня L1
         self.f_cen = par_array[0]
         # инициализация параметров уровня L2
-        self.list_settings.set(obj_set.list_setmodel.get())
-        self.list_env.set(obj_set.list_parenv.get())
-        self.list_array.set(obj_set.list_pararray.get())
-        self.list_proc.set(obj_set.list_paradapt.get())
-        self.list_syntnet.set(obj_set.list_paradapt.get())
-        self.list_test.set(obj_set.list_settest.get())
+        self.list_settings.set(set_model)
+        self.list_env.set(par_env)
+        self.list_array.set(par_array)
+        self.list_proc.set(par_adapt)
+        self.list_syntnet.set(par_adapt)
+        self.list_test.set(set_test)
         # инициализация параметров уровня L3
-        self.list_array.list_factor.set(obj_set.list_pararray.get())
-        self.list_array.list_element.set(obj_set.list_pararray.get())
-        self.list_proc.list_trad.set(obj_set.list_paradapt.get())
-        self.list_proc.list_neuro.set(obj_set.list_paradapt.get())
-        self.list_proc.list_kalman.set(obj_set.list_paradapt.get())
+        self.list_array.list_factor.set(par_array)
+        self.list_array.list_element.set(par_array)
+        self.list_proc.list_trad.set(par_adapt)
+        self.list_proc.list_neuro.set(par_adapt)
+        self.list_proc.list_kalman.set(par_adapt)
 
     def get(self):
         res = []
@@ -119,6 +124,20 @@ class Model_antenna:
         res.append(self.vec_meanoutsnir)
         return res
 
+    def get_info(self):
+        # получить параметры ААР
+        res = []
+        res.append(self.list_array.array_N)
+        res.append(self.list_proc.alg_type)
+        res.append(self.list_proc.control_type)
+        res.append(self.id_script)
+        buf1 = self.vec_meanoutdepth.mean(axis=0) - self.vec_meanindepth.mean(axis=0)
+        buf2 = self.vec_meanoutatten.mean(axis=0) - self.vec_meaninatten.mean(axis=0)
+        res.append(buf1.sum())
+        res.append(buf2.sum())
+        res.append(self.vec_meanoutsnir.mean())
+        return res
+
     def get_out1nd(self):
         # получить вектора для представления
         out_model = self.get_out()
@@ -152,20 +171,6 @@ class Model_antenna:
         self.list_proc.print_out()
         self.list_syntnet.print_out()
         self.print_out()
-
-    def get_info(self):
-        # получить параметры ААР
-        res = []
-        res.append(self.list_array.array_N)
-        res.append(self.list_proc.alg_type)
-        res.append(self.list_proc.control_type)
-        res.append(self.id_script)
-        buf1 = self.vec_meanoutdepth.mean(axis=0) - self.vec_meanindepth.mean(axis=0)
-        buf2 = self.vec_meanoutatten.mean(axis=0) - self.vec_meaninatten.mean(axis=0)
-        res.append(buf1.sum())
-        res.append(buf2.sum())
-        res.append(self.vec_meanoutsnir.mean())
-        return res
 
     def save_learn(self):
         # сохранение обучающей выборки
