@@ -15,19 +15,19 @@ class Graph:
         self.list_signals = pg.signals.Signals(1)
         self.list_output = pg.output.Output(1)
         self.list_adapt = pg.adapt.Adapt(1)
-        self.animation = []
+        self.calc_anima = []
 
     def set(self, init):
-        self.animation = init[15]
+        self.calc_anima = init[11]
 
     def get(self):
         res = []
-        res.append(self.animation)
+        res.append(self.calc_anima)
         return res
 
     def print(self):
         print("Параметры вывода графика (L2):")
-        print("\tanimation = ", self.animation)
+        print("\tcalc_anima = ", self.calc_anima)
         self.list_pattern.print()
         self.list_signals.print()
         self.list_output.print()

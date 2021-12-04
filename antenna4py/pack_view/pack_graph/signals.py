@@ -10,9 +10,9 @@ class Signals:
 
     def __init__(self, id):
         self.id = id
-        self.signals_style = []
+        self.graph_style = []
+        self.graph_legend = []
         self.signals_mean = []
-        self.signals_legend = []
         self.str_axis = ["time [ms]", "amp [V]", "angle [deg]", "band [Hz]"]
         self.vec_col1 = []
         self.vec_lst1 = []
@@ -22,9 +22,9 @@ class Signals:
         self.vec_lwd2 = []
 
     def set(self, init):
-        self.signals_style = init[5]
-        self.signals_mean = init[6]
-        self.signals_legend = init[7]
+        self.graph_style = init[0]
+        self.graph_legend = init[1]
+        self.signals_mean = init[5]
         self.vec_col1 = ['#000000', '#d1281f', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.2, 1.2, 1.2, 1.2, 1.2]
@@ -34,17 +34,17 @@ class Signals:
 
     def get(self):
         res = []
-        res.append(self.signals_style)
+        res.append(self.graph_style)
+        res.append(self.graph_legend)
         res.append(self.signals_mean)
-        res.append(self.signals_legend)
         res.append(self.str_axis)
         return res
 
     def print(self):
         print("Параметры отображения характеристик сигналов и помех (L3):")
-        print("\tsignals_style = ", self.signals_style)
+        print("\tgraph_style = ", self.graph_style)
+        print("\tgraph_legend = ", self.graph_legend)
         print("\tsignals_mean = ", self.signals_mean)
-        print("\tsignals_legend = ", self.signals_legend)
         print("\tstr_axis = ", self.str_axis)
 
     def draw_graph(self, x, y_amp, y_deg, y_band, signals_strleg):
@@ -74,7 +74,7 @@ class Signals:
                 ax_2.hlines(np.mean(y_deg[i]), vec_axisdeg[0], vec_axisdeg[1], color='#666666', linestyle='-', lw=0.6)
                 ax_3.hlines(np.mean(y_band[i]), vec_axisband[0], vec_axisband[1], color='#666666', linestyle='-', lw=0.6)
         # отображение легенды
-        if self.signals_legend == 1:
+        if self.graph_legend == 1:
             ax_1.legend(loc='lower right')
             ax_2.legend(loc='lower right')
             ax_3.legend(loc='lower right')
@@ -99,7 +99,7 @@ class Signals:
 
     def get_style(self):
         # выбор стиля графиков
-        if self.signals_style == 1:
+        if self.graph_style == 0:
             vec_col, vec_lst, vec_lwd = [self.vec_col1, self.vec_lst1, self.vec_lwd1]
         else:
             vec_col, vec_lst, vec_lwd = [self.vec_col2, self.vec_lst2, self.vec_lwd2]

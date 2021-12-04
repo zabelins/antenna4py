@@ -10,11 +10,11 @@ class Pattern:
     def __init__(self, id):
         self.id = id
         # пользовательские настройки графики
-        self.pattern_style = []
+        self.graph_style = []
+        self.graph_legend = []
         self.pattern_mean = []
         self.pattern_norm = []
         self.pattern_db = []
-        self.pattern_legend = []
         # скрытые настройки графики
         self.str_axis = ["Θ [deg]", "G [dB]"]
         self.show_eqint = 1
@@ -27,11 +27,11 @@ class Pattern:
         self.vec_lwd2 = []
 
     def set(self, init):
-        self.pattern_style = init[0]
-        self.pattern_mean = init[1]
-        self.pattern_norm = init[2]
-        self.pattern_db = init[3]
-        self.pattern_legend = init[4]
+        self.graph_style = init[0]
+        self.graph_legend = init[1]
+        self.pattern_mean = init[2]
+        self.pattern_norm = init[3]
+        self.pattern_db = init[4]
         self.vec_col1 = ['#000000', '#d1281f', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.0, 1.2, 1.0, 1.0, 1.0]
@@ -41,22 +41,22 @@ class Pattern:
 
     def get(self):
         res = []
-        res.append(self.pattern_style)
+        res.append(self.graph_style)
+        res.append(self.graph_legend)
         res.append(self.pattern_mean)
         res.append(self.pattern_norm)
         res.append(self.pattern_db)
-        res.append(self.pattern_legend)
         res.append(self.show_eqint)
         res.append(self.str_axis)
         return res
 
     def print(self):
         print("Параметры отображения ДН (L3):")
-        print("\tpattern_style = ", self.pattern_style)
+        print("\tgraph_style = ", self.graph_style)
+        print("\tgraph_legend = ", self.graph_legend)
         print("\tpattern_mean = ", self.pattern_mean)
         print("\tpattern_norm = ", self.pattern_norm)
         print("\tpattern_db = ", self.pattern_db)
-        print("\tpattern_legend = ", self.pattern_legend)
         print("\tshow_eqint = ", self.show_eqint)
         print("\tstr_axis = ", self.str_axis)
 
@@ -101,7 +101,7 @@ class Pattern:
                     ax.arrow(deg_int[i], vec_mark[0], 0, vec_mark[1], color=vec_col[i], width=0.5, head_width=1.3)
                     ax.vlines(deg_int[i], vec_axis[2], vec_axis[3], color='#666666', linestyle='--', lw=0.6)
         # отображение легенды
-        if self.pattern_legend == 1:
+        if self.graph_legend == 1:
             ax.legend(loc='lower left')
         # отображение графика
         ax.axis(vec_axis)
@@ -116,7 +116,7 @@ class Pattern:
 
     def get_style(self):
         # выбор стиля графиков
-        if self.pattern_style == 1:
+        if self.graph_style == 0:
             vec_col, vec_lst, vec_lwd = [self.vec_col1, self.vec_lst1, self.vec_lwd1]
         else:
             vec_col, vec_lst, vec_lwd = [self.vec_col2, self.vec_lst2, self.vec_lwd2]

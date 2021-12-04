@@ -6,13 +6,16 @@ class File_IO:
 
     def __init__(self, id):
         self.id = id
-        self.dir = 'C:/crazy'
+        self.dir_set = []
+
+    def set(self, init):
+        self.dir_set = init[14]
 
     def get(self):
         res = []
-        res.append(self.dir)
+        res.append(self.dir_set)
         return res
 
     def print(self):
         print("Настройки работы с файлами (L2):")
-        print("\tdir = ", self.dir)
+        print("\tdir_set = ", self.dir_set)

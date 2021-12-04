@@ -16,8 +16,8 @@ class Par_adapt:
         self.kalman_type = 0
         self.kalman_sigma = 1
         # тип управления (amp+phi, phi)
-        self.control_type = 0
         # дискретность управления
+        self.control_type = 0
         self.control_stepphi = 0
         self.control_stepamp = 1
 

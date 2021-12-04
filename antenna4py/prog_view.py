@@ -16,9 +16,6 @@ class View:
         self.list_graph = pack_view.graph.Graph(1)
         self.list_client = pack_view.client.Client(1)
         self.list_report = pack_view.report.Report(1)
-        # вывод и сохранение результатов
-        self.id_print = 1
-        self.id_save = 0
         # координатная сетка для графиков
         self.vec_pattern = []
         self.vec_time = []
@@ -55,17 +52,17 @@ class View:
 
     def set(self):
         # инициализация контроллера и модели
-        self.controller.set(self.id_print, self.id_save)
-        vec_setview = self.controller.list_set.list_setview.get()
+        self.controller.set()
+        set_prog = self.controller.list_set.list_setprog.get()
         # инициализация параметров интерфейса уровня L2
-        self.list_graph.set(vec_setview)
-        self.list_client.set(vec_setview)
-        self.list_report.set(vec_setview)
+        self.list_graph.set(set_prog)
+        self.list_client.set(set_prog)
+        self.list_report.set(set_prog)
         # инициализация параметров интерфейса уровня L3
-        self.list_graph.list_pattern.set(vec_setview)
-        self.list_graph.list_signals.set(vec_setview)
-        self.list_graph.list_output.set(vec_setview)
-        self.list_graph.list_adapt.set(vec_setview)
+        self.list_graph.list_pattern.set(set_prog)
+        self.list_graph.list_signals.set(set_prog)
+        self.list_graph.list_output.set(set_prog)
+        self.list_graph.list_adapt.set(set_prog)
 
     def print(self):
         print("Параметры модуля представления (L1):")

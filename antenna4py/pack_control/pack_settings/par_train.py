@@ -1,8 +1,8 @@
 if __name__ == "__main__":
     print("Вы запустили модуль настроек обучения НС (L3)")
 
-class Set_train:
-    """Класс настроек НС"""
+class Par_train:
+    """Класс параметров НС"""
 
     def __init__(self, id):
         self.id = id
@@ -31,7 +31,7 @@ class Set_train:
         return res
 
     def print(self):
-        print("Настройки обучения НС (L3):")
+        print("Параметры обучения НС (L3):")
         print("\tnet_type = ", self.net_type)
         print("\tnet_layers = ", self.net_layers)
         print("\tnet_nodes = ", self.net_nodes)

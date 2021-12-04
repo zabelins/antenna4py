@@ -7,21 +7,27 @@ if __name__ == "__main__":
     print("Модуль использует пакет:", pack_control.NAME)
 
 class Control:
-    """Класс загрузки исходных данных и управления программой"""
+    """Класс управления программой"""
 
     def __init__(self, model_antenna, model_train):
         self.model_antenna = model_antenna
         self.model_train = model_train
         self.list_set = pack_control.settings.All_settings(1)
         self.list_file = file_io.File_IO(1)
-        self.id_print = []
-        self.id_save = []
+        # вывод и сохранение результатов
+        self.calc_save = []
+        self.calc_info = []
 
-    def set(self, id_print, id_save):
+    def set(self):
+        # формирование векторов параметров и настроек
+        set_prog = self.list_set.list_setprog.get()
+        # инициализация параметров модели уровня L1
         self.model_antenna.set(self.list_set)
         self.model_train.set(self.list_set)
-        self.id_print = id_print
-        self.id_save = id_save
+        self.calc_save = set_prog[9]
+        self.calc_info = set_prog[10]
+        # инициализация параметров уровня L2
+        self.list_file.set(set_prog)
 
     def print(self):
         print("Параметры модуля управления (L1):")
@@ -46,7 +52,6 @@ class Control:
 
     def mode_train(self):
         # обучение нейронной сети
-        self.model_train.set(self.list_set)
         self.model_train.calc_out()
 
     def mode_print(self, id_set):
@@ -61,12 +66,12 @@ class Control:
 
     def print_calc(self):
         # вывод служебной информации для графика
-        if self.id_print == 1:
+        if self.calc_info == 1:
             self.model_antenna.print_calc()
 
     def save_learn(self):
         # сохранение обучающей выборки
-        if self.id_save == 1:
+        if self.calc_save == 1:
             self.model_antenna.save_learn()
 
 

@@ -22,7 +22,7 @@ class Proc:
         # тип управления
         self.control_type = []
         # суммарный входной вектор
-        self.vec_in = []
+        self.vec_sum = []
         # вектора весов и осшп
         self.vec_inweight = []
         self.vec_insnir = []
@@ -61,10 +61,9 @@ class Proc:
         vec_sig, vec_int, vec_nois = out_array2nd[0], out_array2nd[1], out_array2nd[2]
         matrix_sig, matrix_int, matrix_nois = out_array2nd[3], out_array2nd[4], out_array2nd[5]
         # суммирование векторов
-        self.get_vecin(vec_sig, vec_int, vec_nois)
+        self.get_vecsum(vec_sig, vec_int, vec_nois)
         # фильтр Калмана
-        buf = self.list_kalman.calc_matrix(matrix_sig, matrix_int, matrix_nois)
-        matrix_sig, matrix_int, matrix_nois = buf
+        matrix_sig, matrix_int, matrix_nois = self.list_kalman.calc_matrix(matrix_sig, matrix_int, matrix_nois)
         # вычисление векторов ВК
         self.calc_weights(vec_sig, matrix_sig, matrix_int, matrix_nois)
         # учёт задержки на вычисления
@@ -86,7 +85,7 @@ class Proc:
         res = []
         res.append(self.vec_inweight)
         res.append(self.vec_outweight)
-        res.append(self.vec_in)
+        res.append(self.vec_sum)
         return res
 
     def print_out(self):
@@ -115,7 +114,7 @@ class Proc:
             self.vec_outweight = self.list_trad.calc_out(vec_sig, matrix_sig, matrix_int, matrix_nois)
         if self.alg_type == 1:
             # нейросетевой алгоритм вычисления ВК
-            self.vec_outweight = self.list_neuro.calc_out(self.vec_in)
+            self.vec_outweight = self.list_neuro.calc_out(self.vec_sum)
 
     def calc_snir(self, matrix_sig, matrix_int, matrix_nois):
         # вычисление осшп
@@ -163,22 +162,22 @@ class Proc:
         # перевод мощности в децибеллы
         return 10 * np.log10(abs(num))
 
-    def get_vecin(self, vec_sig, vec_int, vec_nois):
+    def get_vecsum(self, vec_sig, vec_int, vec_nois):
         # суммируем вектора для каждого момента времени
         len_time, len_num = vec_sig.shape[0], vec_sig.shape[2]
-        self.vec_in = np.zeros(shape=[len_time, len_num], dtype=complex)
+        self.vec_sum = np.zeros(shape=[len_time, len_num], dtype=complex)
         # суммируем вектора для каждого момента времени
         for i in range(len_time):
-            self.vec_in[i] = self.get_varin(vec_sig[i], vec_int[i], vec_nois[i])
+            self.vec_sum[i] = self.get_varsum(vec_sig[i], vec_int[i], vec_nois[i])
 
-    def get_varin(self, vec_sig, vec_int, vec_nois):
+    def get_varsum(self, vec_sig, vec_int, vec_nois):
         # суммарный входной вектор на ААР в заданный момент времени
         len_num = vec_sig.shape[1]
-        vec_in = np.zeros(shape=[len_num], dtype=complex)
-        vec_in = vec_in + np.sum(vec_sig, axis=0)
-        vec_in = vec_in + np.sum(vec_int, axis=0)
-        #vec_in = vec_in + np.sum(vec_nois, axis=0)
-        return vec_in
+        vec_sum = np.zeros(shape=[len_num], dtype=complex)
+        vec_sum = vec_sum + np.sum(vec_sig, axis=0)
+        vec_sum = vec_sum + np.sum(vec_int, axis=0)
+        #vec_sum = vec_sum + np.sum(vec_nois, axis=0)
+        return vec_sum
 
 
 

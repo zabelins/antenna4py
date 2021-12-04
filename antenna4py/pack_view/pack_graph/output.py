@@ -11,9 +11,9 @@ class Output:
 
     def __init__(self, id):
         self.id = id
-        self.output_style = []
+        self.graph_style = []
+        self.graph_legend = []
         self.output_mean = []
-        self.output_legend = []
         self.str_axis = ["time [ms]", "freq [Hz]", "power [W]"]
         self.vec_col1 = []
         self.vec_lst1 = []
@@ -23,9 +23,9 @@ class Output:
         self.vec_lwd2 = []
 
     def set(self, init):
-        self.output_style = init[8]
-        self.output_mean = init[9]
-        self.output_legend = init[10]
+        self.graph_style = init[0]
+        self.graph_legend = init[1]
+        self.output_mean = init[6]
         self.vec_col1 = ['#000000', '#d1281f', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.2, 1.2, 1.2, 1.2, 1.2]
@@ -35,17 +35,17 @@ class Output:
 
     def get(self):
         res = []
-        res.append(self.output_style)
+        res.append(self.graph_style)
+        res.append(self.graph_legend)
         res.append(self.output_mean)
-        res.append(self.output_legend)
         res.append(self.str_axis)
         return res
 
     def print(self):
         print("Параметры отображения характеристик выходного сигнала (L3):")
-        print("\toutput_style = ", self.output_style)
+        print("\tgraph_style = ", self.graph_style)
+        print("\tgraph_legend = ", self.graph_legend)
         print("\toutput_mean = ", self.output_mean)
-        print("\toutput_legend = ", self.output_legend)
         print("\tstr_axis = ", self.str_axis)
 
     def draw_graph(self, x_1, y_1, output_strleg):
@@ -78,7 +78,7 @@ class Output:
             if self.output_mean == 1:
                 ax_2.hlines(np.mean(y_2[i]), vec_axis2[0], vec_axis2[1], color='#666666', linestyle='-', lw=0.6)
         # отображение легенды
-        if self.output_legend == 1:
+        if self.graph_legend == 1:
             ax_1.legend(loc='lower right')
             ax_2.legend(loc='upper right')
         # отображение графика
@@ -99,7 +99,7 @@ class Output:
 
     def get_style(self):
         # выбор стиля графиков
-        if self.output_style == 1:
+        if self.graph_style == 0:
             vec_col, vec_lst, vec_lwd = [self.vec_col1, self.vec_lst1, self.vec_lwd1]
         else:
             vec_col, vec_lst, vec_lwd = [self.vec_col2, self.vec_lst2, self.vec_lwd2]

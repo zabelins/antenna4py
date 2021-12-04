@@ -37,20 +37,22 @@ class Model_antenna:
 
     def set(self, obj_set):
         # формирование векторов параметров и настроек
-        set_model = obj_set.list_setmodel.get()
+        par_model = obj_set.list_parmodel.get()
         par_env = obj_set.list_parenv.get()
         par_array = obj_set.list_pararray.get()
         par_adapt = obj_set.list_paradapt.get()
+        set_prog = obj_set.list_setprog.get()
         set_test =obj_set.list_settest.get()
         # инициализация параметров модели уровня L1
         self.f_cen = par_array[0]
         # инициализация параметров уровня L2
-        self.list_settings.set(set_model)
+        self.list_settings.set(par_model)
         self.list_env.set(par_env)
         self.list_array.set(par_array)
         self.list_proc.set(par_adapt)
         self.list_syntnet.set(par_adapt)
         self.list_test.set(set_test)
+        self.list_file.set(set_prog)
         # инициализация параметров уровня L3
         self.list_array.list_factor.set(par_array)
         self.list_array.list_element.set(par_array)

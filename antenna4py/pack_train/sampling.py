@@ -2,7 +2,7 @@ import numpy as np
 import pack_calc.calc_list as cl
 
 if __name__ == "__main__":
-    print("Вы запустили модуль формирования обучающей выборки (L3)")
+    print("Вы запустили модуль формирования обучающей выборки (L2)")
 
 class Sampling:
     """Класс формирования обучающей выборки"""

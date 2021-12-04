@@ -6,16 +6,16 @@ class Test:
 
     def __init__(self, id):
         self.id = id
-        self.id_test = 1
+        self.test_type = []
 
     def set(self, init):
-        pass
+        self.test_type = init[0]
 
     def get(self):
         res = []
-        res.append(self.id_test)
+        res.append(self.test_type)
         return res
 
     def print(self):
         print("Настройки тестирования ПО (L2):")
-        print("\tid_test = ", self.id_test)
+        print("\ttest_type = ", self.test_type)

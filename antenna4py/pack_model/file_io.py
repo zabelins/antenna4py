@@ -11,7 +11,7 @@ class File_IO:
     def __init__(self, id):
         self.id = id
         # параметры работы с файлами
-        self.name_dir = 'dir_save'
+        self.dir_data = []
         self.name_file = 'CL'
         # формирование обучающей выборки
         self.vec_sig = []
@@ -24,17 +24,17 @@ class File_IO:
         self.vec_outweight = []
 
     def set(self, init):
-        pass
+        self.dir_data = init[12]
 
     def get(self):
         res = []
-        res.append(self.name_dir)
+        res.append(self.dir_data)
         res.append(self.name_file)
         return res
 
     def print(self):
         print("Настройки работы с файлами (L2):")
-        print("\tname_dir = ", self.name_dir)
+        print("\tdir_data = ", self.dir_data)
         print("\tname_file = ", self.name_file)
 
     def save_file(self, vec_data):
@@ -53,8 +53,8 @@ class File_IO:
 
     def load_files(self):
         # проверка списка доступных файлов
-        if os.path.exists(self.name_dir + '/'):
-            file_list = os.listdir(self.name_dir + '/')
+        if os.path.exists(self.dir_data + '/'):
+            file_list = os.listdir(self.dir_data + '/')
         else:
             print("Файлы с обучающими выборками не найдены")
             return []
@@ -64,7 +64,7 @@ class File_IO:
         # запуск цикла по файлам
         for i in range(len_files):
             # прочитать файл
-            var_file = np.load(self.name_dir + '/' + file_list[i])
+            var_file = np.load(self.dir_data + '/' + file_list[i])
             # загрузка данных
             var_data = self.read_data(var_file)
             # заполнение векторов
@@ -92,7 +92,7 @@ class File_IO:
         name_file = name_file + '_DPT' + str(self.get_round(mean_depth))
         name_file = name_file + '_ATT' + str(self.get_round(mean_atten))
         name_file = name_file + '_SNIR' + str(self.get_round(mean_snir))
-        return self.name_dir + '/' + name_file
+        return self.dir_data + '/' + name_file
 
     def save_data(self, name_file, out_array2nd, out_proc2nd):
         # распаковка исходных данных
@@ -131,10 +131,10 @@ class File_IO:
 
     def check_dir(self):
         # проверка и создание директории файла
-        if os.path.exists(self.name_dir):
+        if os.path.exists(self.dir_data):
             pass
         else:
-            os.mkdir(self.name_dir)
+            os.mkdir(self.dir_data)
 
     def get_round(self, num):
         # округление числа

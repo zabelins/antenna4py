@@ -6,8 +6,7 @@ from tensorflow.keras.layers import Dense, Flatten
 from tensorflow.keras.datasets import mnist
 
 if __name__ == "__main__":
-    print("Вы запустили модуль обучения НС (L3)")
-
+    print("Вы запустили модуль обучения НС (L2)")
 
 class Network:
     """Класс модуль обучения НС"""
@@ -31,7 +30,7 @@ class Network:
         return res
 
     def print(self):
-        print("Параметры модуля обучения НС (L3):")
+        print("Параметры обучения НС (L3):")
         print("\t-")
 
     def calc_out(self, out_sampling):

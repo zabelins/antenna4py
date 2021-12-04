@@ -6,16 +6,16 @@ class Set_test:
 
     def __init__(self, id):
         self.id = id
-        self.id_test = 1
+        self.test_type = 0
 
     def set(self, init):
-        self.id_test = init[0]
+        self.test_type = init[0]
 
     def get(self):
         res = []
-        res.append(self.id_test)
+        res.append(self.test_type)
         return res
 
     def print(self):
         print("Значения настроек тестирования ПО (L3):")
-        print("\tid_test = ", self.id_test)
+        print("\ttest_type = ", self.test_type)

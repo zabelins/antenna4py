@@ -1,8 +1,8 @@
 if __name__ == "__main__":
     print("Вы запустили модуль настроек ПО (L3)")
 
-class Set_model:
-    """Класс настроек динамического моделирования в ПО"""
+class Par_model:
+    """Класс параметров моделирования"""
 
     def __init__(self, id):
         self.id = id
@@ -37,7 +37,7 @@ class Set_model:
         return res
 
     def print(self):
-        print("Настройки динамического моделирования (L3):")
+        print("Параметры динамического моделирования (L3):")
         print("\tpattern_line = ", self.pattern_line)
         print("\tpattern_step = ", self.pattern_step)
         print("\ttime_line = ", self.time_line)

@@ -10,11 +10,11 @@ class Adapt:
 
     def __init__(self, id):
         self.id = id
-        self.adapt_style = []
+        self.graph_style = []
+        self.graph_legend = []
         self.adapt_mean = []
-        self.adapt_legend = []
+        self.adapt_approx = []
         self.str_axis = ["time [ms]", "band [%]", "depth [dB]", "atten [dB]", "snir [dB]"]
-        self.approx = []
         self.vec_col1 = []
         self.vec_lst1 = []
         self.vec_lwd1 = []
@@ -23,10 +23,10 @@ class Adapt:
         self.vec_lwd2 = []
 
     def set(self, init):
-        self.adapt_style = init[11]
-        self.adapt_mean = init[12]
-        self.adapt_legend = init[13]
-        self.approx = init[14]
+        self.graph_style = init[0]
+        self.graph_legend = init[1]
+        self.adapt_mean = init[7]
+        self.adapt_approx = init[8]
         self.vec_col1 = ['#000000', '#d1281f', '#00008b', '#336600', '#996600']
         self.vec_lst1 = ['-', '-', '-', '-', '-']
         self.vec_lwd1 = [1.2, 1.2, 1.2, 1.2, 1.2]
@@ -36,20 +36,20 @@ class Adapt:
 
     def get(self):
         res = []
-        res.append(self.adapt_style)
+        res.append(self.graph_style)
+        res.append(self.graph_legend)
         res.append(self.adapt_mean)
-        res.append(self.adapt_legend)
+        res.append(self.adapt_approx)
         res.append(self.str_axis)
-        res.append(self.approx)
         return res
 
     def print(self):
         print("Параметры отображения характеристик адаптации (L3):")
-        print("\tadapt_style = ", self.adapt_style)
+        print("\tgraph_style = ", self.graph_style)
+        print("\tgraph_legend = ", self.graph_legend)
         print("\tadapt_mean = ", self.adapt_mean)
-        print("\tadapt_legend = ", self.adapt_legend)
+        print("\tadapt_approx = ", self.adapt_approx)
         print("\tstr_axis = ", self.str_axis)
-        print("\tapprox = ", self.approx)
 
     def draw_graph(self, x_depth, y_depth, x_atten, y_atten, x_snir, y_snir, leg_depth, leg_atten, leg_snir, mode):
         # приведение типа к float
@@ -124,7 +124,7 @@ class Adapt:
             if self.adapt_mean == 1:
                 ax_3.hlines(np.mean(y_snir[i]), vec_axissnir[0], vec_axissnir[1], color=vec_col[i], linestyle='--', lw=0.6)
         # отображение легенды
-        if self.adapt_legend == 1:
+        if self.graph_legend == 1:
             ax_1.legend(loc='lower right')
             ax_2.legend(loc='lower right')
             ax_3.legend(loc='lower right')
@@ -145,7 +145,7 @@ class Adapt:
 
     def get_style(self):
         # выбор стиля графиков
-        if self.adapt_style == 1:
+        if self.graph_style == 0:
             vec_col, vec_lst, vec_lwd = [self.vec_col1, self.vec_lst1, self.vec_lwd1]
         else:
             vec_col, vec_lst, vec_lwd = [self.vec_col2, self.vec_lst2, self.vec_lwd2]
@@ -173,7 +173,7 @@ class Adapt:
         step = (x_i[1] - x_i[0]) / 10
         x_i_new = np.arange(min(x_i), max(x_i) + step, step)
         # аппроксимация
-        y_i_new = cl.approx(self.approx, x_i_new, x_i, y_i)
+        y_i_new = cl.approx(self.adapt_approx, x_i_new, x_i, y_i)
         # интерполяция
         # coef = np.polyfit(x_i, y_i, self.approx)
         # y_i_new = np.polyval(coef, x_i_new)

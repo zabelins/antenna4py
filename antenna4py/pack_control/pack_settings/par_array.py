@@ -13,14 +13,15 @@ class Par_array:
         # параметры множителя решётки
         self.array_N = 10
         self.array_beta = 1
-        self.array_dist = 1
-        self.array_effect = 1
+        self.array_dist = 0
+        self.array_effect = 0
         self.array_nois = 1/8
-        # параметры элементов решётки
-        self.elem_type = 1
-        # параметры амплитудных и фазовых ошибок
-        self.error_distphi = 1
-        self.error_distamp = 1
+        # параметры элементов решётки (0=изотроп, 1=диполь)
+        self.elem_type = 0
+        # параметры амплитудных ошибок (0=гаусс)
+        # параметры фазовых ошибок (0=равномер, 1=гаусс)
+        self.error_distphi = 0
+        self.error_distamp = 0
         self.error_maxphi = 0 * math.pi
         self.error_maxamp = 0
 
