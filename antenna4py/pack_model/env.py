@@ -12,7 +12,7 @@ class Env:
     """Класс моделирования сигнально-помеховой обстановки"""
 
     def __init__(self, id):
-        self.list_gen = pe.signal_generator.Generator(1)
+        self.obj_gen = pe.signal_generator.Generator(1)
         self.id = id
         # параметры сигналов
         self.sig_deg = []
@@ -66,7 +66,7 @@ class Env:
         print("\tint_band = ", self.int_band)
         print("\tshift_dynamic = ", self.shift_dynamic)
         print("\tshift_static = ", self.shift_static)
-        self.list_gen.print()
+        self.obj_gen.print()
 
     def calc_out(self, out_set, id_script, par_band):
         # распаковка исходных данных
@@ -74,23 +74,23 @@ class Env:
         # получение режимов для генератора
         mode_amp, mode_deg, mode_band, freq_amp = self.get_modegen(id_script, par_band)
         # вычисляем вектора изменения сигналов от времени
-        self.vec_sigdeg = self.list_gen.get_vecdeg(vec_time, self.sig_deg, 0)
-        self.vec_sigamp = self.list_gen.get_vecamp(vec_time, self.sig_amp, 0, 0, 0, 0)
-        self.vec_sigband = self.list_gen.get_vecband(vec_time, self.sig_band, 0)
+        self.vec_sigdeg = self.obj_gen.get_vecdeg(vec_time, self.sig_deg, 0)
+        self.vec_sigamp = self.obj_gen.get_vecamp(vec_time, self.sig_amp, 0, 0, 0, 0)
+        self.vec_sigband = self.obj_gen.get_vecband(vec_time, self.sig_band, 0)
         # вычисляем вектора изменения помех от времени
-        self.vec_intdeg = self.list_gen.get_vecdeg(vec_time, self.int_deg, mode_deg)
-        self.vec_intamp = self.list_gen.get_vecamp(vec_time, self.int_amp, mode_amp, freq_amp, self.shift_static, self.shift_dynamic)
-        self.vec_intband = self.list_gen.get_vecband(vec_time, self.int_band, mode_band)
+        self.vec_intdeg = self.obj_gen.get_vecdeg(vec_time, self.int_deg, mode_deg)
+        self.vec_intamp = self.obj_gen.get_vecamp(vec_time, self.int_amp, mode_amp, freq_amp, self.shift_static, self.shift_dynamic)
+        self.vec_intband = self.obj_gen.get_vecband(vec_time, self.int_band, mode_band)
 
     def get_out(self):
-        res = []
-        res.append(self.vec_sigdeg)
-        res.append(self.vec_sigamp)
-        res.append(self.vec_sigband)
-        res.append(self.vec_intdeg)
-        res.append(self.vec_intamp)
-        res.append(self.vec_intband)
-        return res
+        out_env = []
+        out_env.append(self.vec_sigdeg)
+        out_env.append(self.vec_sigamp)
+        out_env.append(self.vec_sigband)
+        out_env.append(self.vec_intdeg)
+        out_env.append(self.vec_intamp)
+        out_env.append(self.vec_intband)
+        return out_env
 
     def print_out(self):
         # проверка типа векторов на ndarray

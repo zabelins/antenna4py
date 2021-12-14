@@ -11,27 +11,34 @@ class All_settings:
 
     def __init__(self, id):
         self.id = id
-        self.list_parmodel = ps.par_model.Par_model(1)
-        self.list_parenv = ps.par_env.Par_env(1)
-        self.list_pararray = ps.par_array.Par_array(1)
-        self.list_paradapt = ps.par_adapt.Par_adapt(1)
-        self.list_partrain = ps.par_train.Par_train(1)
-        self.list_setprog = ps.set_prog.Set_prog(1)
-        self.list_settest = ps.set_test.Set_test(1)
+        self.obj_parmodel = ps.par_model.Par_model(1)
+        self.obj_parenv = ps.par_env.Par_env(1)
+        self.obj_pararray = ps.par_array.Par_array(1)
+        self.obj_paradapt = ps.par_adapt.Par_adapt(1)
+        self.obj_partrain = ps.par_train.Par_train(1)
+        self.obj_setprog = ps.set_prog.Set_prog(1)
+        self.obj_settest = ps.set_test.Set_test(1)
 
     def get(self):
         res = []
+        res.append(self.obj_parmodel.get())
+        res.append(self.obj_parenv.get())
+        res.append(self.obj_pararray.get())
+        res.append(self.obj_paradapt.get())
+        res.append(self.obj_partrain.get())
+        res.append(self.obj_setprog.get())
+        res.append(self.obj_settest.get())
         return res
 
     def print(self):
         print("Настройки программы и модели (L2):")
         print("\t-")
-        self.list_parmodel.print()
-        self.list_parenv.print()
-        self.list_pararray.print()
-        self.list_paradapt.print()
-        self.list_partrain.print()
-        self.list_setview.print()
-        self.list_settest.print()
+        self.obj_parmodel.print()
+        self.obj_parenv.print()
+        self.obj_pararray.print()
+        self.obj_paradapt.print()
+        self.obj_partrain.print()
+        self.obj_setprog.print()
+        self.obj_settest.print()
 
 

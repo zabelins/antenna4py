@@ -42,12 +42,12 @@ class Syntnet:
         print("\tcontrol_stepphi = ", self.control_stepphi)
         print("\tcontrol_stepamp = ", self.control_stepamp)
 
-    def calc_out(self, out_set, out_env, out_array1nd, out_proc2nd):
+    def calc_out(self, out_set, out_env, out_array, out_proc):
         # распаковка исходных данных
         vec_pattern, vec_time = out_set[0], out_set[1]
         vec_degsig, vec_degint = out_env[0], out_env[3]
-        vec_test, vec_eqdegsig, vec_eqdegint = out_array1nd[0].T, out_array1nd[1], out_array1nd[2]
-        vec_inweight, vec_outweight, vec_in = out_proc2nd[0], out_proc2nd[1], out_proc2nd[2]
+        vec_test, vec_eqdegsig, vec_eqdegint = out_array[0].T, out_array[1], out_array[2]
+        vec_in, vec_inweight, vec_outweight = out_proc[0], out_proc[1], out_proc[2]
         # вычисляем размерности
         len_time, len_pattern = vec_time.shape[0], vec_pattern.shape[0]
         len_sig, len_int = vec_degsig.shape[1], vec_degint.shape[1]
@@ -73,20 +73,20 @@ class Syntnet:
         self.mean_outatten = np.mean(self.vec_outatten, axis=0)
 
     def get_out(self):
-        res = []
-        res.append(self.vec_inpattern)
-        res.append(self.vec_indeph)
-        res.append(self.vec_inatten)
-        res.append(self.vec_insignal)
-        res.append(self.vec_outpattern)
-        res.append(self.vec_outdeph)
-        res.append(self.vec_outatten)
-        res.append(self.vec_outsignal)
-        res.append(self.mean_indeph)
-        res.append(self.mean_inatten)
-        res.append(self.mean_outdeph)
-        res.append(self.mean_outatten)
-        return res
+        out_syntnet = []
+        out_syntnet.append(self.vec_inpattern)
+        out_syntnet.append(self.vec_indeph)
+        out_syntnet.append(self.vec_inatten)
+        out_syntnet.append(self.vec_insignal)
+        out_syntnet.append(self.vec_outpattern)
+        out_syntnet.append(self.vec_outdeph)
+        out_syntnet.append(self.vec_outatten)
+        out_syntnet.append(self.vec_outsignal)
+        out_syntnet.append(self.mean_indeph)
+        out_syntnet.append(self.mean_inatten)
+        out_syntnet.append(self.mean_outdeph)
+        out_syntnet.append(self.mean_outatten)
+        return out_syntnet
 
     def print_out(self):
         # проверка типа векторов на ndarray

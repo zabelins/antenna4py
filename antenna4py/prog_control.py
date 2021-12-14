@@ -9,70 +9,72 @@ if __name__ == "__main__":
 class Control:
     """Класс управления программой"""
 
-    def __init__(self, model_antenna, model_train):
-        self.model_antenna = model_antenna
-        self.model_train = model_train
-        self.list_set = pack_control.settings.All_settings(1)
-        self.list_file = file_io.File_IO(1)
+    def __init__(self, model, train):
+        # основные модули программы
+        self.model = model
+        self.train = train
+        # модули управления программой
+        self.obj_set = pack_control.settings.All_settings(1)
+        self.obj_file = file_io.File_IO(1)
         # вывод и сохранение результатов
         self.calc_save = []
         self.calc_info = []
 
     def set(self):
-        # формирование векторов параметров и настроек
-        set_prog = self.list_set.list_setprog.get()
-        # инициализация параметров модели уровня L1
-        self.model_antenna.set(self.list_set)
-        self.model_train.set(self.list_set)
-        self.calc_save = set_prog[9]
-        self.calc_info = set_prog[10]
-        # инициализация параметров уровня L2
-        self.list_file.set(set_prog)
+        # инициализация модуля управления (L1)
+        list_set = self.obj_set.get()
+        self.calc_save = list_set[5][9]
+        self.calc_info = list_set[5][10]
+        # инициализация основных модулей (L1)
+        self.model.set(list_set)
+        self.train.set(list_set)
+        # инициализация модулей управления (L2)
+        self.obj_file.set(list_set[5])
 
     def print(self):
         print("Параметры модуля управления (L1):")
-        self.list_set.print()
-        self.list_file.print()
+        self.obj_set.print()
+        self.obj_file.print()
 
     def mode_static(self, id_script):
         # расчёт диаграммы направленности
-        self.model_antenna.calc_out(id_script)
+        self.model.calc_out(id_script)
         self.print_calc()
 
     def mode_dynamic1nd(self, id_script):
         # расчёт временных характеристик
-        self.model_antenna.calc_out(id_script)
+        self.model.calc_out(id_script)
         self.print_calc()
         self.save_learn()
 
     def mode_dynamic2nd(self, id_script):
         # расчёт усреднённых характеристик
-        self.model_antenna.calc_out(id_script)
+        self.model.calc_out(id_script)
         self.print_calc()
 
     def mode_train(self):
         # обучение нейронной сети
-        self.model_train.calc_out()
+        self.train.calc_out()
 
     def mode_print(self, id_set):
         # просмотр настроек и параметров
         if id_set == 1:
             # просмотр настроек программы
-            self.list_set.print()
+            self.obj_set.print()
         if id_set == 2:
-            # просмотр параметров модели
-            self.model_antenna.print()
-            self.model_train.print()
+            # просмотр параметров моделей
+            self.model.print()
+            self.train.print()
 
     def print_calc(self):
         # вывод служебной информации для графика
         if self.calc_info == 1:
-            self.model_antenna.print_calc()
+            self.model.print_calc()
 
     def save_learn(self):
         # сохранение обучающей выборки
         if self.calc_save == 1:
-            self.model_antenna.save_learn()
+            self.model.save_learn(self.obj_set.get())
 
 
 

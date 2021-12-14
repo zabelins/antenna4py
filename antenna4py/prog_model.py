@@ -11,22 +11,25 @@ class Model_antenna:
     """Класс динамического моделирования адаптивной антенны"""
 
     def __init__(self):
-        self.list_settings = pack_model.settings.Model(1)
-        self.list_env = pack_model.env.Env(1)
-        self.list_array = pack_model.array.Array(1)
-        self.list_proc = pack_model.proc.Proc(1)
-        self.list_syntnet = pack_model.syntnet.Syntnet(1)
-        self.list_file = pack_model.file_io.File_IO(1)
-        self.list_test = pack_model.test.Test(1)
+        # модули адаптивной антенны
+        self.obj_set = pack_model.settings.Model(1)
+        self.obj_env = pack_model.env.Env(1)
+        self.obj_array = pack_model.array.Array(1)
+        self.obj_proc = pack_model.proc.Proc(1)
+        self.obj_syntnet = pack_model.syntnet.Syntnet(1)
+        self.obj_file = pack_model.file_io.File_IO(1)
+        self.obj_test = pack_model.test.Test(1)
+        # параметры моделирования
         self.f_cen = []
         self.id_script = []
+        # характеристики модулей ААР
         self.out_set = []
         self.out_env = []
-        self.out_array1nd = []
-        self.out_array2nd = []
-        self.out_proc1nd = []
-        self.out_proc2nd = []
+        self.out_array = []
+        self.out_proc = []
         self.out_syntnet = []
+        self.out_model = []
+        # результаты моделирования
         self.vec_meansnir = []
         self.vec_meanindepth = []
         self.vec_meaninatten = []
@@ -35,30 +38,23 @@ class Model_antenna:
         self.vec_meanoutatten = []
         self.vec_meanoutsnir = []
 
-    def set(self, obj_set):
-        # формирование векторов параметров и настроек
-        par_model = obj_set.list_parmodel.get()
-        par_env = obj_set.list_parenv.get()
-        par_array = obj_set.list_pararray.get()
-        par_adapt = obj_set.list_paradapt.get()
-        set_prog = obj_set.list_setprog.get()
-        set_test =obj_set.list_settest.get()
+    def set(self, list_set):
         # инициализация параметров модели уровня L1
-        self.f_cen = par_array[0]
+        self.f_cen = list_set[2][0]
         # инициализация параметров уровня L2
-        self.list_settings.set(par_model)
-        self.list_env.set(par_env)
-        self.list_array.set(par_array)
-        self.list_proc.set(par_adapt)
-        self.list_syntnet.set(par_adapt)
-        self.list_test.set(set_test)
-        self.list_file.set(set_prog)
+        self.obj_set.set(list_set[0])
+        self.obj_env.set(list_set[1])
+        self.obj_array.set(list_set[2])
+        self.obj_proc.set(list_set[3])
+        self.obj_syntnet.set(list_set[3])
+        self.obj_file.set(list_set[5])
+        self.obj_test.set(list_set[6])
         # инициализация параметров уровня L3
-        self.list_array.list_factor.set(par_array)
-        self.list_array.list_element.set(par_array)
-        self.list_proc.list_trad.set(par_adapt)
-        self.list_proc.list_neuro.set(par_adapt)
-        self.list_proc.list_kalman.set(par_adapt)
+        self.obj_array.obj_factor.set(list_set[2])
+        self.obj_array.obj_element.set(list_set[2])
+        self.obj_proc.obj_trad.set(list_set[3])
+        self.obj_proc.obj_neuro.set(list_set[3])
+        self.obj_proc.obj_kalman.set(list_set[3])
 
     def get(self):
         res = []
@@ -68,70 +64,84 @@ class Model_antenna:
     def print(self):
         print("Параметры динамической модели (L1):")
         print("\tf_cen = ", self.f_cen)
-        self.list_settings.print()
-        self.list_env.print()
-        self.list_array.print()
-        self.list_proc.print()
-        self.list_syntnet.print()
-        self.list_test.print()
-        self.list_file.print()
+        self.obj_set.print()
+        self.obj_env.print()
+        self.obj_array.print()
+        self.obj_proc.print()
+        self.obj_syntnet.print()
+        self.obj_test.print()
+        self.obj_file.print()
 
     def calc_out(self, id_script):
         # динамическое моделирование ААР
         self.id_script = id_script
-        # создание векторов изменения параметров
-        self.list_settings.calc_out(id_script)
-        self.out_set = self.list_settings.get_out()
+        # получение параметров динамического моделирования
+        self.obj_set.calc_out(id_script)
+        self.out_set = self.obj_set.get_out()
         # запускаем цикл по параметру (частотной полосе)
         len_var = self.out_set[2].shape[0]
         for i in range(len_var):
             # получение текущей частотной полосы
             par_band = self.get_varpar(id_script, i)
             # создание векторов изменения сигналов и помех от времени
-            self.list_env.calc_out(self.out_set, id_script, par_band)
-            self.out_env = self.list_env.get_out()
+            self.obj_env.calc_out(self.out_set, id_script, par_band)
+            self.out_env = self.obj_env.get_out()
             # вычисление сигналов с антенной решётки
-            self.list_array.calc_out(self.out_set, self.out_env)
-            self.out_array1nd = self.list_array.get_out1nd()
-            self.out_array2nd = self.list_array.get_out2nd()
+            self.obj_array.calc_out(self.out_set, self.out_env)
+            self.out_array = self.obj_array.get_out()
             # вычисление векторов ВК
-            self.list_proc.calc_out(self.out_array2nd)
-            self.out_proc1nd = self.list_proc.get_out1nd()
-            self.out_proc2nd = self.list_proc.get_out2nd()
+            self.obj_proc.calc_out(self.out_array)
+            self.out_proc = self.obj_proc.get_out()
             # вычисление ДН и характеристик
-            self.list_syntnet.calc_out(self.out_set, self.out_env, self.out_array1nd, self.out_proc2nd)
-            self.out_syntnet = self.list_syntnet.get_out()
+            self.obj_syntnet.calc_out(self.out_set, self.out_env, self.out_array, self.out_proc)
+            self.out_syntnet = self.obj_syntnet.get_out()
             # инициализация векторов усреднённых характеристик
             if i == 0:
                 len_sig, len_int = self.out_env[0].shape[1], self.out_env[3].shape[1]
                 self.init_vecmean(len_var, len_sig, len_int)
             # сохранение усреднённых параметров
-            self.vec_meansnir[i] = self.out_array1nd[4]
+            self.vec_meansnir[i] = self.out_array[4]
             self.vec_meanindepth[i] = self.out_syntnet[8]
             self.vec_meaninatten[i] = self.out_syntnet[9]
-            self.vec_meaninsnir[i] = self.out_proc1nd[2]
+            self.vec_meaninsnir[i] = self.out_proc[5]
             self.vec_meanoutdepth[i] = self.out_syntnet[10]
             self.vec_meanoutatten[i] = self.out_syntnet[11]
-            self.vec_meanoutsnir[i] = self.out_proc1nd[3]
+            self.vec_meanoutsnir[i] = self.out_proc[6]
 
     def get_out(self):
-        # получить усреднённые характеристики
-        res = []
-        res.append(self.vec_meansnir)
-        res.append(self.vec_meanindepth)
-        res.append(self.vec_meaninatten)
-        res.append(self.vec_meaninsnir)
-        res.append(self.vec_meanoutdepth)
-        res.append(self.vec_meanoutatten)
-        res.append(self.vec_meanoutsnir)
-        return res
+        # список усреднённых характеристик от параметра
+        self.out_model = []
+        self.out_model.append(self.vec_meansnir)
+        self.out_model.append(self.vec_meanindepth)
+        self.out_model.append(self.vec_meaninatten)
+        self.out_model.append(self.vec_meaninsnir)
+        self.out_model.append(self.vec_meanoutdepth)
+        self.out_model.append(self.vec_meanoutatten)
+        self.out_model.append(self.vec_meanoutsnir)
+
+    def get_data(self):
+        # список всех характеристик модели
+        self.get_out()
+        out_data = []
+        out_data.append(self.out_set)
+        out_data.append(self.out_env)
+        out_data.append(self.out_array)
+        out_data.append(self.out_proc)
+        out_data.append(self.out_syntnet)
+        out_data.append(self.out_model)
+        return out_data
+
+    def get_out2nd(self):
+        # получить вектора для обучения НС
+        out_model2 = self.get_info()
+        return [self.out_array, self.out_proc, out_model2]
 
     def get_info(self):
         # получить параметры ААР
         res = []
-        res.append(self.list_array.array_N)
-        res.append(self.list_proc.alg_type)
-        res.append(self.list_proc.control_type)
+        res.append(self.obj_array.array_N)
+        res.append(self.obj_proc.alg_type)
+        res.append(self.obj_proc.control_type)
         res.append(self.id_script)
         buf1 = self.vec_meanoutdepth.mean(axis=0) - self.vec_meanindepth.mean(axis=0)
         buf2 = self.vec_meanoutatten.mean(axis=0) - self.vec_meaninatten.mean(axis=0)
@@ -139,16 +149,6 @@ class Model_antenna:
         res.append(buf2.sum())
         res.append(self.vec_meanoutsnir.mean())
         return res
-
-    def get_out1nd(self):
-        # получить вектора для представления
-        out_model = self.get_out()
-        return [self.out_set, self.out_env, self.out_array1nd, self.out_proc1nd, self.out_syntnet, out_model]
-
-    def get_out2nd(self):
-        # получить вектора для обучения НС
-        out_model = self.get_info()
-        return [self.out_array2nd, self.out_proc2nd, out_model]
 
     def print_out(self):
         # проверка типа векторов на ndarray
@@ -167,17 +167,17 @@ class Model_antenna:
 
     def print_calc(self):
         # вывод информации о ходе вычислений
-        self.list_settings.print_out()
-        self.list_env.print_out()
-        self.list_array.print_out()
-        self.list_proc.print_out()
-        self.list_syntnet.print_out()
+        self.obj_set.print_out()
+        self.obj_env.print_out()
+        self.obj_array.print_out()
+        self.obj_proc.print_out()
+        self.obj_syntnet.print_out()
         self.print_out()
 
-    def save_learn(self):
+    def save_learn(self, list_set):
         # сохранение обучающей выборки
         vec_data = self.get_out2nd()
-        self.list_file.save_file(vec_data)
+        self.obj_file.save_file(list_set, vec_data)
 
     def init_vecmean(self, len_var, len_sig, len_int):
         # инициализация усреднённых векторов

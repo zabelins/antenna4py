@@ -9,73 +9,44 @@ if __name__ == "__main__":
 class View:
     """Класс вывода информации для пользователя"""
 
-    def __init__(self, model_antenna, model_train, controller):
-        self.model_antenna = model_antenna
-        self.model_train = model_train
+    def __init__(self, controller, model, train):
+        # основные модули программы
         self.controller = controller
-        self.list_graph = pack_view.graph.Graph(1)
-        self.list_client = pack_view.client.Client(1)
-        self.list_report = pack_view.report.Report(1)
-        # координатная сетка для графиков
-        self.vec_pattern = []
-        self.vec_time = []
-        self.vec_var = []
-        # временные характеристики сигналов и помех
-        self.vec_sigdeg = []
-        self.vec_sigamp = []
-        self.vec_sigband = []
-        self.vec_intdeg = []
-        self.vec_intamp = []
-        self.vec_intband = []
-        self.vec_eqdegsig = []
-        self.vec_eqdegint = []
-        self.vec_snir = []
-        # временные характеристики адаптации
-        self.vec_inpattern = []
-        self.vec_indepth = []
-        self.vec_inatten = []
-        self.vec_insignal = []
-        self.vec_insnir = []
-        self.vec_outpattern = []
-        self.vec_outdepth = []
-        self.vec_outatten = []
-        self.vec_outsignal = []
-        self.vec_outsnir = []
-        # параметрические характеристики адаптации
-        self.vec_meanindepth = []
-        self.vec_meaninatten = []
-        self.vec_meaninsnir = []
-        self.vec_meanoutdepth = []
-        self.vec_meanoutatten = []
-        self.vec_meanoutsnir = []
-        self.vec_meansnir = []
+        self.model = model
+        self.train = train
+        # модули вывода информации
+        self.obj_graph = pack_view.graph.Graph(1)
+        self.obj_client = pack_view.client.Client(1)
+        self.obj_report = pack_view.report.Report(1)
+        # выходные данные модели ААР
+        self.out_data = []
 
     def set(self):
-        # инициализация контроллера и модели
+        # инициализация модуля управления (L1)
         self.controller.set()
-        set_prog = self.controller.list_set.list_setprog.get()
-        # инициализация параметров интерфейса уровня L2
-        self.list_graph.set(set_prog)
-        self.list_client.set(set_prog)
-        self.list_report.set(set_prog)
-        # инициализация параметров интерфейса уровня L3
-        self.list_graph.list_pattern.set(set_prog)
-        self.list_graph.list_signals.set(set_prog)
-        self.list_graph.list_output.set(set_prog)
-        self.list_graph.list_adapt.set(set_prog)
+        list_set = self.controller.obj_set.get()
+        # инициализация модулей вывода информации (L2)
+        self.obj_graph.set(list_set[5])
+        self.obj_client.set(list_set[5])
+        self.obj_report.set(list_set[5])
+        # инициализация модулей вывода информации (L3)
+        self.obj_graph.obj_pattern.set(list_set[5])
+        self.obj_graph.obj_signals.set(list_set[5])
+        self.obj_graph.obj_output.set(list_set[5])
+        self.obj_graph.obj_adapt.set(list_set[5])
 
     def print(self):
         print("Параметры модуля представления (L1):")
-        self.list_graph.print()
-        self.list_client.print()
-        self.list_report.print()
+        self.obj_graph.print()
+        self.obj_client.print()
+        self.obj_report.print()
 
     def start_prog(self):
         # инициализируем числовую модель
         self.set()
         # выбор режима расчёта
-        input_buf = self.list_client.input_mode()
-        self.list_client.print_namemode(input_buf)
+        input_buf = self.obj_client.input_mode()
+        self.obj_client.print_namemode(input_buf)
         # запуск выбранного режима
         if input_buf == 1:
             # расчёт диаграммы направленности
@@ -97,7 +68,7 @@ class View:
             self.controller.mode_print(2)
         elif input_buf == 7:
             # просмотр параметров графиков
-            self.list_graph.print()
+            self.obj_graph.print()
 
     def mode_static(self):
         # режим расчёта диаграммы направленности
@@ -112,7 +83,7 @@ class View:
     def mode_dynamic1nd(self):
         # режим расчёта временных характеристик ААР (1 параметр)
         # выбор сценария моделирования
-        id_script = self.list_client.input_script()
+        id_script = self.obj_client.input_script()
         # расчёт модели
         self.controller.mode_dynamic1nd(id_script)
         # синхронизация с моделью
@@ -158,139 +129,106 @@ class View:
 
     def sync_model(self):
         # синхронизация с моделью
-        out_model = self.model_antenna.get_out1nd()
-        # координатные сетки
-        self.vec_pattern = out_model[0][0]
-        self.vec_time = out_model[0][1]
-        self.vec_var = out_model[0][2]
-        # временные характеристики сигналов и помех
-        self.vec_sigdeg = out_model[1][0]
-        self.vec_sigamp = out_model[1][1]
-        self.vec_sigband = out_model[1][2]
-        self.vec_intdeg = out_model[1][3]
-        self.vec_intamp = out_model[1][4]
-        self.vec_intband = out_model[1][5]
-        self.vec_eqdegsig = out_model[2][1]
-        self.vec_eqdegint = out_model[2][2]
-        self.vec_snir = out_model[2][3]
-        # временные характеристики адаптации
-        self.vec_inpattern = out_model[4][0]
-        self.vec_indepth = out_model[4][1]
-        self.vec_inatten = out_model[4][2]
-        self.vec_insnir = out_model[3][0]
-        self.vec_insignal = out_model[4][3]
-        self.vec_outpattern = out_model[4][4]
-        self.vec_outdepth = out_model[4][5]
-        self.vec_outatten = out_model[4][6]
-        self.vec_outsnir = out_model[3][1]
-        self.vec_outsignal = out_model[4][7]
-        # параметрические характеристики адаптации
-        self.vec_meansnir = out_model[5][0]
-        self.vec_meanindepth = out_model[5][1]
-        self.vec_meaninatten = out_model[5][2]
-        self.vec_meaninsnir = out_model[5][3]
-        self.vec_meanoutdepth = out_model[5][4]
-        self.vec_meanoutatten = out_model[5][5]
-        self.vec_meanoutsnir = out_model[5][6]
+        self.out_data = self.model.get_data()
 
     def show_pattern(self):
         # вывод графика диаграммы направленности
         vec = self.get_vecpattern()
-        self.list_graph.draw_pattern(vec, 0)
+        self.obj_graph.draw_pattern(vec, 0)
 
     def show_signals(self):
         # вывод графиков временных характеристик сигналов
         vec = self.get_vecsignals()
-        self.list_graph.draw_signals(vec)
+        self.obj_graph.draw_signals(vec)
 
     def show_adapt(self):
         # вывод графиков временных характеристик адаптации
         vec = self.get_vecadapt()
-        self.list_graph.draw_adapt(vec)
+        self.obj_graph.draw_adapt(vec)
 
     def show_output(self):
         # вывод графиков характеристик выходного сигнала
         vec = self.get_vecoutput()
-        self.list_graph.draw_output(vec)
+        self.obj_graph.draw_output(vec)
 
     def show_mean(self):
         # вывод графиков усреднённых характеристик адаптации
         vec = self.get_vecmean()
-        self.list_graph.draw_mean(vec)
+        self.obj_graph.draw_mean(vec)
 
     def info_pattern(self):
         # вывод информации о диаграмме направленности
         vec_adapt = self.get_vecadapt()
-        self.list_report.info_pattern(vec_adapt, 0)
+        self.obj_report.info_pattern(vec_adapt, 0)
 
     def info_adapt(self):
         # вывод информации об адаптации
         vec_mean = self.get_vecmean()
-        self.list_report.info_adapt(vec_mean)
+        self.obj_report.info_adapt(vec_mean)
 
     def info_mean(self):
         # вывод информации об адаптации
         vec_mean = self.get_vecmean()
-        self.list_report.info_mean(vec_mean)
+        self.obj_report.info_mean(vec_mean)
 
     def get_vecpattern(self):
         # получить вектора для диаграммы направленности
         res = []
-        res.append(self.vec_pattern)
-        res.append(self.vec_sigdeg)
-        res.append(self.vec_intdeg)
-        res.append(self.vec_eqdegsig)
-        res.append(self.vec_eqdegint)
-        res.append(self.vec_inpattern)
-        res.append(self.vec_outpattern)
+        res.append(self.out_data[0][0])
+        res.append(self.out_data[1][0])
+        res.append(self.out_data[1][3])
+        res.append(self.out_data[2][1])
+        res.append(self.out_data[2][2])
+        res.append(self.out_data[4][0])
+        res.append(self.out_data[4][4])
         return res
 
     def get_vecsignals(self):
         # получить вектора для временных характеристик сигналов
         res = []
-        res.append(self.vec_time)
-        res.append(self.vec_sigdeg)
-        res.append(self.vec_sigamp)
-        res.append(self.vec_sigband)
-        res.append(self.vec_intdeg)
-        res.append(self.vec_intamp)
-        res.append(self.vec_intband)
-        res.append(self.vec_eqdegsig)
-        res.append(self.vec_eqdegint)
+        res.append(self.out_data[0][1])
+        res.append(self.out_data[1][0])
+        res.append(self.out_data[1][1])
+        res.append(self.out_data[1][2])
+        res.append(self.out_data[1][3])
+        res.append(self.out_data[1][4])
+        res.append(self.out_data[1][5])
+        res.append(self.out_data[2][1])
+        res.append(self.out_data[2][2])
         return res
 
     def get_vecadapt(self):
         # получить вектора для временных характеристик адаптации
         res = []
-        res.append(self.vec_time)
-        res.append(self.vec_indepth)
-        res.append(self.vec_inatten)
-        res.append(self.vec_insnir)
-        res.append(self.vec_outdepth)
-        res.append(self.vec_outatten)
-        res.append(self.vec_outsnir)
-        res.append(self.vec_snir)
+        res.append(self.out_data[0][1])
+        res.append(self.out_data[4][1])
+        res.append(self.out_data[4][2])
+        res.append(self.out_data[3][3])
+        res.append(self.out_data[4][5])
+        res.append(self.out_data[4][6])
+        res.append(self.out_data[3][4])
+        res.append(self.out_data[2][3])
         return res
 
     def get_vecoutput(self):
         # получить вектора для характеристик выходного сигнала
         res = []
-        res.append(self.vec_time)
-        res.append(self.vec_insignal)
-        res.append(self.vec_outsignal)
+        res.append(self.out_data[0][1])
+        res.append(self.out_data[4][3])
+        res.append(self.out_data[4][7])
         return res
 
     def get_vecmean(self):
         # получить вектора для усреднённых характеристик адаптации
         res = []
-        res.append(self.vec_var)
-        res.append(self.vec_meanindepth)
-        res.append(self.vec_meaninatten)
-        res.append(self.vec_meaninsnir)
-        res.append(self.vec_meanoutdepth)
-        res.append(self.vec_meanoutatten)
-        res.append(self.vec_meanoutsnir)
-        res.append(self.vec_meansnir)
+        res.append(self.out_data[0][2])
+        res.append(self.out_data[5][1])
+        res.append(self.out_data[5][2])
+        res.append(self.out_data[5][3])
+        res.append(self.out_data[5][4])
+        res.append(self.out_data[5][5])
+        res.append(self.out_data[5][6])
+        res.append(self.out_data[5][0])
         return res
 
 

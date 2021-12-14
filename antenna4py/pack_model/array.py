@@ -12,8 +12,8 @@ class Array:
     """Класс моделирования антенной решётки"""
 
     def __init__(self, id):
-        self.list_factor = pa.array_factor.Factor(1)
-        self.list_element = pa.array_element.Element(1)
+        self.obj_factor = pa.array_factor.Factor(1)
+        self.obj_element = pa.array_element.Element(1)
         self.id = id
         # центральная частота для антенной системы
         self.f_cen = []
@@ -54,8 +54,8 @@ class Array:
         print("\tf_cen = ", self.f_cen)
         print("\tarray_N = ", self.array_N)
         print("\tarray_nois = ", self.array_nois)
-        self.list_factor.print()
-        self.list_element.print()
+        self.obj_factor.print()
+        self.obj_element.print()
 
     def calc_out(self, out_set, out_env):
         # распаковка исходных данных
@@ -69,26 +69,20 @@ class Array:
         # вычисление входного осшп
         self.calc_snir(vec_sigamp, vec_intamp)
 
-    def get_out1nd(self):
-        # получить вектора для отрисовки ДН
-        res = []
-        res.append(self.vec_test)
-        res.append(self.vec_eqdegsig)
-        res.append(self.vec_eqdegint)
-        res.append(self.vec_snir)
-        res.append(self.mean_snir)
-        return res
-
-    def get_out2nd(self):
-        # получить вектора для вычислений
-        res = []
-        res.append(self.vec_sig)
-        res.append(self.vec_int)
-        res.append(self.vec_nois)
-        res.append(self.matrix_sig)
-        res.append(self.matrix_int)
-        res.append(self.matrix_nois)
-        return res
+    def get_out(self):
+        out_array = []
+        out_array.append(self.vec_test)
+        out_array.append(self.vec_eqdegsig)
+        out_array.append(self.vec_eqdegint)
+        out_array.append(self.vec_snir)
+        out_array.append(self.mean_snir)
+        out_array.append(self.vec_sig)
+        out_array.append(self.vec_int)
+        out_array.append(self.vec_nois)
+        out_array.append(self.matrix_sig)
+        out_array.append(self.matrix_int)
+        out_array.append(self.matrix_nois)
+        return out_array
 
     def print_out(self):
         # проверка типа векторов и матриц на ndarray и list
@@ -102,6 +96,7 @@ class Array:
             print("\tvec_eqdegsig.shape = ", len(self.vec_eqdegsig))
             print("\tvec_eqdegint.shape = ", len(self.vec_eqdegint))
             print("\tvec_snir.shape = ", self.vec_snir.shape)
+            print("\tmean_snir.shape = ", 1)
             print("\tvec_sig.shape = ", self.vec_sig.shape)
             print("\tvec_int.shape = ", self.vec_int.shape)
             print("\tvec_nois.shape = ", self.vec_nois.shape)
@@ -120,27 +115,27 @@ class Array:
             num = i + 1
             # амплитуды для заданного элемента
             amp_sig = vec_sigamp[0]
-            amp_dist = self.list_factor.get_dist(num)
-            amp_rand = self.list_factor.get_randamp()
+            amp_dist = self.obj_factor.get_dist(num)
+            amp_rand = self.obj_factor.get_randamp()
             # фазы для заданного элемента
-            deg_rand = self.list_factor.get_randphi()
+            deg_rand = self.obj_factor.get_randphi()
             # амплитуды для заданного угла обзора
             buf = np.zeros(shape=[len_pattern], dtype=complex)
             for j in range(len_pattern):
                 deg = math.radians(vec_pattern[j])
-                amp_elem = self.list_element.get_gain(deg)
+                amp_elem = self.obj_element.get_gain(deg)
                 amp = amp_sig * amp_elem * amp_dist * amp_rand
-                buf[j] = self.list_factor.get_signal(amp, deg, num, deg_rand)
+                buf[j] = self.obj_factor.get_signal(amp, deg, num, deg_rand)
             self.vec_test[i] = buf
 
     def calc_realsig(self, vec_sigdeg, vec_sigamp, vec_sigband, vec_intdeg, vec_intamp, vec_intband):
         # вычисление векторов входных сигналов и помех в зависимости от времени для заданных углов прихода
         len_time, len_sig, len_int = vec_sigdeg.shape[0], vec_sigdeg.shape[1], vec_intdeg.shape[1]
         # расчёт вектора и параметров эквивалентных сигналов
-        buf = self.list_factor.get_eqvec(vec_sigdeg, vec_sigband)
+        buf = self.obj_factor.get_eqvec(vec_sigdeg, vec_sigband)
         self.vec_eqdegsig, len_eqsig, sumlen_eqsig, l0_maxsig, f_otnsig = buf
         # расчёт вектора и параметров эквивалентных помех
-        buf = self.list_factor.get_eqvec(vec_intdeg, vec_intband)
+        buf = self.obj_factor.get_eqvec(vec_intdeg, vec_intband)
         self.vec_eqdegint, len_eqint, sumlen_eqint, l0_maxint, f_otnint = buf
         # вычисления размеров для векторов и матриц
         # max - максимум по столбцу, gmax - глобальный максимум
@@ -191,15 +186,15 @@ class Array:
                         num = k + 1
                         # амплитуды для заданного элемента
                         amp_sig = var_amp[i]
-                        amp_dist = self.list_factor.get_dist(num)
-                        amp_rand = self.list_factor.get_randamp()
+                        amp_dist = self.obj_factor.get_dist(num)
+                        amp_rand = self.obj_factor.get_randamp()
                         # фазы для заданного элемента
-                        deg_rand = self.list_factor.get_randphi()
+                        deg_rand = self.obj_factor.get_randphi()
                         # амплитуды для заданного угла обзора
                         deg = math.radians(var_eqdeg[i][j])
-                        amp_elem = self.list_element.get_gain(deg)
+                        amp_elem = self.obj_element.get_gain(deg)
                         amp = amp_sig * amp_elem * amp_dist * amp_rand
-                        vec_buf[k] = vec_buf[k] + self.list_factor.get_signal(amp, deg, num, deg_rand)
+                        vec_buf[k] = vec_buf[k] + self.obj_factor.get_signal(amp, deg, num, deg_rand)
                     else:
                         vec_buf[k] = vec_buf[k]
                 vec[index] = vec_buf
@@ -221,7 +216,7 @@ class Array:
             # запускаем цикл по эквивалентным парам
             for j in range(int(l0_max[i])+1):
                 # вычисление коэффициена дискретного разложения Фурье
-                coef_fourier = self.list_factor.get_eqamp(self.array_N, l0_max[i], j, f_otn[i])
+                coef_fourier = self.obj_factor.get_eqamp(self.array_N, l0_max[i], j, f_otn[i])
                 if j == 0:
                     # расчёт корреляционной матрицы реального сигнала
                     var_vec = vec[index].T

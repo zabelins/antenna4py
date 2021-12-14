@@ -69,11 +69,11 @@ class Model:
         self.vec_var = np.arange(var_min, var_max, self.var_step)
 
     def get_out(self):
-        res = []
-        res.append(self.vec_pattern)
-        res.append(self.vec_time)
-        res.append(self.vec_var)
-        return res
+        out_set = []
+        out_set.append(self.vec_pattern)
+        out_set.append(self.vec_time)
+        out_set.append(self.vec_var)
+        return out_set
 
     def print_out(self):
         # проверка типа векторов на ndarray

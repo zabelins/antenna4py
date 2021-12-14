@@ -11,9 +11,9 @@ class Proc:
     """Класс моделирования сигнального процессора адаптивной антенны"""
 
     def __init__(self, id):
-        self.list_trad = pp.trad.Trad_alg(1)
-        self.list_neuro = pp.neuro.Neuro_alg(1)
-        self.list_kalman = pp.kalman.Kalman(1)
+        self.obj_trad = pp.trad.Trad_alg(1)
+        self.obj_neuro = pp.neuro.Neuro_alg(1)
+        self.obj_kalman = pp.kalman.Kalman(1)
         self.id = id
         # номера критерия и алгоритма адаптации
         self.alg_crit = []
@@ -52,18 +52,18 @@ class Proc:
         print("\talg_type = ", self.alg_type)
         print("\talg_delay = ", self.alg_delay)
         print("\tcontrol_type = ", self.control_type)
-        self.list_trad.print()
-        self.list_neuro.print()
-        self.list_kalman.print()
+        self.obj_trad.print()
+        self.obj_neuro.print()
+        self.obj_kalman.print()
 
-    def calc_out(self, out_array2nd):
+    def calc_out(self, out_array):
         # распаковка исходных данных
-        vec_sig, vec_int, vec_nois = out_array2nd[0], out_array2nd[1], out_array2nd[2]
-        matrix_sig, matrix_int, matrix_nois = out_array2nd[3], out_array2nd[4], out_array2nd[5]
+        vec_sig, vec_int, vec_nois = out_array[5], out_array[6], out_array[7]
+        matrix_sig, matrix_int, matrix_nois = out_array[8], out_array[9], out_array[10]
         # суммирование векторов
         self.get_vecsum(vec_sig, vec_int, vec_nois)
         # фильтр Калмана
-        matrix_sig, matrix_int, matrix_nois = self.list_kalman.calc_matrix(matrix_sig, matrix_int, matrix_nois)
+        matrix_sig, matrix_int, matrix_nois = self.obj_kalman.calc_matrix(matrix_sig, matrix_int, matrix_nois)
         # вычисление векторов ВК
         self.calc_weights(vec_sig, matrix_sig, matrix_int, matrix_nois)
         # учёт задержки на вычисления
@@ -71,34 +71,31 @@ class Proc:
         # вычисление ОСШП
         self.calc_snir(matrix_sig, matrix_int, matrix_nois)
 
-    def get_out1nd(self):
-        # получить вектора для отрисовки ДН
-        res = []
-        res.append(self.vec_insnir)
-        res.append(self.vec_outsnir)
-        res.append(self.mean_insnir)
-        res.append(self.mean_outsnir)
-        return res
-
-    def get_out2nd(self):
-        # получить вектора для вычислений
-        res = []
-        res.append(self.vec_inweight)
-        res.append(self.vec_outweight)
-        res.append(self.vec_sum)
-        return res
+    def get_out(self):
+        out_proc = []
+        out_proc.append(self.vec_sum)
+        out_proc.append(self.vec_inweight)
+        out_proc.append(self.vec_outweight)
+        out_proc.append(self.vec_insnir)
+        out_proc.append(self.vec_outsnir)
+        out_proc.append(self.mean_insnir)
+        out_proc.append(self.mean_outsnir)
+        return out_proc
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res1 = cl.is_ndarray([self.vec_insnir, self.vec_outsnir])
-        bool_res2 = cl.is_ndarray([self.vec_inweight, self.vec_outweight])
+        bool_res1 = cl.is_ndarray([self.vec_sum, self.vec_inweight, self.vec_outweight])
+        bool_res2 = cl.is_ndarray([self.vec_insnir, self.vec_outsnir])
         # вывод размерностей векторов
         if bool_res1 == True and bool_res2 == True:
             print("Размерности векторов ВК:")
-            print("\tvec_insnir.shape = ", self.vec_insnir.shape)
-            print("\tvec_outsnir.shape = ", self.vec_outsnir.shape)
+            print("\tvec_sum.shape = ", self.vec_sum.shape)
             print("\tvec_inweight.shape = ", self.vec_inweight.shape)
             print("\tvec_outweight.shape = ", self.vec_outweight.shape)
+            print("\tvec_insnir.shape = ", self.vec_insnir.shape)
+            print("\tvec_outsnir.shape = ", self.vec_outsnir.shape)
+            print("\tmean_insnir.shape = ", 1)
+            print("\tmean_outsnir.shape = ", 1)
         else:
             print("Ошибка проверки типа векторов ВК")
 
@@ -111,10 +108,10 @@ class Proc:
         # вычисление оптимальных векторов
         if self.alg_type == 0:
             # алгоритм прямого обращения матрицы
-            self.vec_outweight = self.list_trad.calc_out(vec_sig, matrix_sig, matrix_int, matrix_nois)
+            self.vec_outweight = self.obj_trad.calc_out(vec_sig, matrix_sig, matrix_int, matrix_nois)
         if self.alg_type == 1:
             # нейросетевой алгоритм вычисления ВК
-            self.vec_outweight = self.list_neuro.calc_out(self.vec_sum)
+            self.vec_outweight = self.obj_neuro.calc_out(self.vec_sum)
 
     def calc_snir(self, matrix_sig, matrix_int, matrix_nois):
         # вычисление осшп
@@ -127,13 +124,13 @@ class Proc:
         # цикл по времени
         for i in range(len_time):
             # мощности до оптимизации
-            power_insig = self.list_trad.calc_power(self.vec_inweight, matrix_sig[i])
-            power_inint = self.list_trad.calc_power(self.vec_inweight, matrix_int[i])
-            power_innois = self.list_trad.calc_power(self.vec_inweight, matrix_nois[i])
+            power_insig = self.obj_trad.calc_power(self.vec_inweight, matrix_sig[i])
+            power_inint = self.obj_trad.calc_power(self.vec_inweight, matrix_int[i])
+            power_innois = self.obj_trad.calc_power(self.vec_inweight, matrix_nois[i])
             # мощности после оптимизации
-            power_outsig = self.list_trad.calc_power(self.vec_outweight[i], matrix_sig[i])
-            power_outint = self.list_trad.calc_power(self.vec_outweight[i], matrix_int[i])
-            power_outnois = self.list_trad.calc_power(self.vec_outweight[i], matrix_nois[i])
+            power_outsig = self.obj_trad.calc_power(self.vec_outweight[i], matrix_sig[i])
+            power_outint = self.obj_trad.calc_power(self.vec_outweight[i], matrix_int[i])
+            power_outnois = self.obj_trad.calc_power(self.vec_outweight[i], matrix_nois[i])
             # вычисление осшп
             self.vec_insnir[i] = self.get_pow2db(abs(power_insig)/(abs(power_inint)+abs(power_innois)))
             self.vec_outsnir[i] = self.get_pow2db(abs(power_outsig) / (abs(power_outint) + abs(power_outnois)))

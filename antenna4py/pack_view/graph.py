@@ -11,10 +11,10 @@ class Graph:
 
     def __init__(self, id):
         self.id = id
-        self.list_pattern = pg.pattern.Pattern(1)
-        self.list_signals = pg.signals.Signals(1)
-        self.list_output = pg.output.Output(1)
-        self.list_adapt = pg.adapt.Adapt(1)
+        self.obj_pattern = pg.pattern.Pattern(1)
+        self.obj_signals = pg.signals.Signals(1)
+        self.obj_output = pg.output.Output(1)
+        self.obj_adapt = pg.adapt.Adapt(1)
         self.calc_anima = []
 
     def set(self, init):
@@ -28,10 +28,10 @@ class Graph:
     def print(self):
         print("Параметры вывода графика (L2):")
         print("\tcalc_anima = ", self.calc_anima)
-        self.list_pattern.print()
-        self.list_signals.print()
-        self.list_output.print()
-        self.list_adapt.print()
+        self.obj_pattern.print()
+        self.obj_signals.print()
+        self.obj_output.print()
+        self.obj_adapt.print()
 
     def draw_pattern(self, vec, time):
         # распаковка исходных данных
@@ -44,7 +44,7 @@ class Graph:
         # подписи графиков
         str_legend = ["исходная ДН", "оптимальная ДН"]
         # отрисовка графиков
-        self.list_pattern.draw_graph(x, y, vec_sigdeg[time], vec_intdeg[time], vec_eqdegsig[time], vec_eqdegint[time], str_legend)
+        self.obj_pattern.draw_graph(x, y, vec_sigdeg[time], vec_intdeg[time], vec_eqdegsig[time], vec_eqdegint[time], str_legend)
 
     def draw_signals(self, vec):
         # распаковка исходных данных
@@ -70,8 +70,8 @@ class Graph:
         # подписи графиков
         signals_strleg = ["помеха 1", "помеха 2", "помеха 3", "помеха 4", "помеха 5"]
         # отрисовка графиков
-        self.list_signals.draw_graph(x1, y1_amp, y1_deg, y1_band, signals_strleg)
-        #self.list_signals.draw_graph(x2, y2_amp, y2_deg, y2_band, signals_strleg)
+        self.obj_signals.draw_graph(x1, y1_amp, y1_deg, y1_band, signals_strleg)
+        #self.obj_signals.draw_graph(x2, y2_amp, y2_deg, y2_band, signals_strleg)
 
     def draw_adapt(self, vec):
         # распаковка исходных данных
@@ -96,7 +96,7 @@ class Graph:
         leg_atten = ["сигнал 1", "сигнал 2", "сигнал 3", "сигнал 4", "сигнал 5"]
         leg_snir = ["на входе ААР", "исходные ВК", "оптимальные ВК"]
         # отрисовка графиков
-        self.list_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 0)
+        self.obj_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 0)
 
     def draw_output(self, vec):
         # распаковка исходных данных
@@ -107,7 +107,7 @@ class Graph:
         # подписи графиков
         output_strleg = ["исходные ВК", "оптимальные ВК"]
         # отрисовка графиков
-        self.list_output.draw_graph(x_1, y_1, output_strleg)
+        self.obj_output.draw_graph(x_1, y_1, output_strleg)
 
     def draw_mean(self, vec):
         # распаковка исходных данных
@@ -130,7 +130,7 @@ class Graph:
         leg_atten = ["сигнал 1", "сигнал 2", "сигнал 3", "сигнал 4", "сигнал 5"]
         leg_snir = ["исходные ВК", "оптимальные ВК"]
         # отрисовка графиков
-        self.list_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 1)
+        self.obj_adapt.draw_graph(x1, y_depth, x2, y_atten, x3, y_snir, leg_depth, leg_atten, leg_snir, 1)
 
     def get_amp2db(self, num):
         # перевод амплитуды в децибеллы

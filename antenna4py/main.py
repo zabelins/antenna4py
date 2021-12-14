@@ -10,7 +10,7 @@ if __name__ == "__main__":
 model = prog_model.Model_antenna()
 train = prog_train.Model_train()
 controller = prog_control.Control(model, train)
-view = prog_view.View(model, train, controller)
+view = prog_view.View(controller, model, train)
 
 # запускаем вывод всей доступной информации
 view.start_prog()
