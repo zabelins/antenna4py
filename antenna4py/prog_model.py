@@ -131,25 +131,6 @@ class Model_antenna:
         out_data.append(self.out_model)
         return out_data
 
-    def get_out2nd(self):
-        # получить вектора для обучения НС
-        out_model2 = self.get_info()
-        return [self.out_array, self.out_proc, out_model2]
-
-    def get_info(self):
-        # получить параметры ААР
-        res = []
-        res.append(self.obj_array.array_N)
-        res.append(self.obj_proc.alg_type)
-        res.append(self.obj_proc.control_type)
-        res.append(self.id_script)
-        buf1 = self.vec_meanoutdepth.mean(axis=0) - self.vec_meanindepth.mean(axis=0)
-        buf2 = self.vec_meanoutatten.mean(axis=0) - self.vec_meaninatten.mean(axis=0)
-        res.append(buf1.sum())
-        res.append(buf2.sum())
-        res.append(self.vec_meanoutsnir.mean())
-        return res
-
     def print_out(self):
         # проверка типа векторов на ndarray
         bool_res1 = cl.is_ndarray([self.vec_meansnir, self.vec_meanindepth, self.vec_meaninatten, self.vec_meaninsnir])
@@ -176,8 +157,8 @@ class Model_antenna:
 
     def save_learn(self, list_set):
         # сохранение обучающей выборки
-        vec_data = self.get_out2nd()
-        self.obj_file.save_file(list_set, vec_data)
+        out_data = self.get_data()
+        self.obj_file.save_file(list_set, out_data, self.id_script)
 
     def init_vecmean(self, len_var, len_sig, len_int):
         # инициализация усреднённых векторов

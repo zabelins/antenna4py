@@ -38,24 +38,35 @@ class File_IO:
         print("\tdir_data = ", self.dir_data)
         print("\tname_file = ", self.name_file)
 
-    def save_file(self, list_set, vec_data):
+    def save_file(self, list_set, out_data, id_script):
         # сохранить файл
         print("\nСОХРАНЕНИЕ ФАЙЛА")
-        # распаковка исходных данных
-        out_array, out_proc, out_model = vec_data[0], vec_data[1], vec_data[2]
+        # распаковка данных для обучения
+        out_array, out_proc = out_data[2], out_data[3]
+        # распаковка служебных данных
+        par_array, par_adapt = list_set[2], list_set[3]
+        out_model = out_data[5]
         # проверка и создание директории файла
         self.check_dir()
         # создание и сохранение файла
-        name_file = self.get_namefile(out_model)
+        name_file = self.get_namefile(par_array, par_adapt, out_model, id_script)
         # сохранение файла
         buf_report = self.save_data(name_file, out_array, out_proc)
         # результат сохранения
         print(buf_report)
 
-    def get_namefile(self, out_model):
+    def get_namefile(self, par_array, par_adapt, out_model, id_script):
         # получить название файла
-        array_N, alg_type, control_type, id_script = out_model[0], out_model[1], out_model[2], out_model[3]
-        mean_depth, mean_atten, mean_snir = out_model[4], out_model[5], out_model[6]
+        array_N, alg_type, control_type = par_array[1], par_adapt[1], par_adapt[5]
+        vec_meanindepth, vec_meaninatten = out_model[1], out_model[2]
+        vec_meanoutdepth, vec_meanoutatten = out_model[4], out_model[5]
+        vec_meanoutsnir = out_model[6]
+        # вычисления
+        mean_depth = vec_meanoutdepth.mean(axis=0) - vec_meanindepth.mean(axis=0)
+        mean_atten = vec_meanoutatten.mean(axis=0) - vec_meaninatten.mean(axis=0)
+        mean_depth = mean_depth.sum()
+        mean_atten = mean_atten.sum()
+        mean_snir = vec_meanoutsnir.mean()
         # формируем название
         name_file = self.name_file + '_N' + str(int(array_N))
         name_file = name_file + '_A' + str(int(alg_type))
