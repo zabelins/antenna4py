@@ -44,33 +44,36 @@ class File_IO:
         # распаковка данных для обучения
         out_array, out_proc = out_data[2], out_data[3]
         # распаковка служебных данных
-        par_array, par_adapt = list_set[2], list_set[3]
-        out_model = out_data[5]
+        par_array, par_adapt, out_syntnet = list_set[2], list_set[3], out_data[4]
+        print("mean_indepth_OD = ", out_syntnet[8])
+        print("mean_inatten_OD = ", out_syntnet[9])
+        print("mean_outdepth_OD = ", out_syntnet[10])
+        print("mean_outatten_OD = ", out_syntnet[11])
         # проверка и создание директории файла
         self.check_dir()
         # создание и сохранение файла
-        name_file = self.get_namefile(par_array, par_adapt, out_model, id_script)
+        name_file = self.get_namefile(par_array, par_adapt, out_syntnet, out_proc, id_script)
         # сохранение файла
         buf_report = self.save_data(name_file, out_array, out_proc)
         # результат сохранения
         print(buf_report)
 
-    def get_namefile(self, par_array, par_adapt, out_model, id_script):
+    def get_namefile(self, par_array, par_adapt, out_syntnet, out_proc, id_script):
         # получить название файла
         array_N, alg_type, control_type = par_array[1], par_adapt[1], par_adapt[5]
-        vec_meanindepth, vec_meaninatten = out_model[1], out_model[2]
-        vec_meanoutdepth, vec_meanoutatten = out_model[4], out_model[5]
-        vec_meanoutsnir = out_model[6]
+        mean_indepth, mean_inatten = out_syntnet[8], out_syntnet[9]
+        mean_outdepth, mean_outatten = out_syntnet[10], out_syntnet[11]
+        mean_outsnir = out_proc[6]
         # вычисления
-        mean_depth = vec_meanoutdepth.mean(axis=0) - vec_meanindepth.mean(axis=0)
-        mean_atten = vec_meanoutatten.mean(axis=0) - vec_meaninatten.mean(axis=0)
+        mean_depth = mean_outdepth - mean_indepth
+        mean_atten = mean_outatten - mean_inatten
         mean_depth = mean_depth.sum()
         mean_atten = mean_atten.sum()
-        mean_snir = vec_meanoutsnir.mean()
+        mean_snir = mean_outsnir
         # формируем название
         name_file = self.name_file + '_N' + str(int(array_N))
-        name_file = name_file + '_A' + str(int(alg_type))
-        name_file = name_file + '_C' + str(int(control_type))
+        name_file = name_file + '_ALG' + str(int(alg_type))
+        name_file = name_file + '_CON' + str(int(control_type))
         name_file = name_file + '_SCR' + str(int(id_script))
         name_file = name_file + '_DPT' + str(self.get_round(mean_depth))
         name_file = name_file + '_ATT' + str(self.get_round(mean_atten))
