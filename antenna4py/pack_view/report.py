@@ -38,7 +38,7 @@ class Report:
             pattern_attensig[i] = self.get_ras(vec_inatten[time][i], vec_outatten[time][i])
             pattern_attensum = pattern_attensum + pattern_attensig[i]
         # расчёт осшп
-        pattern_snirio = np.array([vec_snir[time], vec_insnir[time], vec_outsnir[time]])
+        pattern_snirio = np.array([vec_snir[time][0], vec_insnir[time][0], vec_outsnir[time][0]])
         pattern_snirdif = pattern_snirio[2] - pattern_snirio[0]
         # округление до сотых
         pattern_depthint = self.get_round(pattern_depthint)

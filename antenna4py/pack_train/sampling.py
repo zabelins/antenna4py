@@ -1,5 +1,6 @@
 import numpy as np
 import pack_calc.calc_list as cl
+import os
 
 if __name__ == "__main__":
     print("Вы запустили модуль формирования обучающей выборки (L2)")
@@ -18,6 +19,18 @@ class Sampling:
         self.vec_outphi = []
         self.matrix_inamp = []
         self.matrix_inphi = []
+        # параметры
+        self.sig_deg = []
+        self.sig_amp = []
+        self.sig_band = []
+        self.int_deg = []
+        self.int_amp = []
+        self.int_band = []
+        self.depth = []
+        self.atten = []
+        self.outsnir = []
+        self.vec_sum = []
+        self.outweight = []
 
     def set(self, init):
         pass
@@ -65,9 +78,16 @@ class Sampling:
 
     def get_learnarray(self, out_data):
         # распаковка исходных данных
-        vec_sig, vec_int, vec_nois = out_data[0], out_data[1], out_data[2]
-        matrix_sig, matrix_int, matrix_nois = out_data[3], out_data[4], out_data[5]
-        vec_inweight, vec_outweight = out_data[6], out_data[7]
+        quit()
+        self.sig_deg, self.sig_amp, self.sig_band = out_data[0], out_data[1], out_data[2]
+        self.int_deg, self.int_amp, self.int_band = out_data[3], out_data[4], out_data[5]
+        self.depth, self.atten, self.outsnir = out_data[6], out_data[7], out_data[8]
+        self.vec_sum, self.outweight = out_data[9], out_data[10]
+
+
+        vec_sig, vec_int, vec_nois = 1,1,1
+        matrix_sig, matrix_int, matrix_nois = 1,1,1
+        vec_inweight, vec_outweight = 1,1,1
         # инициализация векторов
         len_sumtime, len_arrayn = self.get_sumtime(vec_sig), vec_sig[0].shape[2]
         vec_in = np.zeros(shape=[len_sumtime, len_arrayn], dtype=complex)

@@ -101,6 +101,7 @@ class Graph:
     def draw_output(self, vec):
         # распаковка исходных данных
         vec_time, vec_insignal, vec_outsignal = vec[0], vec[1], vec[2]
+        vec_insignal, vec_outsignal = np.transpose(vec_insignal)[0], np.transpose(vec_outsignal)[0]
         # выходные сигналы
         x_1 = [vec_time, vec_time]
         y_1 = [np.abs(vec_insignal ** 2), np.abs(vec_outsignal ** 2)]

@@ -13,16 +13,7 @@ class File_IO:
         self.id = id
         # параметры работы с файлами
         self.dir_data = ''
-        self.name_file = 'CL'
-        # формирование обучающей выборки
-        self.vec_sig = []
-        self.vec_int = []
-        self.vec_nois = []
-        self.matrix_sig = []
-        self.matrix_int = []
-        self.matrix_nois = []
-        self.vec_inweight = []
-        self.vec_outweight = []
+        self.name_file = 'DF'
 
     def set(self, init):
         self.dir_data = init[12]
@@ -41,29 +32,21 @@ class File_IO:
     def save_file(self, list_set, out_data, id_script):
         # сохранить файл
         print("\nСОХРАНЕНИЕ ФАЙЛА")
-        # распаковка данных для обучения
-        out_array, out_proc = out_data[2], out_data[3]
-        # распаковка служебных данных
-        par_array, par_adapt, out_syntnet = list_set[2], list_set[3], out_data[4]
-        print("mean_indepth_OD = ", out_syntnet[8])
-        print("mean_inatten_OD = ", out_syntnet[9])
-        print("mean_outdepth_OD = ", out_syntnet[10])
-        print("mean_outatten_OD = ", out_syntnet[11])
         # проверка и создание директории файла
         self.check_dir()
         # создание и сохранение файла
-        name_file = self.get_namefile(par_array, par_adapt, out_syntnet, out_proc, id_script)
+        name_file = self.get_namefile(list_set, out_data, id_script)
         # сохранение файла
-        buf_report = self.save_data(name_file, out_array, out_proc)
+        buf_report = self.save_data(name_file, out_data)
         # результат сохранения
         print(buf_report)
 
-    def get_namefile(self, par_array, par_adapt, out_syntnet, out_proc, id_script):
+    def get_namefile(self, list_set, out_data, id_script):
         # получить название файла
-        array_N, alg_type, control_type = par_array[1], par_adapt[1], par_adapt[5]
-        mean_indepth, mean_inatten = out_syntnet[8], out_syntnet[9]
-        mean_outdepth, mean_outatten = out_syntnet[10], out_syntnet[11]
-        mean_outsnir = out_proc[6]
+        array_N, alg_type, control_type = list_set[2][1], list_set[3][1], list_set[3][5]
+        mean_indepth, mean_inatten = out_data[4][8], out_data[4][9]
+        mean_outdepth, mean_outatten = out_data[4][10], out_data[4][11]
+        mean_outsnir = out_data[3][6]
         # вычисления
         mean_depth = mean_outdepth - mean_indepth
         mean_atten = mean_outatten - mean_inatten
@@ -78,23 +61,37 @@ class File_IO:
         name_file = name_file + '_DPT' + str(self.get_round(mean_depth))
         name_file = name_file + '_ATT' + str(self.get_round(mean_atten))
         name_file = name_file + '_SNIR' + str(self.get_round(mean_snir))
-        return self.dir_data + '/' + name_file
+        return name_file
 
-    def save_data(self, name_file, out_array, out_proc):
+    def save_data(self, name_file, out_data):
+        # распаковка данных для обучения
+        out_env, out_array, out_proc, out_syntnet = out_data[1], out_data[2], out_data[3], out_data[4]
         # распаковка исходных данных
         vec_sig, vec_int, vec_nois = out_array[5], out_array[6], out_array[7]
         matrix_sig, matrix_int, matrix_nois = out_array[8], out_array[9], out_array[10]
-        vec_inweight, vec_outweight = out_proc[1], out_proc[2]
+        vec_sum, vec_inweight, vec_outweight = out_proc[0], out_proc[1], out_proc[2]
         # проверка типа на ndarray
         res = self.check_type(vec_sig, vec_int, vec_nois, matrix_sig,
                               matrix_int, matrix_nois, vec_inweight, vec_outweight)
         if res != True:
             return "Ошибка проверки типа данных"
-        # сохранение
-        np.savez(name_file, vec_sig=vec_sig, vec_int=vec_int, vec_nois=vec_nois,
-                 matrix_sig=matrix_sig, matrix_int=matrix_int, matrix_nois=matrix_nois,
-                 vec_inweight=vec_inweight, vec_outweight=vec_outweight)
-        return "Файл успешно сохранён:\n" + name_file + ".npz"
+        # сохранение csv
+        data_file = pd.DataFrame(columns=['sig_deg', 'sig_amp', 'sig_band', 'int_deg', 'int_amp', 'int_band',
+                                          'depth', 'atten', 'outsnir', 'vec_sum', 'outweight'])
+        for i in range(len(out_array[5])):
+            data_file.at[i, 'sig_deg'] = out_env[0][i].tolist()
+            data_file.at[i, 'sig_amp'] = out_env[1][i].tolist()
+            data_file.at[i, 'sig_band'] = out_env[2][i].tolist()
+            data_file.at[i, 'int_deg'] = out_env[3][i].tolist()
+            data_file.at[i, 'int_amp'] = out_env[4][i].tolist()
+            data_file.at[i, 'int_band'] = out_env[5][i].tolist()
+            data_file.at[i, 'depth'] = (out_syntnet[5][i] - out_syntnet[1][i]).tolist()
+            data_file.at[i, 'atten'] = (out_syntnet[6][i] - out_syntnet[2][i]).tolist()
+            data_file.at[i, 'outsnir'] = out_proc[4][i].tolist()
+            data_file.at[i, 'vec_sum'] = out_proc[0][i].tolist()
+            data_file.at[i, 'outweight'] = out_proc[2][i].tolist()
+        data_file.to_csv(self.dir_data + '/' + name_file + '.csv')
+        return "Файл успешно сохранен:\n" + self.dir_data + '/' + name_file + ".csv"
 
     def check_type(self, *args):
         # проверка типа на ndarray
@@ -109,5 +106,5 @@ class File_IO:
             os.mkdir(self.dir_data)
 
     def get_round(self, num):
-        # округление числа
-        return round(num * 100) / 100
+        # округление числа до тысячных
+        return np.round(num*100)/100

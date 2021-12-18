@@ -117,8 +117,8 @@ class Proc:
         # вычисление осшп
         len_time = matrix_sig.shape[0]
         # инициализируем размеры векторов
-        self.vec_insnir = np.zeros(shape=[len_time])
-        self.vec_outsnir = np.zeros(shape=[len_time])
+        self.vec_insnir = np.zeros(shape=[len_time, 1])
+        self.vec_outsnir = np.zeros(shape=[len_time, 1])
         self.mean_insnir = np.zeros(shape=[1])
         self.mean_outsnir = np.zeros(shape=[1])
         # цикл по времени
@@ -132,8 +132,8 @@ class Proc:
             power_outint = self.obj_trad.calc_power(self.vec_outweight[i], matrix_int[i])
             power_outnois = self.obj_trad.calc_power(self.vec_outweight[i], matrix_nois[i])
             # вычисление осшп
-            self.vec_insnir[i] = self.get_pow2db(abs(power_insig)/(abs(power_inint)+abs(power_innois)))
-            self.vec_outsnir[i] = self.get_pow2db(abs(power_outsig) / (abs(power_outint) + abs(power_outnois)))
+            self.vec_insnir[i][0] = self.get_pow2db(abs(power_insig)/(abs(power_inint)+abs(power_innois)))
+            self.vec_outsnir[i][0] = self.get_pow2db(abs(power_outsig) / (abs(power_outint) + abs(power_outnois)))
         # вычисление среднего осшп
         self.mean_insnir = np.mean(self.vec_insnir)
         self.mean_outsnir = np.mean(self.vec_outsnir)

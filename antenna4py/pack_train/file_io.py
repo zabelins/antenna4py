@@ -1,5 +1,8 @@
+import sys
+
 import pack_calc.calc_list as cl
 import numpy as np
+import pandas as pd
 import os
 
 if __name__ == "__main__":
@@ -11,17 +14,22 @@ class File_IO:
     def __init__(self, id):
         self.id = id
         # параметры работы с файлами
-        self.dir_data = []
+        self.dir_data = ''
         self.name_file = 'CL'
-        # формирование обучающей выборки
-        self.vec_sig = []
-        self.vec_int = []
-        self.vec_nois = []
-        self.matrix_sig = []
-        self.matrix_int = []
-        self.matrix_nois = []
-        self.vec_inweight = []
-        self.vec_outweight = []
+        # параметры
+        self.sig_deg = []
+        self.sig_amp = []
+        self.sig_band = []
+        self.int_deg = []
+        self.int_amp = []
+        self.int_band = []
+        self.depth = []
+        self.atten = []
+        self.outsnir = []
+        self.vec_sum = []
+        self.outweight = []
+        # список данных от файлов
+        self.out_file = []
 
     def set(self, init):
         self.dir_data = init[12]
@@ -37,20 +45,6 @@ class File_IO:
         print("\tdir_data = ", self.dir_data)
         print("\tname_file = ", self.name_file)
 
-    def save_file(self, vec_data):
-        # сохранить файл
-        print("\nСОХРАНЕНИЕ ФАЙЛА")
-        # распаковка исходных данных
-        out_array2nd, out_proc2nd, out_model = vec_data[0], vec_data[1], vec_data[2]
-        # проверка и создание директории файла
-        self.check_dir()
-        # создание и сохранение файла
-        name_file = self.get_namefile(out_model)
-        # сохранение файла
-        buf_report = self.save_data(name_file, out_array2nd, out_proc2nd)
-        # результат сохранения
-        print(buf_report)
-
     def load_files(self):
         # проверка списка доступных файлов
         if os.path.exists(self.dir_data + '/'):
@@ -63,71 +57,53 @@ class File_IO:
         print("Найдено файлов с обучающими выборками:", len_files)
         # запуск цикла по файлам
         for i in range(len_files):
-            # прочитать файл
-            var_file = np.load(self.dir_data + '/' + file_list[i])
-            # загрузка данных
-            var_data = self.read_data(var_file)
-            # заполнение векторов
-            self.vec_sig.append(var_data[0])
-            self.vec_int.append(var_data[1])
-            self.vec_nois.append(var_data[2])
-            self.matrix_sig.append(var_data[3])
-            self.matrix_int.append(var_data[4])
-            self.matrix_nois.append(var_data[5])
-            self.vec_inweight.append(var_data[6])
-            self.vec_outweight.append(var_data[7])
+            # чтение csv
+            data_file = pd.read_csv(self.dir_data + '/' + file_list[i], delimiter=',')
+            # инициализация массивов
+            self.init_vec(data_file)
+            # заполнение массивов
+            for j in range(data_file.shape[0]):
+                self.sig_deg[j] = self.get_flarray(data_file.at[j, 'sig_deg'])
+                self.sig_amp[j] = self.get_flarray(data_file.at[j, 'sig_amp'])
+                self.sig_band[j] = self.get_flarray(data_file.at[j, 'sig_band'])
+                self.int_deg[j] = self.get_flarray(data_file.at[j, 'int_deg'])
+                self.int_amp[j] = self.get_flarray(data_file.at[j, 'int_amp'])
+                self.int_band[j] = self.get_flarray(data_file.at[j, 'int_band'])
+                self.depth[j] = self.get_flarray(data_file.at[j, 'depth'])
+                self.atten[j] = self.get_flarray(data_file.at[j, 'atten'])
+                self.outsnir[j] = self.get_flarray(data_file.at[j, 'outsnir'])
+                self.vec_sum[j] = self.get_cparray(data_file.at[j, 'vec_sum'])
+                self.outweight[j] = self.get_cparray(data_file.at[j, 'outweight'])
+            # формирование выходных данных
+            out_array = [self.sig_deg, self.sig_amp, self.sig_band, self.int_deg, self.int_amp, self.int_band,
+                         self.depth, self.atten, self.outsnir, self.vec_sum, self.outweight]
+            self.out_file.append(out_array)
+            self.print_calc(i)
+            # очистка векторов
+            self.sig_deg, self.sig_amp, self.sig_band = [], [], []
+            self.int_deg, self.int_amp, self.int_band = [], [], []
+            self.depth, self.atten, self.outsnir = [], [], []
+            self.vec_sum, self.outweight = [], []
         # возврат данных
-        return [self.vec_sig, self.vec_int, self.vec_nois, self.matrix_sig,
-                self.matrix_int, self.matrix_nois, self.vec_inweight, self.vec_outweight]
+        return self.out_file
 
-    def get_namefile(self, out_model):
-        # получить название файла
-        array_N, alg_type, control_type, id_script = out_model[0], out_model[1], out_model[2], out_model[3]
-        mean_depth, mean_atten, mean_snir = out_model[4], out_model[5], out_model[6]
-        # формируем название
-        name_file = self.name_file + '_N' + str(int(array_N))
-        name_file = name_file + '_A' + str(int(alg_type))
-        name_file = name_file + '_C' + str(int(control_type))
-        name_file = name_file + '_SCR' + str(int(id_script))
-        name_file = name_file + '_DPT' + str(self.get_round(mean_depth))
-        name_file = name_file + '_ATT' + str(self.get_round(mean_atten))
-        name_file = name_file + '_SNIR' + str(self.get_round(mean_snir))
-        return self.dir_data + '/' + name_file
-
-    def save_data(self, name_file, out_array2nd, out_proc2nd):
-        # распаковка исходных данных
-        vec_sig, vec_int, vec_nois = out_array2nd[0], out_array2nd[1], out_array2nd[2]
-        matrix_sig, matrix_int, matrix_nois = out_array2nd[3], out_array2nd[4], out_array2nd[5]
-        vec_inweight, vec_outweight = out_proc2nd[0], out_proc2nd[1]
-        # проверка типа на ndarray
-        res = self.check_type(vec_sig, vec_int, vec_nois, matrix_sig,
-                              matrix_int, matrix_nois, vec_inweight, vec_outweight)
-        if (res != True):
-            return "Ошибка проверки типа данных"
-        # сохранение
-        np.savez(name_file, vec_sig=vec_sig, vec_int=vec_int, vec_nois=vec_nois,
-                 matrix_sig=matrix_sig, matrix_int=matrix_int, matrix_nois=matrix_nois,
-                 vec_inweight=vec_inweight, vec_outweight=vec_outweight)
-        return "Файл успешно сохранён:\n" + name_file + ".npz"
-
-    def read_data(self, var_file):
-        # распаковка исходных данных
-        vec_sig, vec_int, vec_nois = var_file['vec_sig'], var_file['vec_int'], var_file['vec_nois']
-        matrix_sig, matrix_int, matrix_nois = var_file['matrix_sig'], var_file['matrix_int'], var_file['matrix_nois']
-        vec_inweight, vec_outweight = var_file['vec_inweight'], var_file['vec_outweight']
-        # проверка типа на ndarray
-        res = self.check_type(vec_sig, vec_int, vec_nois, matrix_sig,
-                              matrix_int, matrix_nois, vec_inweight, vec_outweight)
-        if (res != True):
-            print("Ошибка проверки типа данных")
-            return
-        # возврат данных
-        return [vec_sig, vec_int, vec_nois, matrix_sig, matrix_int, matrix_nois, vec_inweight, vec_outweight]
-
-    def check_type(self, *args):
-        # проверка типа на ndarray
-        bool_res = cl.is_ndarray([*args])
-        return bool_res
+    def print_calc(self, id_file):
+        # проверка типа векторов на ndarray
+        bool_res = cl.is_ndarray([self.sig_deg, self.sig_amp, self.sig_band, self.int_deg,
+                                self.int_amp, self.int_band, self.depth, self.atten,
+                                self.outsnir, self.vec_sum, self.outweight])
+        # вывод размерностей векторов
+        if bool_res:
+            print("Файл ", id_file+1, ", размерности векторов:")
+            print("\tsig_deg, sig_amp, sig_band = ", self.sig_deg.shape)
+            print("\tint_deg, int_amp, int_band = ", self.int_deg.shape)
+            print("\tdepth = ", self.depth.shape)
+            print("\tatten = ", self.atten.shape)
+            print("\toutsnir = ", self.outsnir.shape)
+            print("\tvec_sum = ", self.vec_sum.shape)
+            print("\toutweight = ", self.outweight.shape)
+        else:
+            print("Ошибка проверки типа векторов и матриц от антенной решётки")
 
     def check_dir(self):
         # проверка и создание директории файла
@@ -136,6 +112,41 @@ class File_IO:
         else:
             os.mkdir(self.dir_data)
 
-    def get_round(self, num):
-        # округление числа
-        return round(num * 100) / 100
+    def get_cparray(self, str):
+        str = str.replace(' ', '')
+        str = str.replace('[', '')
+        str = str.replace(']', '')
+        str = str.replace('(', '')
+        str = str.replace(')', '')
+        str = str.split(',')
+        my_list = [complex(x) for x in str]
+        my_list = np.array(my_list)
+        return my_list
+
+    def get_flarray(self, str):
+        str = str.replace(' ', '')
+        str = str.replace('[', '')
+        str = str.replace(']', '')
+        str = str.replace('(', '')
+        str = str.replace(')', '')
+        str = str.split(',')
+        my_list = [float(x) for x in str]
+        my_list = np.array(my_list)
+        return my_list
+
+    def init_vec(self, data_file):
+        # инициализация векторов
+        len_time = data_file.shape[0]
+        self.sig_deg = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'sig_deg'])).shape[0]])
+        self.sig_amp = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'sig_amp'])).shape[0]])
+        self.sig_band = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'sig_band'])).shape[0]])
+        self.int_deg = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'int_deg'])).shape[0]])
+        self.int_amp = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'int_amp'])).shape[0]])
+        self.int_band = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'int_band'])).shape[0]])
+        self.depth = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'depth'])).shape[0]])
+        self.atten = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'atten'])).shape[0]])
+        self.outsnir = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'outsnir'])).shape[0]])
+        self.vec_sum = np.zeros(shape=[len_time, (self.get_cparray(data_file.at[0, 'vec_sum'])).shape[0]],
+                                dtype=complex)
+        self.outweight = np.zeros(shape=[len_time, (self.get_cparray(data_file.at[0, 'outweight'])).shape[0]],
+                                  dtype=complex)

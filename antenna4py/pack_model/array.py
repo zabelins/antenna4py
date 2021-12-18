@@ -258,7 +258,7 @@ class Array:
     def calc_snir(self, vec_sigamp, vec_intamp):
         # вычислить временную зависимость осшп
         len_time = vec_sigamp.shape[0]
-        self.vec_snir = np.zeros(shape=[len_time])
+        self.vec_snir = np.zeros(shape=[len_time, 1])
         pow_nois = np.square(self.array_nois)
         # запускаем цикл по времени
         for i in range(len_time):
@@ -269,7 +269,7 @@ class Array:
             pow_sig = pow_sig.sum()
             pow_int = pow_int.sum()
             # вычисление осшп
-            self.vec_snir[i] = self.get_pow2db(pow_sig/(pow_int+pow_nois))
+            self.vec_snir[i][0] = self.get_pow2db(pow_sig/(pow_int+pow_nois))
         # вычисление среднего осшп
         self.mean_snir = self.vec_snir.mean()
 
