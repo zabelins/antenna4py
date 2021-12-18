@@ -125,7 +125,11 @@ class View:
 
     def mode_train(self):
         # обучение нейронной сети
-        self.controller.mode_train()
+        self.controller.mode_samples()
+        # выбор сценария моделирования
+        id_train = self.obj_client.input_train()
+        # обучение нейронной сети
+        self.controller.mode_train(id_train)
 
     def sync_model(self):
         # синхронизация с моделью

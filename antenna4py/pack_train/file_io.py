@@ -29,7 +29,7 @@ class File_IO:
         self.vec_sum = []
         self.outweight = []
         # список данных от файлов
-        self.out_file = []
+        self.out_data = []
 
     def set(self, init):
         self.dir_data = init[12]
@@ -75,9 +75,9 @@ class File_IO:
                 self.vec_sum[j] = self.get_cparray(data_file.at[j, 'vec_sum'])
                 self.outweight[j] = self.get_cparray(data_file.at[j, 'outweight'])
             # формирование выходных данных
-            out_array = [self.sig_deg, self.sig_amp, self.sig_band, self.int_deg, self.int_amp, self.int_band,
+            out_file = [self.sig_deg, self.sig_amp, self.sig_band, self.int_deg, self.int_amp, self.int_band,
                          self.depth, self.atten, self.outsnir, self.vec_sum, self.outweight]
-            self.out_file.append(out_array)
+            self.out_data.append(out_file)
             self.print_calc(i)
             # очистка векторов
             self.sig_deg, self.sig_amp, self.sig_band = [], [], []
@@ -85,7 +85,7 @@ class File_IO:
             self.depth, self.atten, self.outsnir = [], [], []
             self.vec_sum, self.outweight = [], []
         # возврат данных
-        return self.out_file
+        return self.out_data
 
     def print_calc(self, id_file):
         # проверка типа векторов на ndarray
@@ -104,13 +104,6 @@ class File_IO:
             print("\toutweight = ", self.outweight.shape)
         else:
             print("Ошибка проверки типа векторов и матриц от антенной решётки")
-
-    def check_dir(self):
-        # проверка и создание директории файла
-        if os.path.exists(self.dir_data):
-            pass
-        else:
-            os.mkdir(self.dir_data)
 
     def get_cparray(self, str):
         str = str.replace(' ', '')

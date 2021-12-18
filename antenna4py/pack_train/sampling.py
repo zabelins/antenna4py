@@ -10,27 +10,11 @@ class Sampling:
 
     def __init__(self, id):
         self.id = id
-        self.matrix_learn = []
-        self.matrix_test = []
         # обучающая выборка
         self.vec_inamp = []
         self.vec_inphi = []
         self.vec_outamp = []
         self.vec_outphi = []
-        self.matrix_inamp = []
-        self.matrix_inphi = []
-        # параметры
-        self.sig_deg = []
-        self.sig_amp = []
-        self.sig_band = []
-        self.int_deg = []
-        self.int_amp = []
-        self.int_band = []
-        self.depth = []
-        self.atten = []
-        self.outsnir = []
-        self.vec_sum = []
-        self.outweight = []
 
     def set(self, init):
         pass
@@ -47,93 +31,43 @@ class Sampling:
         # подготовка обучающей выборки
         self.get_learnarray(out_data)
         self.get_norm()
-        # вывод информации
-        self.print_out()
 
     def get_out(self):
-        res = []
-        res.append(self.vec_inamp)
-        res.append(self.vec_inphi)
-        res.append(self.vec_outamp)
-        res.append(self.vec_outphi)
-        res.append(self.matrix_inamp)
-        res.append(self.matrix_inphi)
-        return res
+        out_samples = []
+        out_samples.append(self.vec_inamp)
+        out_samples.append(self.vec_inphi)
+        out_samples.append(self.vec_outamp)
+        out_samples.append(self.vec_outphi)
+        return out_samples
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res1 = cl.is_ndarray([self.vec_inamp, self.vec_inphi, self.vec_outamp, self.vec_outphi])
-        bool_res2 = cl.is_ndarray([self.matrix_inamp, self.matrix_inphi])
+        bool_res = cl.is_ndarray([self.vec_inamp, self.vec_inphi, self.vec_outamp, self.vec_outphi])
         # вывод размерностей векторов
-        if (bool_res1 == True) and (bool_res2 == True):
+        if bool_res:
             print("Размерности векторов обучающей выборки:")
             print("\tvec_inamp.shape = ", self.vec_inamp.shape)
             print("\tvec_inphi.shape = ", self.vec_inphi.shape)
             print("\tvec_outamp.shape = ", self.vec_outamp.shape)
             print("\tvec_outphi.shape = ", self.vec_outphi.shape)
-            print("\tmatrix_inamp.shape = ", self.matrix_inamp.shape)
-            print("\tmatrix_inphi.shape = ", self.matrix_inphi.shape)
         else:
             print("Ошибка проверки типа векторов обучающей выборки")
 
     def get_learnarray(self, out_data):
-        # распаковка исходных данных
-        quit()
-        self.sig_deg, self.sig_amp, self.sig_band = out_data[0], out_data[1], out_data[2]
-        self.int_deg, self.int_amp, self.int_band = out_data[3], out_data[4], out_data[5]
-        self.depth, self.atten, self.outsnir = out_data[6], out_data[7], out_data[8]
-        self.vec_sum, self.outweight = out_data[9], out_data[10]
-
-
-        vec_sig, vec_int, vec_nois = 1,1,1
-        matrix_sig, matrix_int, matrix_nois = 1,1,1
-        vec_inweight, vec_outweight = 1,1,1
-        # инициализация векторов
-        len_sumtime, len_arrayn = self.get_sumtime(vec_sig), vec_sig[0].shape[2]
-        vec_in = np.zeros(shape=[len_sumtime, len_arrayn], dtype=complex)
-        vec_out = np.zeros(shape=[len_sumtime, len_arrayn], dtype=complex)
-        matrix_in = np.zeros(shape=[len_sumtime, len_arrayn, len_arrayn], dtype=complex)
-        # формирование обучающей выборки
-        len_data, id_buf = len(vec_sig), 0
-        # запускаем цикл по файлам
-        for i in range(len_data):
-            len_time = vec_sig[i].shape[0]
-            # запускаем цикл по времени
-            for j in range(len_time):
-                vec_in[id_buf] = self.get_vecin(vec_sig[i][j], vec_int[i][j], vec_nois[i][j])
-                vec_out[id_buf] = vec_outweight[i][j]
-                matrix_in[id_buf] = self.get_matrixin(matrix_sig[i][j], matrix_int[i][j], matrix_nois[i][j])
-                id_buf = id_buf + 1
+        # цикл склейки обучающей выборки по файлам
+        for i in range(len(out_data)):
+            if i == 0:
+                vec_in = out_data[i][9]
+                vec_out = out_data[i][10]
+            else:
+                if vec_in.shape[1] == (out_data[i][9]).shape[1]:
+                    vec_in = np.concatenate((vec_in, out_data[i][9]), axis=0)
+                    vec_out = np.concatenate((vec_out, out_data[i][10]), axis=0)
+                else:
+                    print("Ошибка размерности обучающей выборки")
         # разделение на амплитуды и фазы
         self.vec_inamp, self.vec_inphi = self.get_ampphi(vec_in)
         self.vec_outamp, self.vec_outphi = self.get_ampphi(vec_out)
-        self.matrix_inamp, self.matrix_inphi = self.get_ampphi(matrix_in)
-
-    def get_sumtime(self, vec):
-        # вычисление общего размера обучающей выборки
-        len_data = len(vec)
-        len_time = 0
-        for i in range(len_data):
-            len_time = len_time + vec[i].shape[0]
-        return len_time
-
-    def get_vecin(self, vec_sig, vec_int, vec_nois):
-        # суммарный входной вектор на ААР в заданный момент времени
-        len_N = vec_sig.shape[1]
-        vec_in = np.zeros(shape=[len_N], dtype=complex)
-        vec_in = vec_in + np.sum(vec_sig, axis=0)
-        vec_in = vec_in + np.sum(vec_int, axis=0)
-        #vec_in = vec_in + np.sum(vec_nois, axis=0)
-        return vec_in
-
-    def get_matrixin(self, matrix_sig, matrix_int, matrix_nois):
-        # суммарная входная матрица на ААР в заданный момент времени
-        len_N = matrix_sig.shape[1]
-        matrix_in = np.zeros(shape=[len_N, len_N], dtype=complex)
-        matrix_in = matrix_in + matrix_sig
-        matrix_in = matrix_in + matrix_int
-        matrix_in = matrix_in + matrix_nois
-        return matrix_in
 
     def get_ampphi(self, vec):
         # разделение на амплитудную и фазовую составляющую

@@ -39,22 +39,27 @@ class Control:
     def mode_static(self, id_script):
         # расчёт диаграммы направленности
         self.model.calc_out(id_script)
-        self.print_calc()
+        self.print_modelcalc()
 
     def mode_dynamic1nd(self, id_script):
         # расчёт временных характеристик
         self.model.calc_out(id_script)
-        self.print_calc()
+        self.print_modelcalc()
         self.save_learn()
 
     def mode_dynamic2nd(self, id_script):
         # расчёт усреднённых характеристик
         self.model.calc_out(id_script)
-        self.print_calc()
+        self.print_modelcalc()
 
-    def mode_train(self):
+    def mode_samples(self):
+        # подготовка обучающей выборки
+        self.train.calc_samples()
+        self.print_samplecalc()
+
+    def mode_train(self, id_train):
         # обучение нейронной сети
-        self.train.calc_out()
+        self.train.calc_out(id_train)
 
     def mode_print(self, id_set):
         # просмотр настроек и параметров
@@ -66,10 +71,15 @@ class Control:
             self.model.print()
             self.train.print()
 
-    def print_calc(self):
+    def print_modelcalc(self):
         # вывод служебной информации для графика
         if self.calc_info == 1:
             self.model.print_calc()
+
+    def print_samplecalc(self):
+        # вывод служебной информации для графика
+        if self.calc_info == 1:
+            self.train.print_calc()
 
     def save_learn(self):
         # сохранение обучающей выборки

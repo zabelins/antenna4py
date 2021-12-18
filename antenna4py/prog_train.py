@@ -22,9 +22,10 @@ class Model_train:
         # параметры обучения
         self.learn_type = []
         self.learn_epoch = []
-        # выборки
-        self.matrix_learn = []
-        self.matrix_test = []
+        # характеристики модулей обучения
+        self.out_data = []
+        self.out_samples = []
+        self.out_net = []
 
     def set(self, list_set):
         # инициализация параметров модели уровня L1
@@ -56,15 +57,20 @@ class Model_train:
         self.obj_network.print()
         self.obj_file.print()
 
-    def calc_out(self):
+    def calc_samples(self):
         # загрузка файлов с обучающими выборками
-        out_data = self.obj_file.load_files()
+        self.out_data = self.obj_file.load_files()
         # проверка исходных данных
-        if len(out_data) == 0:
+        if len(self.out_data) == 0:
             return []
         # формирование обучающих выборок
-        self.obj_sampling.calc_out(out_data)
-        out_sampling = self.obj_sampling.get_out()
+        self.obj_sampling.calc_out(self.out_data)
+        self.out_samples = self.obj_sampling.get_out()
+
+    def calc_out(self, id_train):
         # обучение НС
-        print("инициализация НС...")
-        self.obj_network.calc_out(out_sampling)
+        self.obj_network.calc_out(self.out_samples, id_train)
+
+    def print_calc(self):
+        # вывод информации о ходе вычислений
+        self.obj_sampling.print_out()

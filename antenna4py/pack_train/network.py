@@ -33,11 +33,14 @@ class Network:
         print("Параметры обучения НС (L3):")
         print("\t-")
 
-    def calc_out(self, out_sampling):
+    def calc_out(self, out_sampling, id_train):
         # распаковка исходных данных
         vec_inamp, vec_inphi = out_sampling[0], out_sampling[1]
         vec_outamp, vec_outphi = out_sampling[2], out_sampling[3]
-        matrix_inamp, matrix_inphi = out_sampling[4], out_sampling[5]
+        # приветствие
+        print("\nИНИЦИАЛИЗАЦИЯ НС...")
+        print("\tАлгоритм обучения ", id_train)
+        # обучение НС
         self.calc_xy(vec_inamp, vec_inphi, vec_outamp, vec_outphi)
         self.start_train()
 
