@@ -48,11 +48,8 @@ class File_IO:
         mean_outdepth, mean_outatten = out_data[4][10], out_data[4][11]
         mean_outsnir = out_data[3][6]
         # вычисления
-        mean_depth = mean_outdepth - mean_indepth
-        mean_atten = mean_outatten - mean_inatten
-        mean_depth = mean_depth.sum()
-        mean_atten = mean_atten.sum()
-        mean_snir = mean_outsnir
+        mean_depth = (mean_outdepth - mean_indepth).sum()
+        mean_atten = (mean_outatten - mean_inatten).sum()
         # формируем название
         name_file = self.name_file + '_N' + str(int(array_N))
         name_file = name_file + '_ALG' + str(int(alg_type))
@@ -60,7 +57,7 @@ class File_IO:
         name_file = name_file + '_SCR' + str(int(id_script))
         name_file = name_file + '_DPT' + str(self.get_round(mean_depth))
         name_file = name_file + '_ATT' + str(self.get_round(mean_atten))
-        name_file = name_file + '_SNIR' + str(self.get_round(mean_snir))
+        name_file = name_file + '_SNIR' + str(self.get_round(mean_outsnir))
         return name_file
 
     def save_data(self, name_file, out_data):

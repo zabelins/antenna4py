@@ -1,11 +1,13 @@
 import pack_model
 from pack_model import *
+import math
 import numpy as np
 import pack_calc.calc_list as cl
 
 if __name__ == "__main__":
     print("Вы запустили модуль динамической модели ААР (L1)")
     print("Модуль использует пакет:", pack_model.NAME)
+
 
 class Model_antenna:
     """Класс динамического моделирования адаптивной антенны"""
@@ -22,6 +24,7 @@ class Model_antenna:
         # параметры моделирования
         self.f_cen = []
         self.id_script = []
+        self.par_script = []
         # характеристики модулей ААР
         self.out_set = []
         self.out_env = []
@@ -75,16 +78,18 @@ class Model_antenna:
     def calc_out(self, id_script):
         # динамическое моделирование ААР
         self.id_script = id_script
+        # получение параметров для создания сетки
+        self.get_parscript()
         # получение параметров динамического моделирования
-        self.obj_set.calc_out(id_script)
+        self.obj_set.calc_out(self.par_script)
         self.out_set = self.obj_set.get_out()
         # запускаем цикл по параметру (частотной полосе)
         len_var = self.out_set[2].shape[0]
         for i in range(len_var):
-            # получение текущей частотной полосы
-            par_band = self.get_varpar(id_script, i)
+            # получение параметров для генератора сигналов
+            self.get_parscript(i)
             # создание векторов изменения сигналов и помех от времени
-            self.obj_env.calc_out(self.out_set, id_script, par_band)
+            self.obj_env.calc_out(self.out_set, self.par_script)
             self.out_env = self.obj_env.get_out()
             # вычисление сигналов с антенной решётки
             self.obj_array.calc_out(self.out_set, self.out_env)
@@ -170,18 +175,47 @@ class Model_antenna:
         self.vec_meanoutsnir = np.zeros(shape=[len_var])
         self.vec_meansnir = np.zeros(shape=[len_var])
 
-    def get_varpar(self, id_script, i):
-        # выдать значение текущей частотной полосы
-        if id_script == 4:
-            # временной режим по углам
-            par_band = self.f_cen * 0.1
-        elif id_script == 5:
-            # временной рандомный режим
-            par_band = self.f_cen * 0.1
-        elif id_script == 6:
-            # параметрический режим
-            par_band = self.f_cen * self.out_set[2][i]
-            print("var_band = ", self.out_set[2][i])
-        else:
-            par_band = 0
-        return par_band
+    def get_parscript(self, item=-1):
+        # выдать значения параметров для скрипта
+        id_set, id_deg, id_amp, id_band, int_deg, int_amp, int_band, int_mfreq = 0, 0, 0, 0, 0, 0, 0, 0
+        if self.id_script == 0:
+            # статический режим ДН
+            id_set, id_deg, id_amp, id_band = [0, 0, 0, 0]
+            int_deg, int_amp, int_band, int_mfreq = [0, 0, 0, 0]
+        elif self.id_script == 1:
+            # амплитуды - симуляция синусоидальных помех
+            id_set, id_deg, id_amp, id_band = [1, 0, 1, 0]
+            int_deg, int_amp, int_band, int_mfreq = [0, 0, 0, 1 * math.pow(10, 3)]
+        elif self.id_script == 2:
+            # амплитуды - симуляция меандровых помех
+            id_set, id_deg, id_amp, id_band = [1, 0, 2, 0]
+            int_deg, int_amp, int_band, int_mfreq = [0, 0, 0, 1 * math.pow(10, 3)]
+        elif self.id_script == 3:
+            # амплитуды - симуляция импульсных помех
+            id_set, id_deg, id_amp, id_band = [1, 0, 3, 0]
+            int_deg, int_amp, int_band, int_mfreq = [0, 0, 0, 1 * math.pow(10, 3)]
+        elif self.id_script == 4:
+            # углы - линейное изменение углов для одной помехи
+            id_set, id_deg, id_amp, id_band = [1, 1, 0, 0]
+            int_deg, int_amp, int_band, int_mfreq = [np.array([90]), np.array([1]), np.array([self.f_cen * 0.1]), 0]
+        elif self.id_script == 5:
+            # рандом - генерирование случайных параметров для для одной помехи
+            id_set, id_deg, id_amp, id_band = [1, 2, 4, 1]
+            int_deg, int_amp, int_band, int_mfreq = [np.array([90]), np.array([1]), np.array([self.f_cen * 0.1]), 0]
+        elif self.id_script == 6:
+            # рандом - генерирование случайных параметров для для мерцающей помехи
+            id_set, id_deg, id_amp, id_band = [1, 3, 5, 2]
+            int_deg, int_amp, int_band, int_mfreq = [np.array([90, 90]), np.array([1, 1]),
+                                                     np.array([self.f_cen * 0.1, self.f_cen * 0.1]), 0]
+        elif self.id_script == 7:
+            # параметрический режим ДН
+            id_set, id_deg, id_amp, id_band = [2, 1, 0, 0]
+            int_deg, int_amp, int_mfreq = [np.array([90]), np.array([1]), 0]
+            if item == -1:
+                int_band = 0
+            else:
+                int_band = np.array([self.f_cen * self.out_set[2][item]])
+                print("var_band = ", self.out_set[2][item])
+        # формат: режим для сетки, полоса частот, режим изменения углов,
+        # режим изменения амплитуд, режим изменения полос, частота модуляции
+        self.par_script = [id_set, id_deg, id_amp, id_band, int_deg, int_amp, int_band, int_mfreq]

@@ -103,7 +103,7 @@ class View:
 
     def mode_dynamic2nd(self):
         # режим расчёта временных характеристик ААР (N параметров)
-        self.controller.mode_dynamic2nd(6)
+        self.controller.mode_dynamic2nd(7)
         # синхронизация с моделью
         self.sync_model()
         # вывод информации о ДН

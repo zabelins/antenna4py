@@ -50,13 +50,13 @@ class Model:
         print("\tvar_line = ", self.var_line)
         print("\tvar_step = ", self.var_step)
 
-    def calc_out(self, id_script):
+    def calc_out(self, par_script):
         # один временной отсчёт для статического режима
-        if id_script == 0:
+        if par_script[0] == 0:
             self.time_line = [0, 0]
             self.time_step = 1
         # один параметрический отсчёт для статического и временного режимов
-        if id_script >= 0 and id_script <= 5:
+        if par_script[0] != 2:
             self.var_line = [0, 0]
             self.var_step = 1
         # определяем диапазон изменения параметров

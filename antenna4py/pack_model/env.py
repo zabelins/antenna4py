@@ -68,19 +68,24 @@ class Env:
         print("\tshift_static = ", self.shift_static)
         self.obj_gen.print()
 
-    def calc_out(self, out_set, id_script, par_band):
+    def calc_out(self, out_set, par_script):
         # распаковка исходных данных
         vec_time = out_set[1]
         # получение режимов для генератора
-        mode_amp, mode_deg, mode_band, freq_amp = self.get_modegen(id_script, par_band)
+        id_deg, id_amp, id_band, int_mfreq = par_script[1], par_script[2], par_script[3], par_script[7]
+        # если есть изменение угла - то фиксируем заданные параметры
+        if id_deg != 0:
+            self.int_deg = par_script[4]
+            self.int_amp = par_script[5]
+            self.int_band = par_script[6]
         # вычисляем вектора изменения сигналов от времени
         self.vec_sigdeg = self.obj_gen.get_vecdeg(vec_time, self.sig_deg, 0)
         self.vec_sigamp = self.obj_gen.get_vecamp(vec_time, self.sig_amp, 0, 0, 0, 0)
         self.vec_sigband = self.obj_gen.get_vecband(vec_time, self.sig_band, 0)
         # вычисляем вектора изменения помех от времени
-        self.vec_intdeg = self.obj_gen.get_vecdeg(vec_time, self.int_deg, mode_deg)
-        self.vec_intamp = self.obj_gen.get_vecamp(vec_time, self.int_amp, mode_amp, freq_amp, self.shift_static, self.shift_dynamic)
-        self.vec_intband = self.obj_gen.get_vecband(vec_time, self.int_band, mode_band)
+        self.vec_intdeg = self.obj_gen.get_vecdeg(vec_time, self.int_deg, id_deg)
+        self.vec_intamp = self.obj_gen.get_vecamp(vec_time, self.int_amp, id_amp, int_mfreq, self.shift_static, self.shift_dynamic)
+        self.vec_intband = self.obj_gen.get_vecband(vec_time, self.int_band, id_band)
 
     def get_out(self):
         out_env = []
@@ -108,22 +113,6 @@ class Env:
         else:
             print("Ошибка проверки типа векторов сигналов и помех от времени")
 
-    def get_modegen(self, id_script, par_band):
-        # выдать номера режимов для генератора
-        mode_amp, mode_deg, mode_band, freq_amp = 0, 0, 0, 0
-        if id_script >= 1 and id_script <= 3:
-            # если амплитудная модуляция, 1 КГц
-            mode_amp = id_script
-            freq_amp = 1 * math.pow(10, 3)
-        elif id_script == 5:
-            # если рандомные помехи, максимальная полоса 10%
-            mode_amp, mode_deg, mode_band = 4, 2, 1
-            self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([par_band])
-        elif id_script == 4 or id_script == 6:
-            # если изменение углов
-            mode_deg = 1
-            self.int_deg, self.int_amp, self.int_band = np.array([90]), np.array([1]), np.array([par_band])
-        return mode_amp, mode_deg, mode_band, freq_amp
 
 
 

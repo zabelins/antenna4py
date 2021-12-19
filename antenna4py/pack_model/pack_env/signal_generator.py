@@ -37,6 +37,9 @@ class Generator:
         if mode_deg == 2:
             # рандомное изменение углов
             vec_mod = self.get_degrand(len_deg, len_time)
+        if mode_deg == 3:
+            # рандомное изменение углов
+            vec_mod = self.get_degrand(len_deg, len_time)
         # вектора после модуляции
         vec_deg = cl.ones_modul(vec_mod, var_deg)
         return vec_deg
@@ -61,6 +64,9 @@ class Generator:
         if mode_amp == 4:
             # рандомное изменение амплитуд
             vec_mod = self.get_amprand(len_amp, len_time)
+        if mode_amp == 5:
+            # рандомное изменение амплитуд
+            vec_mod = self.get_amprand(len_amp, len_time)
         vec_amp = cl.ones_modul(vec_mod, var_amp)
         return vec_amp
 
@@ -73,6 +79,9 @@ class Generator:
             # частотные полосы без изменений
             vec_mod = np.ones(shape=[len_band, len_time])
         if mode_band == 1:
+            # рандомное изменение частотных полос
+            vec_mod = self.get_bandrand(len_band, len_time)
+        if mode_band == 2:
             # рандомное изменение частотных полос
             vec_mod = self.get_bandrand(len_band, len_time)
         vec_band = cl.ones_modul(vec_mod, var_band)
