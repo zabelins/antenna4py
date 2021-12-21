@@ -21,7 +21,7 @@ class Set_prog:
         self.adapt_mean = 1
         self.adapt_approx = 5
         # дополнительные настройки
-        self.calc_save = 1
+        self.calc_save = 0
         self.calc_info = 1
         self.calc_anima = 0
         # сохранение файлов

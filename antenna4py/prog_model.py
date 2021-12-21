@@ -206,7 +206,7 @@ class Model_antenna:
             # рандом - генерирование случайных параметров для для мерцающей помехи
             id_set, id_deg, id_amp, id_band = [1, 3, 5, 2]
             int_deg, int_amp, int_band, int_mfreq = [np.array([90, 90]), np.array([1, 1]),
-                                                     np.array([self.f_cen * 0.1, self.f_cen * 0.1]), 0]
+                                                     np.array([self.f_cen * 0.0, self.f_cen * 0.0]), 0]
         elif self.id_script == 7:
             # параметрический режим ДН
             id_set, id_deg, id_amp, id_band = [2, 1, 0, 0]

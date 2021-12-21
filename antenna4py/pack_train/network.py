@@ -61,7 +61,8 @@ class Network:
         net_model = keras.Sequential()
         # создаём слои
         net_model.add(Dense(units=20, input_shape=(20,), activation='sigmoid'))
-        net_model.add(Dense(26, activation='sigmoid'))
+        net_model.add(Dense(20, activation='sigmoid'))
+        net_model.add(Dense(20, activation='sigmoid'))
         net_model.add(Dense(20, activation='linear'))
         # компиляция НС с оптимизацией Adam
         net_model.compile(optimizer='adam',
