@@ -47,49 +47,6 @@ class Network:
     def print_out(self):
         pass
 
-    def start_train(self):
-        # эксперименты с НС
-        print("Тестовое обучение НС")
-        # отключение предупреждений
-        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-        # загрузка данных
-        x_train, y_train = self.x_train, self.y_train
-        x_test, y_test = self.x_test, self.y_test
-        print("x_train", x_train.shape)
-        print("y_train", y_train.shape)
-        # создаём модель НС
-        net_model = keras.Sequential()
-        # создаём слои
-        net_model.add(Dense(units=20, input_shape=(20,), activation='sigmoid'))
-        net_model.add(Dense(20, activation='sigmoid'))
-        net_model.add(Dense(20, activation='sigmoid'))
-        net_model.add(Dense(20, activation='linear'))
-        # компиляция НС с оптимизацией Adam
-        net_model.compile(optimizer='adam',
-                          loss='mean_squared_error',
-                          metrics=['accuracy'])
-        # вывод информации о НС
-        print(net_model.summary())
-        # запуск процесса обучения
-        net_model.fit(x_train, y_train, batch_size=2, epochs=300, validation_split=0.2)
-        # проверка на тестовой выборке
-        print("Проверка обученной НС")
-        net_model.evaluate(x_test, y_test)
-        # сохранение НС
-        print("Сохранение НС")
-        net_model.save(self.name_net)
-        # загрузка НС
-        print("Загрузка НС")
-        net_loaded = keras.models.load_model(self.name_net)
-        print("Проверка сохранённой НС")
-        net_loaded.evaluate(x_test, y_test)
-        # проверка 1 значения
-        n = 1
-        x = np.expand_dims(x_test[n], axis=0)
-        res = net_loaded.predict(x)
-        print(res)
-        print(np.argmax(res))
-
     def calc_xy(self, vec_inamp, vec_inphi, vec_outamp, vec_outphi):
         # преобразование в сигналы для входа
         len_time, len_num = vec_inamp.shape[0], vec_inamp.shape[1]
@@ -113,4 +70,48 @@ class Network:
                 self.y_test[i][j] = vec_outamp[i][j]
                 self.x_test[i][j+len_num] = vec_inphi[i][j]
                 self.y_test[i][j+len_num] = vec_outphi[i][j]
+
+    def start_train(self):
+        # эксперименты с НС
+        print("Тестовое обучение НС")
+        # отключение предупреждений
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+        # загрузка данных
+        print("x_train", self.x_train.shape)
+        print("y_train", self.y_train.shape)
+        print("x_test", self.x_test.shape)
+        print("y_test", self.y_test.shape)
+        # создаём модель НС
+        net_model = keras.Sequential()
+        # создаём слои
+        net_model.add(Dense(units=20, input_shape=(20,), activation='sigmoid'))
+        net_model.add(Dense(24, activation='sigmoid'))
+        net_model.add(Dense(20, activation='linear'))
+        # компиляция НС с оптимизацией Adam
+        net_model.compile(optimizer='adam',
+                          loss='mean_squared_error',
+                          metrics=['accuracy'])
+        # вывод информации о НС
+        print(net_model.summary())
+        # запуск процесса обучения
+        net_model.fit(self.x_train, self.y_train, batch_size=1, epochs=300) #  validation_split=0.2
+        # проверка на тестовой выборке
+        print("Проверка обученной НС")
+        net_model.evaluate(self.x_test, self.y_test)
+        # сохранение НС
+        print("Сохранение НС")
+        net_model.save(self.name_net)
+        # загрузка НС
+        print("Загрузка НС")
+        net_loaded = keras.models.load_model(self.name_net)
+        print("Проверка сохранённой НС")
+        net_loaded.evaluate(self.x_test, self.y_test)
+        # проверка 1 значения
+        n = 1
+        x = np.expand_dims(self.x_test[n], axis=0)
+        res = net_loaded.predict(x)
+        print(res)
+        print(np.argmax(res))
+
+
 

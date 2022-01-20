@@ -78,6 +78,7 @@ class Sampling:
 
     def get_norm(self):
         # нормировка выборки
+        # запас по амплитуде = 10%
         self.vec_inamp = self.vec_inamp / 4
         self.vec_outamp = self.vec_outamp / 4
         self.vec_inphi = (self.vec_inphi + np.pi) / (2 * np.pi)

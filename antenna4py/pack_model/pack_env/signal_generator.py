@@ -48,7 +48,6 @@ class Generator:
         # вычисление вектора изменения амплитуд
         len_amp, len_time = var_amp.shape[0], vec_time.shape[0]
         vec_mod = []
-        print('mode_amp = ', mode_amp)
         # выбор режима
         if mode_amp == 0:
             # амплитуды без изменений
@@ -117,10 +116,10 @@ class Generator:
         diff_deg = np.zeros(shape=[len_time])
         # цикл по времени
         for i in range(len_time):
-            # нормальное распределение, среднее = ок. 13 град., СКО = ок. 9 град.
+            # нормальное распределение, среднее = ок. 25 град., СКО = ок. 9 град.
             flag = 0
             while flag == 0:
-                diff_deg[i] = abs(np.random.normal(loc=(2.0/13), scale=(2.0/20)))
+                diff_deg[i] = abs(np.random.normal(loc=(2.0/7), scale=(2.0/20)))
                 # проверка на допустимое значение
                 if diff_deg[i] < 2.0:
                     flag = 1
