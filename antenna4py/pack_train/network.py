@@ -2,7 +2,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow import keras
-from tensorflow.keras.layers import Dense, Flatten
+from tensorflow.keras.layers import Dense, Conv2D, Flatten, AveragePooling1D, AveragePooling2D
 from tensorflow.keras.datasets import mnist
 
 if __name__ == "__main__":
@@ -13,63 +13,59 @@ class Network:
 
     def __init__(self, id):
         self.id = id
+        # параметры нейронной сети
+        self.net_type = []
+        self.net_nodes = []
+        # параметры обучения
+        self.learn_type = []
+        self.learn_epoch = []
+        # имя сохранения НС
+        self.dir_net = ''
+        self.name_net = 'NN'
+        self.name_file = ''
         # вектора обучающей выборки
         self.x_train = []
         self.y_train = []
         # вектора тестовой выборки
         self.x_test = []
         self.y_test = []
-        # имя сохранения НС
-        self.name_net = 'NN_1'
 
-    def set(self, init):
-        pass
+    def set(self, init0, init1):
+        self.net_type = init0[0]
+        self.net_nodes = init0[1]
+        self.learn_type = init0[2]
+        self.learn_epoch = init0[3]
+        self.dir_net = init1[13]
 
     def get(self):
         res = []
+        res.append(self.net_type)
+        res.append(self.net_nodes)
+        res.append(self.learn_type)
+        res.append(self.learn_epoch)
+        res.append(self.dir_net)
         return res
 
     def print(self):
         print("Параметры обучения НС (L3):")
-        print("\t-")
+        print("\tnet_type = ", self.net_type)
+        print("\tnet_nodes = ", self.net_nodes)
+        print("\tlearn_type = ", self.learn_type)
+        print("\tlearn_epoch = ", self.learn_epoch)
+        print("\tdir_net = ", self.dir_net)
 
     def calc_out(self, out_sampling, id_train):
         # распаковка исходных данных
-        vec_inamp, vec_inphi = out_sampling[0], out_sampling[1]
-        vec_outamp, vec_outphi = out_sampling[2], out_sampling[3]
+        self.x_train, self.y_train = out_sampling[0], out_sampling[1]
+        self.x_test, self.y_test = out_sampling[2], out_sampling[3]
         # приветствие
         print("\nИНИЦИАЛИЗАЦИЯ НС...")
         print("\tАлгоритм обучения ", id_train)
         # обучение НС
-        self.calc_xy(vec_inamp, vec_inphi, vec_outamp, vec_outphi)
         self.start_train()
 
     def print_out(self):
         pass
-
-    def calc_xy(self, vec_inamp, vec_inphi, vec_outamp, vec_outphi):
-        # преобразование в сигналы для входа
-        len_time, len_num = vec_inamp.shape[0], vec_inamp.shape[1]
-        len_train, len_test = round(len_time * 0.8), round(len_time * 0.2)
-        # инициализация векторов выборки
-        self.x_train = np.zeros(shape=[len_train, len_num * 2])
-        self.y_train = np.zeros(shape=[len_train, len_num * 2])
-        self.x_test = np.zeros(shape=[len_test, len_num * 2])
-        self.y_test = np.zeros(shape=[len_test, len_num * 2])
-        # собираем единые вектора обучающей выборки
-        for i in range(len_train):
-            for j in range(len_num):
-                self.x_train[i][j] = vec_inamp[i][j]
-                self.y_train[i][j] = vec_outamp[i][j]
-                self.x_train[i][j+len_num] = vec_inphi[i][j]
-                self.y_train[i][j+len_num] = vec_outphi[i][j]
-        # собираем единые вектора тестовой выборки
-        for i in range(len_test):
-            for j in range(len_num):
-                self.x_test[i][j] = vec_inamp[i][j]
-                self.y_test[i][j] = vec_outamp[i][j]
-                self.x_test[i][j+len_num] = vec_inphi[i][j]
-                self.y_test[i][j+len_num] = vec_outphi[i][j]
 
     def start_train(self):
         # эксперименты с НС
@@ -83,28 +79,21 @@ class Network:
         print("y_test", self.y_test.shape)
         # создаём модель НС
         net_model = keras.Sequential()
-        # создаём слои
-        net_model.add(Dense(units=20, input_shape=(20,), activation='sigmoid'))
-        net_model.add(Dense(24, activation='sigmoid'))
-        net_model.add(Dense(20, activation='linear'))
-        # компиляция НС с оптимизацией Adam
-        net_model.compile(optimizer='adam',
-                          loss='mean_squared_error',
-                          metrics=['accuracy'])
+        if self.net_type == 0:
+            net_model = self.create_mlp(net_model)
+        elif self.net_type == 1:
+            net_model = self.create_cnn(net_model)
         # вывод информации о НС
         print(net_model.summary())
         # запуск процесса обучения
-        net_model.fit(self.x_train, self.y_train, batch_size=1, epochs=300) #  validation_split=0.2
-        # проверка на тестовой выборке
-        print("Проверка обученной НС")
-        net_model.evaluate(self.x_test, self.y_test)
+        net_model.fit(self.x_train, self.y_train, validation_data=(self.x_test, self.y_test), batch_size=1, epochs=self.learn_epoch)
         # сохранение НС
-        print("Сохранение НС")
-        net_model.save(self.name_net)
+        self.save_net(net_model)
         # загрузка НС
         print("Загрузка НС")
-        net_loaded = keras.models.load_model(self.name_net)
+        net_loaded = keras.models.load_model(self.dir_net + '/' + self.name_file)
         print("Проверка сохранённой НС")
+        print(net_loaded.summary())
         net_loaded.evaluate(self.x_test, self.y_test)
         # проверка 1 значения
         n = 1
@@ -112,6 +101,52 @@ class Network:
         res = net_loaded.predict(x)
         print(res)
         print(np.argmax(res))
+
+    def create_mlp(self, net_model):
+        # создаём многослойный персептрон (MLP)
+        net_model.add(Dense(units=self.net_nodes[0], input_shape=(30,), activation='sigmoid')) # sigmoid, tanh
+        net_model.add(Dense(self.net_nodes[1], activation='sigmoid')) # sigmoid, tanh
+        net_model.add(Dense(self.net_nodes[2], activation='linear'))
+        # компиляция НС с оптимизацией Adam
+        net_model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+        return net_model
+
+    def create_cnn(self, net_model):
+        # создаём свёрточную НС (CNN)
+        # преобразуем входные данные
+        self.x_train = np.reshape(self.x_train, (self.x_train.shape[0], 3, 10, 1))
+        self.x_test = np.reshape(self.x_test, (self.x_test.shape[0], 3, 10, 1))
+        print("x_train.shape = ", self.x_train.shape)
+        # создаём слои CNN, padding='same' (с нулями), padding='valid' (без нулей)
+        net_model.add(Conv2D(filters=6, kernel_size=(1, 3), input_shape=(3, 10, 1), padding='same', activation='sigmoid'))
+        # net_model.add(AveragePooling2D(pool_size=(1, 2), padding='valid', data_format=None))
+        net_model.add(Flatten(data_format=None))
+        net_model.add(Dense(20, activation='sigmoid'))
+        net_model.add(Dense(30, activation='linear'))
+        # компиляция НС с оптимизацией Adam
+        net_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+        return net_model
+
+    def save_net(self, net_model):
+        # сохранение НС
+        print("Сохранение НС")
+        self.check_dir(self.dir_net)
+        self.get_namefile()
+        net_model.save(self.dir_net + '/' + self.name_file)
+
+    def get_namefile(self):
+        # получить название файла
+        name_file = self.name_net + '_TYP' + str(int(self.net_type))
+        #name_file = name_file + '_LAY' + str(int(self.net_layers))
+        #name_file = name_file + '_NOD' + str(self.net_nodes)
+        self.name_file = name_file
+
+    def check_dir(self, dir_net):
+        # проверка и создание директории файла
+        if os.path.exists(dir_net):
+            pass
+        else:
+            os.mkdir(dir_net)
 
 
 

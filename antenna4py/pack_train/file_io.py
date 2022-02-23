@@ -15,7 +15,7 @@ class File_IO:
         self.id = id
         # параметры работы с файлами
         self.dir_data = ''
-        self.name_file = 'CL'
+        self.name_file = 'DF'
         # параметры
         self.sig_deg = []
         self.sig_amp = []

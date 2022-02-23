@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import time
 import matplotlib.pyplot as plt
 from tensorflow import keras
 from tensorflow.keras.layers import Dense, Flatten
@@ -13,87 +14,103 @@ class Neuro_alg:
 
     def __init__(self, id):
         self.id = id
-        # номер критерия адаптации
-        self.alg_crit = []
-        # тип управления
-        self.control_type = []
-        # адрес сохранённой НС
-        self.name_dir = 'NN_1'
+        # параметры работы с файлами
+        self.dir_net = ''
+        self.name_net = 'NN'
+        # параметры нейронной сети
+        self.net_type = []
+        self.net_nodes = []
+        # параметры обучения
+        self.learn_type = []
+        self.learn_epoch = []
         # промежуточные вектора
-        self.vec_inamp = []
-        self.vec_inphi = []
-        self.x_in = []
-        self.y_out = []
-        self.vec_outamp = []
-        self.vec_outphi = []
+        self.x_amp = []
+        self.x_sin = []
+        self.x_cos = []
+        self.x_test = []
+        self.y_amp = []
+        self.y_sin = []
+        self.y_cos = []
+        self.y_test = []
         self.vec_outweight = []
 
-
-    def set(self, init):
-        self.alg_crit = init[0]
-        self.control_type = init[5]
+    def set(self, init0, init1):
+        self.net_type = init0[0]
+        self.net_nodes = init0[1]
+        self.learn_type = init0[2]
+        self.learn_epoch = init0[3]
+        self.dir_net = init1[13]
 
     def get(self):
         res = []
-        res.append(self.alg_crit)
-        res.append(self.control_type)
+        res.append(self.net_type)
+        res.append(self.net_nodes)
+        res.append(self.learn_type)
+        res.append(self.learn_epoch)
+        res.append(self.dir_net)
         return res
 
     def print(self):
         print("Параметры модели НС алгоритма (L3):")
-        print("\talg_crit = ", self.alg_crit)
-        print("\tcontrol_type = ", self.control_type)
+        print("\tnet_type = ", self.net_type)
+        print("\tnet_nodes = ", self.net_nodes)
+        print("\tlearn_type = ", self.learn_type)
+        print("\tlearn_epoch = ", self.learn_epoch)
+        print("\tdir_net = ", self.dir_net)
 
     def calc_out(self, vec_in):
         # вычисление с помощью НС
-        if os.path.exists(self.name_dir):
-            # отключение предупреждений
-            os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-            # загрузка НС
-            print("Загрузка НС")
-            net_loaded = keras.models.load_model(self.name_dir)
-        else:
-            print("Сохранённая НС не обнаружена")
-            len_time, len_num = [vec_in.shape[0], vec_in.shape[2]]
-            return np.ones(shape=[len_time, len_num], dtype=complex)
+        net_loaded = self.load_network()
+        # начало фиксации времени
+        start_time = time.time()
         # преобразование входных векторов во входы НС
         self.create_in(vec_in)
-        # проверка значений
-        len_time, len_num = self.x_in.shape[0], self.x_in.shape[1]
-        self.y_out = np.zeros(shape=[len_time, len_num])
+        len_time = self.x_test.shape[0]
+        # вычисление ВВК
         for i in range(len_time):
-            x = np.expand_dims(self.x_in[i], axis=0)
-            self.y_out[i] = net_loaded.predict(x)
-        print("y_out = ", self.y_out)
+            x = np.expand_dims(self.x_test[i], axis=0)
+            self.y_test[i] = net_loaded.predict(x)
         # обратное преобразование в ВК ААР
         self.create_out()
+        # конец фиксации времени
+        print("time_adapt = ", time.time() - start_time)
         # возврат вектора ВК ААР
         return self.vec_outweight
 
     def create_in(self, vec_in):
         # преобразование входных векторов во входы НС
-        # разбиение на амплитуды и фазы
-        self.calc_ampphi(vec_in)
-        # нормировка
-        self.calc_norm()
-        # сбор единых векторов
-        self.calc_x()
+        self.get_format(vec_in)
+        self.get_norm()
+        # объединение векторов
+        len_time, len_num = self.x_amp.shape[0], self.x_amp.shape[1]
+        self.x_test = np.zeros(shape=[len_time, len_num * 3])
+        self.y_test = np.zeros(shape=[len_time, len_num * 3])
+        # собираем единые вектора обучающей выборки
+        for i in range(len_time):
+            for j in range(len_num):
+                self.x_test[i][j] = self.x_amp[i][j]
+                self.x_test[i][j + len_num] = self.x_sin[i][j]
+                self.x_test[i][j + 2 * len_num] = self.x_cos[i][j]
+        # преобразование векторов для свёрточной НС
+        if self.net_type == 1:
+            self.x_test = np.reshape(self.x_test, (len_time, 3, 10, 1))
 
     def create_out(self):
         # преобразование выходов НС в ВК ААР
-        len_time, len_num = self.y_out.shape[0], self.y_out.shape[1]
-        print(round(len_num/2))
-        self.vec_outamp = np.zeros(shape=[len_time, round(len_num/2)])
-        self.vec_outphi = np.zeros(shape=[len_time, round(len_num/2)])
+        len_time, len_num = self.y_test.shape[0], self.y_test.shape[1]
+        self.y_amp = np.zeros(shape=[len_time, round(len_num/3)])
+        self.y_sin = np.zeros(shape=[len_time, round(len_num/3)])
+        self.y_cos = np.zeros(shape=[len_time, round(len_num/3)])
         # разбиваем на вектора амплитуд и фаз
         for i in range(len_time):
-            for j in range(round(len_num/2)):
-                self.vec_outamp[i][j] = self.y_out[i][j]
-                self.vec_outphi[i][j] = self.y_out[i][j+round(len_num/2)]
+            for j in range(round(len_num/3)):
+                self.y_amp[i][j] = self.y_test[i][j]
+                self.y_sin[i][j] = self.y_test[i][j + round(len_num/3)]
+                self.y_cos[i][j] = self.y_test[i][j + 2 * round(len_num/3)]
         # денормировка
-        self.calc_denorm()
+        self.get_denorm()
         # сборка комплексных векторов
-        self.calc_complex()
+        self.get_complex()
 
     def get_vecin(self, vec_sig, vec_int, vec_nois):
         # суммарный входной вектор на ААР в заданный момент времени
@@ -104,35 +121,49 @@ class Neuro_alg:
         #vec_in = vec_in + np.sum(vec_nois, axis=0)
         return vec_in
 
-    def calc_ampphi(self, vec):
-        # разделение на амплитудную и фазовую составляющую
-        # фазы - угол относительно оси Re
-        self.vec_inamp = np.abs(vec)
-        self.vec_inphi = np.angle(vec)
+    def get_format(self, vec):
+        # разделение на амплитуды, фазовые синусы и косинусы
+        self.x_amp = np.abs(vec)
+        self.x_sin = np.sin(np.angle(vec))
+        self.x_cos = np.cos(np.angle(vec))
 
-    def calc_norm(self):
+    def get_norm(self):
         # нормировка входных значений
-        self.vec_inamp = self.vec_inamp / 4
-        self.vec_inphi = (self.vec_inphi + np.pi) / (2 * np.pi)
+        self.x_amp = self.x_amp / 4
+        self.x_sin = self.x_sin / 2 + 0.5
+        self.x_cos = self.x_cos / 2 + 0.5
 
-    def calc_x(self):
-        # объединение векторов
-        len_time, len_num = self.vec_inamp.shape[0], self.vec_inamp.shape[1]
-        self.x_in = np.zeros(shape=[len_time, len_num * 2])
-        # собираем единые вектора обучающей выборки
-        for i in range(len_time):
-            for j in range(len_num):
-                self.x_in[i][j] = self.vec_inamp[i][j]
-            for j in range(len_num):
-                self.x_in[i][j + 10] = self.vec_inphi[i][j]
-
-    def calc_denorm(self):
+    def get_denorm(self):
         # возврат реальных значений
-        self.vec_outamp = self.vec_outamp * 4
-        self.vec_outphi = self.vec_outphi * (2 * np.pi) - np.pi
+        self.y_amp = self.y_amp * 4
+        self.y_sin = (self.y_sin - 0.5) * 2
+        self.y_cos = (self.y_cos - 0.5) * 2
 
-    def calc_complex(self):
+    def get_complex(self):
         # разделение на амплитудную и фазовую составляющую
         # фазы - угол относительно оси Re
-        self.vec_outweight = self.vec_outamp * np.exp(1j * self.vec_outphi)
+        self.vec_outweight = abs(self.y_amp) * (self.y_cos + 1j * self.y_sin)
+        #self.vec_outweight = self.y_amp * np.exp(1j * self.vec_outphi)
+
+    def load_network(self):
+        # начало фиксации времени
+        start_time = time.time()
+        name_file = self.get_namefile()
+        if os.path.exists(self.dir_net + '/' + name_file):
+            # отключение предупреждений
+            os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+            # загрузка НС
+            print("Загрузка НС")
+            net_loaded = keras.models.load_model(self.dir_net + '/' + name_file)
+            print(net_loaded.summary())
+        else:
+            print("Сохранённая НС не обнаружена")
+            quit()
+        # конец фиксации времени
+        print("\ntime_load = ", time.time() - start_time)
+        return net_loaded
+
+    def get_namefile(self):
+        name_file = self.name_net + '_TYP' + str(int(self.net_type))
+        return name_file
 

@@ -116,7 +116,7 @@ class Generator:
         diff_deg = np.zeros(shape=[len_time])
         # цикл по времени
         for i in range(len_time):
-            # нормальное распределение, среднее = ок. 25 град., СКО = ок. 9 град.
+            # нормальное распределение для разности углов, среднее = ок. 25 град., СКО = ок. 9 град.
             flag = 0
             while flag == 0:
                 diff_deg[i] = abs(np.random.normal(loc=(2.0/7), scale=(2.0/20)))
@@ -124,6 +124,7 @@ class Generator:
                 if diff_deg[i] < 2.0:
                     flag = 1
             # цикл по сигналам
+            # равномерное распределение для 1-й из 2-х помех
             vec_mod[0][i] = np.random.uniform(-1, 1-diff_deg[i])
             vec_mod[1][i] = vec_mod[0][i] + diff_deg[i]
         print('diff_deg.mean = ', diff_deg.mean() * 90)
@@ -178,26 +179,26 @@ class Generator:
 
     def get_amprand(self, len_amp, len_time):
         # рандомные значения амплитуд мерцающей помехи
-        # нормальное распределение, среднее = 1, СКО = 0.3, строго > 0
+        # распределение Рэлея, стандарт. откл=0.2, строго > 0
         vec_mod = np.ones(shape=[len_amp, len_time])
         # цикл по времени
         for i in range(len_time):
             # цикл по сигналам
             for j in range(len_amp):
-                vec_mod[j][i] = abs(np.random.normal(loc=1.0, scale=0.5))
+                vec_mod[j][i] = abs(np.random.rayleigh(scale=0.1))
         return vec_mod
 
     def get_amp2rand(self, len_amp, len_time):
         # рандомные значения амплитуд мерцающей помехи
-        # нормальное распределение, среднее = 1, СКО = 0.3, строго > 0
+        # распределение Рэлея, стандарт. откл=0.2, строго > 0
         if len_amp != 2:
             print("Ошибка размерности, необходимы 2 амплитудных значения")
             exit()
         vec_mod = np.ones(shape=[len_amp, len_time])
         # цикл по времени
         for i in range(len_time):
-            vec_mod[0][i] = abs(np.random.normal(loc=0.2, scale=0.1))
-            vec_mod[1][i] = abs(vec_mod[0][i] + np.random.normal(loc=0.0, scale=0.05))
+            vec_mod[0][i] = abs(np.random.rayleigh(scale=0.1))
+            vec_mod[1][i] = abs(np.random.rayleigh(scale=0.1))
         return vec_mod
 
     def get_bandrand(self, len_band, len_time):

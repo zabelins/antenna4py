@@ -56,7 +56,7 @@ class Model_antenna:
         self.obj_array.obj_factor.set(list_set[2])
         self.obj_array.obj_element.set(list_set[2])
         self.obj_proc.obj_trad.set(list_set[3])
-        self.obj_proc.obj_neuro.set(list_set[3])
+        self.obj_proc.obj_neuro.set(list_set[4], list_set[5])
         self.obj_proc.obj_kalman.set(list_set[3])
 
     def get(self):
@@ -206,7 +206,7 @@ class Model_antenna:
             # рандом - генерирование случайных параметров для мерцающей помехи
             id_set, id_deg, id_amp, id_band = [1, 3, 5, 2]
             int_deg, int_amp, int_band, int_mfreq = [np.array([90, 90]), np.array([1, 1]),
-                                                     np.array([self.f_cen * 0.0, self.f_cen * 0.0]), 0]
+                                                     np.array([self.f_cen * 0.1, self.f_cen * 0.1]), 0]
         elif self.id_script == 7:
             # параметрический режим ДН
             id_set, id_deg, id_amp, id_band = [2, 1, 0, 0]
