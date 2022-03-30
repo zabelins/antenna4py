@@ -2,6 +2,7 @@ import pack_model.pack_proc as pp
 from pack_model.pack_proc import *
 import pack_calc.calc_list as cl
 import numpy as np
+import time
 
 if __name__ == "__main__":
     print("Вы запустили модуль модели сигнального процессора (L2)")
@@ -62,10 +63,14 @@ class Proc:
         matrix_sig, matrix_int, matrix_nois = out_array[8], out_array[9], out_array[10]
         # суммирование векторов
         self.get_vecsum(vec_sig, vec_int, vec_nois)
+        # начало фиксации времени
+        start_time = time.time()
         # фильтр Калмана
         matrix_sig, matrix_int, matrix_nois = self.obj_kalman.calc_matrix(matrix_sig, matrix_int, matrix_nois)
         # вычисление векторов ВК
         self.calc_weights(vec_sig, matrix_sig, matrix_int, matrix_nois)
+        # конец фиксации времени
+        print("time_adapt = ", time.time() - start_time)
         # учёт задержки на вычисления
         self.calc_delay()
         # вычисление ОСШП

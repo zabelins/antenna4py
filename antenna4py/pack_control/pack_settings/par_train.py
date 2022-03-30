@@ -7,11 +7,12 @@ class Par_train:
     def __init__(self, id):
         self.id = id
         # параметры нейронной сети
+        # тип НС (0=MLP, 1=RBF, 2=CNN, 3=RNN)
         self.net_type = 0
-        self.net_nodes = [30, 26, 30]
+        self.net_nodes = [30, 36, 30]
         # параметры обучения
         self.learn_type = 1
-        self.learn_epoch = 150
+        self.learn_epoch = 200
 
     def set(self, init):
         self.net_type = init[0]

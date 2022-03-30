@@ -34,8 +34,6 @@ class Trad_alg:
         # алгоритм прямого обращения матрицы
         len_time, len_num = [vec_sig.shape[0], vec_sig.shape[2]]
         res = np.zeros(shape=[len_time, len_num], dtype=complex)
-        # начало фиксации времени
-        start_time = time.time()
         if self.alg_crit == 0:
             # критерий адаптации без ограничений
             for i in range(len_time):
@@ -53,8 +51,6 @@ class Trad_alg:
                 vector_cj = np.conj(vector_in)
                 buf = self.calc_power(vector_in, matrix_in)
                 res[i] = mu * matrix_in.dot(vector_cj) / buf
-        # конец фиксации времени
-        print("time_adapt = ", time.time() - start_time)
         return res
 
     def calc_power(self, vector_in, matrix):

@@ -61,8 +61,6 @@ class Neuro_alg:
     def calc_out(self, vec_in):
         # вычисление с помощью НС
         net_loaded = self.load_network()
-        # начало фиксации времени
-        start_time = time.time()
         # преобразование входных векторов во входы НС
         self.create_in(vec_in)
         len_time = self.x_test.shape[0]
@@ -72,8 +70,6 @@ class Neuro_alg:
             self.y_test[i] = net_loaded.predict(x)
         # обратное преобразование в ВК ААР
         self.create_out()
-        # конец фиксации времени
-        print("time_adapt = ", time.time() - start_time)
         # возврат вектора ВК ААР
         return self.vec_outweight
 
@@ -92,7 +88,7 @@ class Neuro_alg:
                 self.x_test[i][j + len_num] = self.x_sin[i][j]
                 self.x_test[i][j + 2 * len_num] = self.x_cos[i][j]
         # преобразование векторов для свёрточной НС
-        if self.net_type == 1:
+        if self.net_type == 2:
             self.x_test = np.reshape(self.x_test, (len_time, 3, 10, 1))
 
     def create_out(self):

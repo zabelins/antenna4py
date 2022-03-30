@@ -1,9 +1,8 @@
 import os
 import numpy as np
-import matplotlib.pyplot as plt
-from tensorflow import keras
-from tensorflow.keras.layers import Dense, Conv2D, Flatten, AveragePooling1D, AveragePooling2D
-from tensorflow.keras.datasets import mnist
+from keras.models import Sequential, load_model
+from keras.layers import Layer, Dense, Conv2D, Flatten, AveragePooling1D, AveragePooling2D, SimpleRNN, Input
+from keras import backend as K
 
 if __name__ == "__main__":
     print("Вы запустили модуль обучения НС (L2)")
@@ -17,7 +16,7 @@ class Network:
         self.net_type = []
         self.net_nodes = []
         # параметры обучения
-        self.learn_type = []
+        self.learn_type = []    # не использую
         self.learn_epoch = []
         # имя сохранения НС
         self.dir_net = ''
@@ -78,37 +77,64 @@ class Network:
         print("x_test", self.x_test.shape)
         print("y_test", self.y_test.shape)
         # создаём модель НС
-        net_model = keras.Sequential()
+        net_model = Sequential()
+        # определяем тип архитектуры НС
         if self.net_type == 0:
             net_model = self.create_mlp(net_model)
         elif self.net_type == 1:
+            net_model = self.create_rbf(net_model)
+        elif self.net_type == 2:
             net_model = self.create_cnn(net_model)
-        # вывод информации о НС
+        elif self.net_type == 3:
+            net_model = self.create_rnn(net_model)
+        # вывод информации о сети
         print(net_model.summary())
-        # запуск процесса обучения
-        net_model.fit(self.x_train, self.y_train, validation_data=(self.x_test, self.y_test), batch_size=1, epochs=self.learn_epoch)
-        # сохранение НС
+        # запуск тренировки сети
+        fit_results = net_model.fit(x=self.x_train, y=self.y_train,
+                                    validation_data=(self.x_test, self.y_test),
+                                    batch_size=1,
+                                    epochs=3)
+        # сохранение сети
         self.save_net(net_model)
-        # загрузка НС
+        # загрузка сети
         print("Загрузка НС")
-        net_loaded = keras.models.load_model(self.dir_net + '/' + self.name_file)
-        print("Проверка сохранённой НС")
-        print(net_loaded.summary())
-        net_loaded.evaluate(self.x_test, self.y_test)
-        # проверка 1 значения
-        n = 1
-        x = np.expand_dims(self.x_test[n], axis=0)
-        res = net_loaded.predict(x)
-        print(res)
-        print(np.argmax(res))
+        net_loaded = load_model(self.dir_net + '/' + self.name_file)
+        # оценка точности на тестовых данных
+        print("Оценка точности на тестовых данных")
+        score = net_loaded.evaluate(self.x_test, self.y_test, batch_size=1)
+        print('test loss, test acc:', score)
+        # прогноз 1 значения (проверка НС)
+        x = np.expand_dims(self.x_test[0], axis=0)  # формируем вектор
+        predicted = net_loaded.predict(x)
+        print("predicted = ", predicted)
 
     def create_mlp(self, net_model):
         # создаём многослойный персептрон (MLP)
-        net_model.add(Dense(units=self.net_nodes[0], input_shape=(30,), activation='sigmoid')) # sigmoid, tanh
-        net_model.add(Dense(self.net_nodes[1], activation='sigmoid')) # sigmoid, tanh
-        net_model.add(Dense(self.net_nodes[2], activation='linear'))
+        # добавляем линейный стек слоёв
+        net_model.add(Dense(units=self.net_nodes[0],            # выходная размерность
+                            input_shape=(self.net_nodes[0],),   # входная размерность
+                            activation='sigmoid'))              # активация (sigmoid, tanh)
+        net_model.add(Dense(units=self.net_nodes[1],
+                            activation='sigmoid'))
+        net_model.add(Dense(units=self.net_nodes[2],
+                            activation='linear'))
+        # компилятор НС
+        net_model.compile(optimizer='adam',         # оптимизатор (sgd, rmsprop, adam)
+                          loss='mse',               # функция ошибки (mae, mse, categorical_crossentropy)
+                          metrics=['accuracy'])     # метрика
+        return net_model
+
+    def create_rbf(self, net_model):
+        # создаём радиально-базисную сеть (RBF)
+        net_model.add(Dense(units=self.net_nodes[0],
+                            input_shape=(self.net_nodes[0],),
+                            activation='linear'))
+        net_model.add(RBFLayer(self.net_nodes[1],
+                               0.5)) # sigmoid, tanh
+        net_model.add(Dense(self.net_nodes[2],
+                            activation='linear'))
         # компиляция НС с оптимизацией Adam
-        net_model.compile(optimizer='adam', loss='mse', metrics=['mae'])
+        net_model.compile(optimizer='adam', loss='mse', metrics=['accuracy'])
         return net_model
 
     def create_cnn(self, net_model):
@@ -123,6 +149,15 @@ class Network:
         net_model.add(Flatten(data_format=None))
         net_model.add(Dense(20, activation='sigmoid'))
         net_model.add(Dense(30, activation='linear'))
+        # компиляция НС с оптимизацией Adam
+        net_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+        return net_model
+
+    def create_rnn(self, net_model):
+        # создаём рекуррентную нейронную сеть (RNN)
+        net_model.add(Input((30, 100)))
+        net_model.add(SimpleRNN(36, activation='tanh')) # sigmoid, tanh
+        net_model.add(Dense(self.net_nodes[2], activation='linear'))
         # компиляция НС с оптимизацией Adam
         net_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         return net_model
@@ -147,6 +182,31 @@ class Network:
             pass
         else:
             os.mkdir(dir_net)
+
+class RBFLayer(Layer):
+
+    def __init__(self, units, gamma, **kwargs):
+        super(RBFLayer, self).__init__(**kwargs)
+        self.units = units
+        self.gamma = K.cast_to_floatx(gamma)
+
+    def build(self, input_shape):
+        self.mu = self.add_weight(name='mu',
+                                  shape=(int(input_shape[1]), self.units),
+                                  initializer='uniform',
+                                  trainable=True)
+        super(RBFLayer, self).build(input_shape)
+
+    def call(self, inputs):
+        diff = K.expand_dims(inputs) - self.mu
+        l2 = K.sum(K.pow(diff,2), axis=1)
+        res = K.exp(-1 * self.gamma * l2)
+        return res
+
+    def compute_output_shape(self, input_shape):
+        return (input_shape[0], self.units)
+
+
 
 
 
