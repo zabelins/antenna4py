@@ -10,13 +10,15 @@ class Sampling:
 
     def __init__(self, id):
         self.id = id
+        # данные для фильтрации
+        self.x_complex = []
+        self.y_complex = []
+        self.outsnir = []
         # обучающая выборка
-        self.x_amp = []
-        self.x_sin = []
-        self.x_cos = []
-        self.y_amp = []
-        self.y_sin = []
-        self.y_cos = []
+        self.x_real = []
+        self.x_imag = []
+        self.y_real = []
+        self.y_imag = []
         # вектора обучающей выборки
         self.x_train = []
         self.y_train = []
@@ -37,21 +39,31 @@ class Sampling:
 
     def calc_out(self, out_data):
         # цикл склейки обучающей выборки по файлам
-        for i in range(len(out_data)):
-            if i == 0:
-                vec_in = out_data[i][9]
-                vec_out = out_data[i][10]
+        for file in range(len(out_data)):
+            if file == 0:
+                self.outsnir = out_data[file][2]
+                self.x_complex = out_data[file][3]
+                self.y_complex = out_data[file][4]
             else:
-                if vec_in.shape[1] == (out_data[i][9]).shape[1]:
-                    vec_in = np.concatenate((vec_in, out_data[i][9]), axis=0)
-                    vec_out = np.concatenate((vec_out, out_data[i][10]), axis=0)
+                # проверка размерности входов и выходов обучающей выборки
+                condition_1 = (self.x_complex.shape[1] == (out_data[file][3]).shape[1])
+                condition_2 = (self.y_complex.shape[1] == (out_data[file][4]).shape[1])
+                if condition_1 and condition_2:
+                    self.outsnir = np.concatenate((self.outsnir, out_data[file][2]), axis=0)
+                    self.x_complex = np.concatenate((self.x_complex, out_data[file][3]), axis=0)
+                    self.y_complex = np.concatenate((self.y_complex, out_data[file][4]), axis=0)
                 else:
                     print("Ошибка размерности обучающей выборки")
+        # результаты фильтрации
+        print("Выборка до фильтрации:")
+        print("\tx_complex.shape = ", self.x_complex.shape)
+        print("\ty_complex.shape = ", self.y_complex.shape)
+        # цикл фильтрации
+        self.calc_filter()
         # разделение на амплитуды, синусы и косинусы
-        self.x_amp, self.x_sin, self.x_cos = self.get_format(vec_in)
-        self.y_amp, self.y_sin, self.y_cos = self.get_format(vec_out)
+        self.calc_format()
         # нормировка векторов
-        self.get_norm()
+        self.calc_norm()
         # формирование обучающей и тестовой выборок
         self.get_array()
 
@@ -76,49 +88,76 @@ class Sampling:
         else:
             print("Ошибка проверки типа векторов обучающей выборки")
 
-    def get_format(self, vec):
-        # разделение на амплитуды, фазовые синусы и косинусы
-        vec_amp = np.abs(vec)
-        vec_sin = np.sin(np.angle(vec))
-        vec_cos = np.cos(np.angle(vec))
-        return [vec_amp, vec_sin, vec_cos]
+    def calc_filter(self):
+        # фильтрация обучающей выборки по критерию
+        len_array, sample = self.outsnir.shape[0], 0
+        while sample < len_array:
+            # порог по выходному ОСШП
+            if self.outsnir[sample][0] < 12.0:
+                self.x_complex = np.delete(self.x_complex, sample, axis=0)
+                self.y_complex = np.delete(self.y_complex, sample, axis=0)
+                self.outsnir = np.delete(self.outsnir, sample, axis=0)
+                len_array = len_array - 1
+                sample = sample - 1
+            sample = sample + 1
+        # результаты фильтрации
+        print("Выборка после фильтрации:")
+        print("\tx_complex.shape = ", self.x_complex.shape)
+        print("\ty_complex.shape = ", self.y_complex.shape)
 
-    def get_norm(self):
+    def calc_format(self):
+        # разделение на действительную и мнимую составляющую
+        self.x_real = np.real(self.x_complex)
+        self.x_imag = np.imag(self.x_complex)
+        self.y_real = np.real(self.y_complex)
+        self.y_imag = np.imag(self.y_complex)
+
+    def calc_norm(self):
         # нормировка выборки
-        # запас по амплитуде = 10%
-        self.x_amp = self.x_amp / 4
-        self.y_amp = self.y_amp / 4
-        self.x_sin = self.x_sin / 2 + 0.5
-        self.y_sin = self.y_sin / 2 + 0.5
-        self.x_cos = self.x_cos / 2 + 0.5
-        self.y_cos = self.y_cos / 2 + 0.5
-        #self.vec_inphi = (self.vec_inphi + np.pi) / (2 * np.pi)
-        #self.vec_outphi = (self.vec_outphi + np.pi) / (2 * np.pi)
+        print("x_real")
+        [x_real_mean, x_real_dev] = self.calc_statistic(self.x_real, 1)
+        print("x_imag")
+        [x_imag_mean, x_imag_dev] = self.calc_statistic(self.x_imag, 1)
+        print("y_real")
+        [y_real_mean, y_real_dev] = self.calc_statistic(self.y_real, 1)
+        print("y_imag")
+        [y_imag_mean, y_imag_dev] = self.calc_statistic(self.y_imag, 1)
+        # нормируем, чтобы попадало в интервал [0,1]
+        self.x_real = (self.x_real - x_real_mean) / (x_real_dev * 2) + 0.5
+        self.x_imag = (self.x_imag - x_imag_mean) / (x_imag_dev * 2) + 0.5
+        self.y_real = (self.y_real - y_real_mean) / (y_real_dev * 2) + 0.5
+        self.y_imag = (self.y_imag - y_imag_mean) / (y_imag_dev * 2) + 0.5
+
+    def calc_statistic(self, vec, info):
+        if info == 1:
+            #print("\tmax = ", np.max(vec))
+            #print("\tmin = ", np.min(vec))
+            #print("\tmax_3msd = ", np.mean(vec) + (np.std(vec) * 3))
+            #print("\tmin_3msd = ", np.mean(vec) - (np.std(vec) * 3))
+            print("\tmean = ", np.mean(vec))
+            print("\tdev = ", np.max([np.max(vec)-np.mean(vec), np.mean(vec)-np.min(vec)]))
+        return [np.mean(vec), np.max([np.max(vec)-np.mean(vec), np.mean(vec)-np.min(vec)])]
 
     def get_array(self):
         # преобразование в сигналы для входа
-        len_time, len_num = self.x_amp.shape[0], self.x_amp.shape[1]
+        len_time, len_num = self.x_real.shape[0], self.x_real.shape[1]
         len_train, len_test = round(len_time * 0.8), round(len_time * 0.2)
         # инициализация векторов выборки
-        self.x_train = np.zeros(shape=[len_train, len_num * 3])
-        self.y_train = np.zeros(shape=[len_train, len_num * 3])
-        self.x_test = np.zeros(shape=[len_test, len_num * 3])
-        self.y_test = np.zeros(shape=[len_test, len_num * 3])
+        self.x_train = np.zeros(shape=[len_train, len_num * 2])
+        self.y_train = np.zeros(shape=[len_train, len_num * 2])
+        self.x_test = np.zeros(shape=[len_test, len_num * 2])
+        self.y_test = np.zeros(shape=[len_test, len_num * 2])
         # собираем единые вектора обучающей выборки
-        for i in range(len_train):
-            for j in range(len_num):
-                self.x_train[i][j] = self.x_amp[i][j]
-                self.y_train[i][j] = self.y_amp[i][j]
-                self.x_train[i][j + len_num] = self.x_sin[i][j]
-                self.y_train[i][j + len_num] = self.y_sin[i][j]
-                self.x_train[i][j + 2 * len_num] = self.x_cos[i][j]
-                self.y_train[i][j + 2 * len_num] = self.y_cos[i][j]
+        for sample in range(len_train):
+            for column in range(len_num):
+                self.x_train[sample][column] = self.x_real[sample][column]
+                self.y_train[sample][column] = self.y_real[sample][column]
+                self.x_train[sample][column + len_num] = self.x_imag[sample][column]
+                self.y_train[sample][column + len_num] = self.y_imag[sample][column]
         # собираем единые вектора тестовой выборки
-        for i in range(len_test):
-            for j in range(len_num):
-                self.x_test[i][j] = self.x_amp[len_train + i][j]
-                self.y_test[i][j] = self.y_amp[len_train + i][j]
-                self.x_test[i][j + len_num] = self.x_sin[len_train + i][j]
-                self.y_test[i][j + len_num] = self.y_sin[len_train + i][j]
-                self.x_test[i][j + 2 * len_num] = self.x_cos[len_train + i][j]
-                self.y_test[i][j + 2 * len_num] = self.y_cos[len_train + i][j]
+        for sample in range(len_test):
+            for column in range(len_num):
+                self.x_test[sample][column] = self.x_real[sample + len_train][column]
+                self.y_test[sample][column] = self.y_real[sample + len_train][column]
+                self.x_test[sample][column + len_num] = self.x_imag[sample + len_train][column]
+                self.y_test[sample][column + len_num] = self.y_imag[sample + len_train][column]

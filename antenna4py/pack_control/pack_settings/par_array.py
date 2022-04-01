@@ -9,13 +9,13 @@ class Par_array:
     def __init__(self, id):
         self.id = id
         # центральная частота для антенной системы
-        self.f_cen = 5 * math.pow(10, 9)
+        self.f_cen = 3 * math.pow(10, 9)
         # параметры множителя решётки
         self.array_N = 10
         self.array_beta = 1
         self.array_dist = 0
         self.array_effect = 0
-        self.array_nois = 1/8
+        self.array_nois = 1/4
         # параметры элементов решётки (0=изотроп, 1=диполь)
         self.elem_type = 0
         # параметры амплитудных ошибок (0=гаусс)

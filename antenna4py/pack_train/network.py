@@ -1,7 +1,8 @@
 import os
 import numpy as np
+import matplotlib.pylab as plt
 from keras.models import Sequential, load_model
-from keras.layers import Layer, Dense, Conv2D, Flatten, AveragePooling1D, AveragePooling2D, SimpleRNN, Input
+from keras.layers import Layer, Dense, Conv2D, Flatten, AveragePooling1D, AveragePooling2D, SimpleRNN, Input, BatchNormalization
 from keras import backend as K
 
 if __name__ == "__main__":
@@ -16,7 +17,7 @@ class Network:
         self.net_type = []
         self.net_nodes = []
         # параметры обучения
-        self.learn_type = []    # не использую
+        self.learn_batch = []
         self.learn_epoch = []
         # имя сохранения НС
         self.dir_net = ''
@@ -32,7 +33,7 @@ class Network:
     def set(self, init0, init1):
         self.net_type = init0[0]
         self.net_nodes = init0[1]
-        self.learn_type = init0[2]
+        self.learn_batch = init0[2]
         self.learn_epoch = init0[3]
         self.dir_net = init1[13]
 
@@ -40,7 +41,7 @@ class Network:
         res = []
         res.append(self.net_type)
         res.append(self.net_nodes)
-        res.append(self.learn_type)
+        res.append(self.learn_batch)
         res.append(self.learn_epoch)
         res.append(self.dir_net)
         return res
@@ -49,7 +50,7 @@ class Network:
         print("Параметры обучения НС (L3):")
         print("\tnet_type = ", self.net_type)
         print("\tnet_nodes = ", self.net_nodes)
-        print("\tlearn_type = ", self.learn_type)
+        print("\tlearn_batch = ", self.learn_batch)
         print("\tlearn_epoch = ", self.learn_epoch)
         print("\tdir_net = ", self.dir_net)
 
@@ -71,11 +72,6 @@ class Network:
         print("Тестовое обучение НС")
         # отключение предупреждений
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-        # загрузка данных
-        print("x_train", self.x_train.shape)
-        print("y_train", self.y_train.shape)
-        print("x_test", self.x_test.shape)
-        print("y_test", self.y_test.shape)
         # создаём модель НС
         net_model = Sequential()
         # определяем тип архитектуры НС
@@ -92,21 +88,22 @@ class Network:
         # запуск тренировки сети
         fit_results = net_model.fit(x=self.x_train, y=self.y_train,
                                     validation_data=(self.x_test, self.y_test),
-                                    batch_size=1,
-                                    epochs=3)
+                                    batch_size=self.learn_batch,
+                                    epochs=self.learn_epoch)
         # сохранение сети
         self.save_net(net_model)
-        # загрузка сети
-        print("Загрузка НС")
+        # графики обучения
+        self.show_graph(fit_results)
+        # оценка точности сохранённой сети на тестовых данных
+        print("Оценка точности сохранённой НС на тестовых данных")
         net_loaded = load_model(self.dir_net + '/' + self.name_file)
-        # оценка точности на тестовых данных
-        print("Оценка точности на тестовых данных")
         score = net_loaded.evaluate(self.x_test, self.y_test, batch_size=1)
         print('test loss, test acc:', score)
         # прогноз 1 значения (проверка НС)
-        x = np.expand_dims(self.x_test[0], axis=0)  # формируем вектор
-        predicted = net_loaded.predict(x)
-        print("predicted = ", predicted)
+        #print("Прогноз значения")
+        #x = np.expand_dims(self.x_test[0], axis=0)  # формируем вектор
+        #predicted = net_loaded.predict(x)
+        #print("predicted = ", predicted)
 
     def create_mlp(self, net_model):
         # создаём многослойный персептрон (MLP)
@@ -120,7 +117,7 @@ class Network:
                             activation='linear'))
         # компилятор НС
         net_model.compile(optimizer='adam',         # оптимизатор (sgd, rmsprop, adam)
-                          loss='mse',               # функция ошибки (mae, mse, categorical_crossentropy)
+                          loss='mse',               # функция ошибки (mae, mse)
                           metrics=['accuracy'])     # метрика
         return net_model
 
@@ -129,8 +126,7 @@ class Network:
         net_model.add(Dense(units=self.net_nodes[0],
                             input_shape=(self.net_nodes[0],),
                             activation='linear'))
-        net_model.add(RBFLayer(self.net_nodes[1],
-                               0.5)) # sigmoid, tanh
+        net_model.add(RBFLayer(self.net_nodes[1], 0.5))
         net_model.add(Dense(self.net_nodes[2],
                             activation='linear'))
         # компиляция НС с оптимизацией Adam
@@ -182,6 +178,23 @@ class Network:
             pass
         else:
             os.mkdir(dir_net)
+
+    def show_graph(self, fit_results):
+        # отрисовка графиков обучения
+        fig = plt.figure(figsize=(12, 5))
+        ax_1 = fig.add_subplot(1, 2, 1)
+        ax_2 = fig.add_subplot(1, 2, 2)
+        ax_1.set(title='Ошибка обучения', xlabel='epoch', ylabel='loss')
+        ax_2.set(title='Точность обучения', xlabel='epoch', ylabel='accuracy')
+        ax_1.plot(fit_results.history['loss'])
+        ax_1.plot(fit_results.history['val_loss'])
+        ax_1.legend(['train', 'test'], loc='best')
+        ax_2.plot(fit_results.history['accuracy'])
+        ax_2.plot(fit_results.history['val_accuracy'])
+        ax_2.legend(['train', 'test'], loc='best')
+        ax_1.grid()
+        ax_2.grid()
+        plt.show()
 
 class RBFLayer(Layer):
 

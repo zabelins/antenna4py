@@ -63,25 +63,16 @@ class File_IO:
             self.init_vec(data_file)
             # заполнение массивов
             for j in range(data_file.shape[0]):
-                self.sig_deg[j] = self.get_flarray(data_file.at[j, 'sig_deg'])
-                self.sig_amp[j] = self.get_flarray(data_file.at[j, 'sig_amp'])
-                self.sig_band[j] = self.get_flarray(data_file.at[j, 'sig_band'])
-                self.int_deg[j] = self.get_flarray(data_file.at[j, 'int_deg'])
-                self.int_amp[j] = self.get_flarray(data_file.at[j, 'int_amp'])
-                self.int_band[j] = self.get_flarray(data_file.at[j, 'int_band'])
                 self.depth[j] = self.get_flarray(data_file.at[j, 'depth'])
                 self.atten[j] = self.get_flarray(data_file.at[j, 'atten'])
                 self.outsnir[j] = self.get_flarray(data_file.at[j, 'outsnir'])
                 self.vec_sum[j] = self.get_cparray(data_file.at[j, 'vec_sum'])
                 self.outweight[j] = self.get_cparray(data_file.at[j, 'outweight'])
             # формирование выходных данных
-            out_file = [self.sig_deg, self.sig_amp, self.sig_band, self.int_deg, self.int_amp, self.int_band,
-                         self.depth, self.atten, self.outsnir, self.vec_sum, self.outweight]
+            out_file = [self.depth, self.atten, self.outsnir, self.vec_sum, self.outweight]
             self.out_data.append(out_file)
             self.print_calc(i)
             # очистка векторов
-            self.sig_deg, self.sig_amp, self.sig_band = [], [], []
-            self.int_deg, self.int_amp, self.int_band = [], [], []
             self.depth, self.atten, self.outsnir = [], [], []
             self.vec_sum, self.outweight = [], []
         # возврат данных
@@ -89,14 +80,10 @@ class File_IO:
 
     def print_calc(self, id_file):
         # проверка типа векторов на ndarray
-        bool_res = cl.is_ndarray([self.sig_deg, self.sig_amp, self.sig_band, self.int_deg,
-                                self.int_amp, self.int_band, self.depth, self.atten,
-                                self.outsnir, self.vec_sum, self.outweight])
+        bool_res = cl.is_ndarray([self.depth, self.atten, self.outsnir, self.vec_sum, self.outweight])
         # вывод размерностей векторов
         if bool_res:
             print("Файл ", id_file+1, ", размерности векторов:")
-            print("\tsig_deg, sig_amp, sig_band = ", self.sig_deg.shape)
-            print("\tint_deg, int_amp, int_band = ", self.int_deg.shape)
             print("\tdepth = ", self.depth.shape)
             print("\tatten = ", self.atten.shape)
             print("\toutsnir = ", self.outsnir.shape)
@@ -130,12 +117,6 @@ class File_IO:
     def init_vec(self, data_file):
         # инициализация векторов
         len_time = data_file.shape[0]
-        self.sig_deg = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'sig_deg'])).shape[0]])
-        self.sig_amp = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'sig_amp'])).shape[0]])
-        self.sig_band = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'sig_band'])).shape[0]])
-        self.int_deg = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'int_deg'])).shape[0]])
-        self.int_amp = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'int_amp'])).shape[0]])
-        self.int_band = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'int_band'])).shape[0]])
         self.depth = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'depth'])).shape[0]])
         self.atten = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'atten'])).shape[0]])
         self.outsnir = np.zeros(shape=[len_time, (self.get_flarray(data_file.at[0, 'outsnir'])).shape[0]])
