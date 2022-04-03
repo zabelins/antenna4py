@@ -80,9 +80,9 @@ class File_IO:
 
     def print_calc(self, id_file):
         # проверка типа векторов на ndarray
-        bool_res = cl.is_ndarray([self.depth, self.atten, self.outsnir, self.vec_sum, self.outweight])
+        condit = cl.is_ndarray([self.depth, self.atten, self.outsnir, self.vec_sum, self.outweight])
         # вывод размерностей векторов
-        if bool_res:
+        if condit:
             print("Файл ", id_file+1, ", размерности векторов:")
             print("\tdepth = ", self.depth.shape)
             print("\tatten = ", self.atten.shape)

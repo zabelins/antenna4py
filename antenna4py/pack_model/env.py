@@ -99,10 +99,10 @@ class Env:
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res1 = cl.is_ndarray([self.vec_sigdeg, self.vec_sigamp, self.vec_sigband])
-        bool_res2 = cl.is_ndarray([self.vec_intdeg, self.vec_intamp, self.vec_intband])
+        condit_1 = cl.is_ndarray([self.vec_sigdeg, self.vec_sigamp, self.vec_sigband])
+        condit_2 = cl.is_ndarray([self.vec_intdeg, self.vec_intamp, self.vec_intband])
         # вывод размерностей векторов
-        if bool_res1 == True and bool_res2 == True:
+        if condit_1 and condit_2:
             print("Размерности векторов сигналов и помех от времени:")
             print("\tvec_sigdeg.shape = ", self.vec_sigdeg.shape)
             print("\tvec_sigamp.shape = ", self.vec_sigamp.shape)

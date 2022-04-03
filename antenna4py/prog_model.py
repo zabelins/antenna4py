@@ -84,10 +84,10 @@ class Model_antenna:
         self.obj_set.calc_out(self.par_script)
         self.out_set = self.obj_set.get_out()
         # запускаем цикл по параметру (частотной полосе)
-        len_var = self.out_set[2].shape[0]
-        for i in range(len_var):
+        len_par = self.out_set[2].shape[0]
+        for par in range(len_par):
             # получение параметров для генератора сигналов
-            self.get_parscript(i)
+            self.get_parscript(par)
             # создание векторов изменения сигналов и помех от времени
             self.obj_env.calc_out(self.out_set, self.par_script)
             self.out_env = self.obj_env.get_out()
@@ -101,17 +101,17 @@ class Model_antenna:
             self.obj_syntnet.calc_out(self.out_set, self.out_env, self.out_array, self.out_proc)
             self.out_syntnet = self.obj_syntnet.get_out()
             # инициализация векторов усреднённых характеристик
-            if i == 0:
+            if par == 0:
                 len_sig, len_int = self.out_env[0].shape[1], self.out_env[3].shape[1]
-                self.init_vecmean(len_var, len_sig, len_int)
+                self.init_vecmean(len_par, len_sig, len_int)
             # сохранение усреднённых параметров
-            self.vec_meansnir[i] = self.out_array[4]
-            self.vec_meanindepth[i] = self.out_syntnet[8]
-            self.vec_meaninatten[i] = self.out_syntnet[9]
-            self.vec_meaninsnir[i] = self.out_proc[5]
-            self.vec_meanoutdepth[i] = self.out_syntnet[10]
-            self.vec_meanoutatten[i] = self.out_syntnet[11]
-            self.vec_meanoutsnir[i] = self.out_proc[6]
+            self.vec_meansnir[par] = self.out_array[4]
+            self.vec_meanindepth[par] = self.out_syntnet[8]
+            self.vec_meaninatten[par] = self.out_syntnet[9]
+            self.vec_meaninsnir[par] = self.out_proc[5]
+            self.vec_meanoutdepth[par] = self.out_syntnet[10]
+            self.vec_meanoutatten[par] = self.out_syntnet[11]
+            self.vec_meanoutsnir[par] = self.out_proc[6]
 
     def get_out(self):
         # список усреднённых характеристик от параметра
@@ -138,10 +138,10 @@ class Model_antenna:
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res1 = cl.is_ndarray([self.vec_meansnir, self.vec_meanindepth, self.vec_meaninatten, self.vec_meaninsnir])
-        bool_res2 = cl.is_ndarray([self.vec_meanoutdepth, self.vec_meanoutatten, self.vec_meanoutsnir])
+        condit_1 = cl.is_ndarray([self.vec_meansnir, self.vec_meanindepth, self.vec_meaninatten, self.vec_meaninsnir])
+        condit_2 = cl.is_ndarray([self.vec_meanoutdepth, self.vec_meanoutatten, self.vec_meanoutsnir])
         # вывод размерностей векторов
-        if (bool_res1 == True) and (bool_res2 == True):
+        if condit_1 and condit_2:
             print("Размерности векторов модели ААР:")
             print("\tvec_meansnir.shape = ", self.vec_meansnir.shape)
             print("\tvec_meanindepth.shape = ", self.vec_meanindepth.shape)

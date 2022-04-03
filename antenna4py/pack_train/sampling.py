@@ -46,9 +46,9 @@ class Sampling:
                 self.y_complex = out_data[file][4]
             else:
                 # проверка размерности входов и выходов обучающей выборки
-                condition_1 = (self.x_complex.shape[1] == (out_data[file][3]).shape[1])
-                condition_2 = (self.y_complex.shape[1] == (out_data[file][4]).shape[1])
-                if condition_1 and condition_2:
+                condit_1 = (self.x_complex.shape[1] == (out_data[file][3]).shape[1])
+                condit_2 = (self.y_complex.shape[1] == (out_data[file][4]).shape[1])
+                if condit_1 and condit_2:
                     self.outsnir = np.concatenate((self.outsnir, out_data[file][2]), axis=0)
                     self.x_complex = np.concatenate((self.x_complex, out_data[file][3]), axis=0)
                     self.y_complex = np.concatenate((self.y_complex, out_data[file][4]), axis=0)

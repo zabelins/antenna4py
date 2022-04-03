@@ -89,10 +89,10 @@ class Proc:
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res1 = cl.is_ndarray([self.vec_sum, self.vec_inweight, self.vec_outweight])
-        bool_res2 = cl.is_ndarray([self.vec_insnir, self.vec_outsnir])
+        condit_1 = cl.is_ndarray([self.vec_sum, self.vec_inweight, self.vec_outweight])
+        condit_2 = cl.is_ndarray([self.vec_insnir, self.vec_outsnir])
         # вывод размерностей векторов
-        if bool_res1 == True and bool_res2 == True:
+        if condit_1 and condit_2:
             print("Размерности векторов ВК:")
             print("\tvec_sum.shape = ", self.vec_sum.shape)
             print("\tvec_inweight.shape = ", self.vec_inweight.shape)

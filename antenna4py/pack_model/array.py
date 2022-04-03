@@ -86,11 +86,11 @@ class Array:
 
     def print_out(self):
         # проверка типа векторов и матриц на ndarray и list
-        bool_res1 = cl.is_list([self.vec_eqdegsig, self.vec_eqdegint])
-        bool_res2 = cl.is_ndarray([self.vec_test, self.vec_sig, self.vec_int, self.vec_nois])
-        bool_res3 = cl.is_ndarray([self.vec_snir, self.matrix_sig, self.matrix_int, self.matrix_nois])
+        condit_1 = cl.is_list([self.vec_eqdegsig, self.vec_eqdegint])
+        condit_2 = cl.is_ndarray([self.vec_test, self.vec_sig, self.vec_int, self.vec_nois])
+        condit_3 = cl.is_ndarray([self.vec_snir, self.matrix_sig, self.matrix_int, self.matrix_nois])
         # вывод размерностей векторов
-        if bool_res1 == True and bool_res2 == True and bool_res3 == True:
+        if condit_1 and condit_2 and condit_3:
             print("Размерности векторов и матриц от антенной решётки:")
             print("\tvec_test.shape = ", self.vec_test.shape)
             print("\tvec_eqdegsig.shape = ", len(self.vec_eqdegsig))

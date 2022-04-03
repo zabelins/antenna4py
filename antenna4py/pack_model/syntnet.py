@@ -90,11 +90,11 @@ class Syntnet:
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res1 = cl.is_ndarray([self.vec_inpattern, self.vec_indeph, self.vec_inatten, self.vec_insignal])
-        bool_res2 = cl.is_ndarray([self.vec_outpattern, self.vec_outdeph, self.vec_outatten, self.vec_outsignal])
-        bool_res3 = cl.is_ndarray([self.mean_indeph, self.mean_inatten, self.mean_outdeph, self.mean_outatten])
+        condit_1 = cl.is_ndarray([self.vec_inpattern, self.vec_indeph, self.vec_inatten, self.vec_insignal])
+        condit_2 = cl.is_ndarray([self.vec_outpattern, self.vec_outdeph, self.vec_outatten, self.vec_outsignal])
+        condit_3 = cl.is_ndarray([self.mean_indeph, self.mean_inatten, self.mean_outdeph, self.mean_outatten])
         # вывод размерностей векторов
-        if bool_res1 == True and bool_res2 == True and bool_res3 == True:
+        if condit_1 and condit_2 and condit_3:
             print("Размерности векторов ДОС:")
             print("\tvec_inpattern.shape = ", self.vec_inpattern.shape)
             print("\tvec_indeph.shape = ", self.vec_indeph.shape)

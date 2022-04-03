@@ -77,9 +77,9 @@ class Model:
 
     def print_out(self):
         # проверка типа векторов на ndarray
-        bool_res = cl.is_ndarray([self.vec_time, self.vec_pattern, self.vec_var])
+        condit = cl.is_ndarray([self.vec_time, self.vec_pattern, self.vec_var])
         # вывод размерностей векторов
-        if bool_res == True:
+        if condit:
             print("Размерности векторов динамических параметров:")
             print("\tvec_pattern.shape = ", self.vec_pattern.shape)
             print("\tvec_time.shape = ", self.vec_time.shape)
