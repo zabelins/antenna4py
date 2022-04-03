@@ -22,6 +22,7 @@ class Env:
         self.int_deg = []
         self.int_amp = []
         self.int_band = []
+        self.int_mfreq = []
         # параметры модуляции
         self.shift_dynamic = []
         self.shift_static = []
@@ -72,11 +73,15 @@ class Env:
         # распаковка исходных данных
         vec_time = out_set[1]
         # получение режимов для генератора
-        id_deg, id_amp, id_band, int_mfreq = par_script[1], par_script[2], par_script[3], par_script[7]
+        id_deg, id_amp, id_band = par_script[1], par_script[2], par_script[3]
+        self.int_mfreq = par_script[7]
         # если есть изменение угла - то фиксируем заданные параметры
-        if id_deg != 0:
+        if id_deg == 1 or id_deg == 2:
             self.int_deg = par_script[4]
             self.int_amp = par_script[5]
+            self.int_band = par_script[6]
+        if id_deg == 3 or id_deg == 4:
+            self.int_deg = par_script[4]
             self.int_band = par_script[6]
         # вычисляем вектора изменения сигналов от времени
         self.vec_sigdeg = self.obj_gen.get_vecdeg(vec_time, self.sig_deg, 0)
@@ -84,7 +89,8 @@ class Env:
         self.vec_sigband = self.obj_gen.get_vecband(vec_time, self.sig_band, 0)
         # вычисляем вектора изменения помех от времени
         self.vec_intdeg = self.obj_gen.get_vecdeg(vec_time, self.int_deg, id_deg)
-        self.vec_intamp = self.obj_gen.get_vecamp(vec_time, self.int_amp, id_amp, int_mfreq, self.shift_static, self.shift_dynamic)
+        self.vec_intamp = self.obj_gen.get_vecamp(vec_time, self.int_amp, id_amp, self.int_mfreq,
+                                                  self.shift_static, self.shift_dynamic)
         self.vec_intband = self.obj_gen.get_vecband(vec_time, self.int_band, id_band)
 
     def get_out(self):
