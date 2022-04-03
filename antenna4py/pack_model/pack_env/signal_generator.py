@@ -12,10 +12,10 @@ class Generator:
     def __init__(self, id):
         self.id = id
         # интервал переключения временной последовательности
-        self.swith_range = 21
+        self.swith_range = []
 
-    def set(self):
-        pass
+    def set(self, init):
+        self.swith_range = np.array(init[8])
 
     def get(self):
         res = []
@@ -254,11 +254,13 @@ class Generator:
             now_batch = np.int(np.floor(i / self.swith_range))
             # срабатывание переключателя модуляции
             if now_batch != last_batch:
-                # формирование значений на текущий пакет
+                # определение случайных параметров
                 now_maxamp = np.abs(np.random.rayleigh(scale=0.6))
                 now_shift = np.random.uniform(-math.pi, math.pi)
+                now_freq = np.abs(np.random.normal(loc=freq_amp, scale=freq_amp/10))
+                # формирование значений на текущий пакет
                 vec_batch = vec_time[i:i+self.swith_range]
-                res = self.calc_ampsin(len_amp, vec_batch, freq_amp, shift_static, now_shift)
+                res = self.calc_ampsin(len_amp, vec_batch, now_freq, shift_static, now_shift)
                 vec_mod[:, i:i + self.swith_range] = res * now_maxamp
             last_batch = now_batch
         return vec_mod

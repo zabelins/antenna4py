@@ -53,6 +53,7 @@ class Model_antenna:
         self.obj_file.set(list_set[5])
         self.obj_test.set(list_set[6])
         # инициализация параметров уровня L3
+        self.obj_env.obj_gen.set(list_set[1])
         self.obj_array.obj_factor.set(list_set[2])
         self.obj_array.obj_element.set(list_set[2])
         self.obj_proc.obj_trad.set(list_set[3])

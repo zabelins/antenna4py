@@ -10,7 +10,7 @@ class Par_model:
         self.pattern_line = [-90, 90]
         self.pattern_step = 0.25
         # диапазон времени, 1 ед = 1 мс
-        self.time_line = [0, 10]
+        self.time_line = [0, 1000]
         # для обучающей выборки max=300..500, по умолчанию 10
         self.time_step = 0.05
         # для Калмана T=1, T/2=0.5, T/4=0.25, по умолчанию 0.05

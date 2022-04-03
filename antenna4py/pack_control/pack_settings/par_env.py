@@ -19,6 +19,8 @@ class Par_env:
         # параметры модуляции
         self.shift_dynamic = [math.pi / 4]
         self.shift_static = [-math.pi / 4 + math.pi / 4]
+        # параметры временной последовательности
+        self.swith_range = 21
 
     def set(self, init):
         self.sig_deg = init[0]
@@ -29,6 +31,7 @@ class Par_env:
         self.int_band = init[5]
         self.shift_dynamic = init[6]
         self.shift_static = init[7]
+        self.swith_range = init[8]
 
     def get(self):
         res = []
@@ -40,6 +43,7 @@ class Par_env:
         res.append(self.int_band)
         res.append(self.shift_dynamic)
         res.append(self.shift_static)
+        res.append(self.swith_range)
         return res
 
     def print(self):
@@ -52,4 +56,5 @@ class Par_env:
         print("\tint_band = ", self.int_band)
         print("\tshift_dynamic = ", self.shift_dynamic)
         print("\tshift_static = ", self.shift_static)
+        print("\tswith_range = ", self.swith_range)
 
