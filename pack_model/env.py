@@ -56,7 +56,7 @@ class Env:
             id_amp0, id_deg1, id_amp1, id_bnd1, id_demod = [1, 1, 1, 2, 0]
         elif id_script == 3:
             # время - выборка случайной одиночной помехи
-            id_amp0, id_deg1, id_amp1, id_bnd1, id_demod = [3, 2, 3, 1, 0]
+            id_amp0, id_deg1, id_amp1, id_bnd1, id_demod = [0, 2, 3, 1, 0]
         elif id_script == 4:
             # время - выборка случайной мерцающей помехи
             id_amp0, id_deg1, id_amp1, id_bnd1, id_demod = [0, 3, 4, 4, 0]

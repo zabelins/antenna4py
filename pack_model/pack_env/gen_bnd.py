@@ -59,15 +59,15 @@ class Genbnd:
         elif id_bnd == 3:
             # время - выборка случайной частотной полосы для 1 помехи
             bnd = np.array([self.arr_frq * 0.1])
-            vec_mod = self.calc_bandrand(bnd.shape[0], vec_time.shape[0])
+            vec_mod = self.bnd_rand(bnd.shape[0], vec_time.shape[0])
         elif id_bnd == 4:
             # время - выборка случайных частотных полос для 2 помех
             bnd = np.array([self.arr_frq * 0.1, self.arr_frq * 0.1])
-            vec_mod = self.calc_band2rand(bnd.shape[0], vec_time.shape[0], 0)
+            vec_mod = self.bnd_2rand(bnd.shape[0], vec_time.shape[0])
         elif id_bnd == 5:
             # время - выборка случайных частотных полос для 2 помех с накоплением
             bnd = np.array([self.arr_frq * 0.1, self.arr_frq * 0.1])
-            vec_mod = self.calc_band2rand(bnd.shape[0], vec_time.shape[0], 1)
+            vec_mod = self.bnd_2rand(bnd.shape[0], vec_time.shape[0])
         elif id_bnd == 6:
             # параметр - переменная частотная полоса (от 0 до 10%)
             bnd = self.arr_frq * var_par
@@ -75,40 +75,46 @@ class Genbnd:
         vec_bnd = cl.ones_modul(vec_mod, bnd)
         return vec_bnd
 
-    def calc_bandrand(self, len_bnd, len_time):
+    def bnd_rand(self, len_bnd, len_time):
+        self.check_bnd(len_bnd, 1)
         # рандомные значения частотных полос одиночной помехи
-        # равномерное распределение от 0 до 1
         vec_mod = np.ones(shape=[len_bnd, len_time])
         # цикл по времени
         for i in range(len_time):
             # цикл по сигналам
             for j in range(len_bnd):
+                # равномерное распределение от 0 до 1
                 vec_mod[j][i] = np.random.uniform(0, 1)
         return vec_mod
 
-    def calc_band2rand(self, len_bnd, len_time, is_switch):
+    def bnd_2rand(self, len_bnd, len_time):
         # рандомные значения частотных полос мерцающей помехи
-        # равномерное распределение от 0 до 1
-        if len_bnd != 2:
-            print("Ошибка размерности, необходимы 2 амплитудных значения")
-            exit()
-        if is_switch == 0:
-            self.learn_size = 1
+        self.check_bnd(len_bnd, 2)
         vec_mod = np.ones(shape=[len_bnd, len_time])
-        last_batch, now_batch = -1, -1
-        now_bnd1, now_bnd2 = 0, 0
+        # цикл по времени
+        for i in range(len_time):
+            # равномерное распределение от 0 до 1
+            vec_mod[0][i] = np.random.uniform(0, 1)
+            vec_mod[1][i] = vec_mod[0][i]
+        return vec_mod
+
+    def bnd_blinkgen(self, len_bnd, len_time):
+        # рандомные значения частотных полос мерцающей помехи
+        self.check_bnd(len_bnd, 2)
+        vec_mod = np.ones(shape=[len_bnd, len_time])
+        last_seq, new_seq, new_bnd = 0, 0, 0
         # цикл по времени
         for i in range(len_time):
             # проверка пакета
-            now_batch = np.int(np.floor(i/self.learn_size))
+            new_seq = np.int(np.floor(i/self.learn_size) + 1)
             # срабатывание переключателя модуляции
-            if now_batch != last_batch:
-                now_bnd1 = np.random.uniform(0, 1)
-                now_bnd2 = now_bnd1
+            if new_seq != last_seq:
+                # равномерное распределение от 0 до 1
+                new_bnd = np.random.uniform(0, 1)
             # формирование значений за текущий такт
-            vec_mod[0][i] = now_bnd1
-            vec_mod[1][i] = now_bnd2
-            last_batch = now_batch
+            vec_mod[0][i] = new_bnd
+            vec_mod[1][i] = new_bnd
+            last_seq = new_seq
         return vec_mod
 
     def get_par(self, is_int):
@@ -122,3 +128,8 @@ class Genbnd:
             bnd = self.int_bnd
         return bnd
 
+    def check_bnd(self, len_bnd, req_bnd):
+        # проверка размерности полос
+        if len_bnd != req_bnd:
+            print("Ошибка, размерность полос не равна " + str(req_bnd))
+            exit()

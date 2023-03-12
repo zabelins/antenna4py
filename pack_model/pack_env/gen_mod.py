@@ -85,98 +85,138 @@ class Genmod:
 
     def get_vec(self, vec_time, id_amp, var_par, is_int):
         # вычисление вектора изменения амплитуд
-        vec_mod = []
+        vec_inf, vec_mod = [], []
         [amp, frq, mod, inf] = self.get_par(is_int)
         # выбор режима
         if id_amp == 0:
             # статический режим - исходная амплитуда
-            vec_mod = self.information(0, amp, 0, 0, 0, vec_time)
+            vec_inf = self.information(0, vec_time, amp, 0, 0, 0)
+            vec_mod = self.modulation(0, vec_time, vec_inf)
         elif id_amp == 1:
             # статический режим - единичная амплитуда
             amp = np.array([1])
-            vec_mod = self.information(0, amp, 0, 0, 0, vec_time)
+            vec_inf = self.information(0, vec_time, amp, 0, 0, 0)
+            vec_mod = self.modulation(0, vec_time, vec_inf)
         elif id_amp == 2:
             # время - произвольная модуляция с исходной амплитудой
-            vec_mod = self.information(inf, amp, frq, self.shift_static, self.shift_dynamic, vec_time)
-            vec_mod = self.modulation(mod, vec_mod, vec_time)   # модуляция [0,1]
+            vec_inf = self.information(inf, vec_time, amp, frq, self.shift_static, self.shift_dynamic)
+            vec_mod = self.modulation(mod, vec_time, vec_inf)   # модуляция [0,1]
         elif id_amp == 3:
             # время - выборка случайной одиночной помехи
-            vec_mod = self.information(6, amp, 0, 0, 0, vec_time)
+            vec_inf = self.information(6, vec_time, amp, 0, 0, 0)
+            vec_mod = self.modulation(0, vec_time, vec_inf)
         elif id_amp == 4:
             # время - выборка случайной мерцающей помехи
-            vec_mod = self.information(7, amp, 0, 0, 0, vec_time)   # нужна размерность амплитуд 2!
+            vec_inf = self.information(7, vec_time, amp, 0, 0, 0)
+            vec_mod = self.modulation(0, vec_time, vec_inf)
         elif id_amp == 5:
             # время - выборка потока битов с накоплением
-            vec_mod = self.information(4, amp, frq, 0, 0, vec_time)
-            vec_mod = self.modulation(1, vec_mod, vec_time)
+            vec_inf = self.information(8, vec_time, amp, frq, 0, 0)
+            vec_mod = self.modulation(1, vec_time, vec_inf)
         elif id_amp == 6:
             # время - выборка шумовой помехи с накоплением
-            vec_mod = self.information(5, amp, frq, 0, 0, vec_time)
-            vec_mod = self.modulation(1, vec_mod, vec_time)
+            vec_inf = self.information(9, vec_time, amp, frq, 0, 0)
+            vec_mod = self.modulation(1, vec_time, vec_inf)
         elif id_amp == 7:
             # время - выборка импульсной помехи с накоплением
-            vec_mod = self.information(1, amp, frq, self.shift_static, self.shift_dynamic, vec_time)
-            vec_mod = self.modulation(1, vec_mod, vec_time)
+            vec_inf = self.information(10, vec_time, amp, frq, self.shift_static, self.shift_dynamic)
+            vec_mod = self.modulation(1, vec_time, vec_inf)
         elif id_amp == 8:
             # время - выборка мерцающей помехи с накоплением
-            vec_mod = self.information(8, amp, self.int_frq, self.shift_static, self.shift_dynamic, vec_time) # нужна размерность амплитуд 2!
-            vec_mod = self.modulation(1, vec_mod, vec_time)
+            vec_inf = self.information(11, vec_time, amp, self.int_frq, self.shift_static, self.shift_dynamic)
+            vec_mod = self.modulation(1, vec_time, vec_inf)
         elif id_amp == 9:
             # параметр - модулированная амплитуда
             amp = amp * var_par
-            vec_mod = self.information(inf, amp, frq, self.shift_static, self.shift_dynamic, vec_time)
-            vec_mod = self.modulation(mod, vec_mod, vec_time)
+            vec_inf = self.information(inf, vec_time, amp, frq, self.shift_static, self.shift_dynamic)
+            vec_mod = self.modulation(mod, vec_time, vec_inf)
         vec_amp = cl.ones_modul(vec_mod, amp)
         return vec_amp
 
-    def information(self, inf, var_amp, var_frq, var_shiftst, var_shiftdn, vec_time):
+    def information(self, inf, vec_time, amp, frq, shift_static, shift_dynamic):
         vec_inf = []
         # выбор модулирующей огибающей
         if inf == 0:
             # постоянный сигнал
-            vec_inf = np.ones(shape=[var_amp.shape[0], vec_time.shape[0]])
+            vec_inf = np.ones(shape=[amp.shape[0], vec_time.shape[0]])
         elif inf == 1:
-            # короткие импульсы
-            vec_inf = self.inf_short(var_amp.shape[0], vec_time, var_frq, var_shiftst, var_shiftdn)
+            # модуляция - длинные импульсы
+            vec_inf = self.inf_meander(vec_time, amp.shape[0], frq, shift_static, shift_dynamic)
         elif inf == 2:
-            # длинные импульсы
-            vec_inf = self.inf_pulse(var_amp.shape[0], vec_time, var_frq, var_shiftst, var_shiftdn)
+            # модуляция - короткие импульсы
+            vec_inf = self.inf_pulse(vec_time, amp.shape[0], frq, shift_static, shift_dynamic)
         elif inf == 3:
-            # синусоидальный сигнал
-            vec_inf = self.inf_sin(var_amp.shape[0], vec_time, var_frq, var_shiftst, var_shiftdn)
+            # модуляция - синусоидальный сигнал
+            vec_inf = self.inf_sin(vec_time, amp.shape[0], frq, shift_static, shift_dynamic)
         elif inf == 4:
-            # поток битов
-            vec_inf = self.inf_bit(var_amp.shape[0], vec_time, var_frq)
+            # модуляция - поток битов
+            vec_inf = self.inf_bit(vec_time, amp.shape[0], frq)
         elif inf == 5:
-            # фазовый шум
-            vec_inf = self.inf_noisephs(var_amp.shape[0], vec_time)
+            # модуляция - фазовый шум
+            vec_inf = self.inf_noisephs(vec_time, amp.shape[0])
         elif inf == 6:
-            # рандомная амплитуда (1 помеха)
-            vec_inf = self.inf_1rand(var_amp.shape[0], vec_time.shape[0])
+            # обучение - случайные амплитуда (1 помеха)
+            vec_inf = self.inf_rand(vec_time.shape[0], amp.shape[0])
         elif inf == 7:
-            # рандомные амплитуды (2 помехи)
-            vec_inf = self.inf_2rand(var_amp.shape[0], vec_time.shape[0], 0)
+            # обучение - случайные амплитуды (2 помехи)
+            vec_inf = self.inf_2rand(vec_time.shape[0], amp.shape[0])
         elif inf == 8:
-            # рандомные амплитуды (временной ряд для мерцающей помехи)
-            vec_inf = self.inf_2randmod(var_amp.shape[0], vec_time, var_frq, var_shiftst, var_shiftdn, 1)
+            # обучение с накоплением - поток битов
+            vec_inf = self.inf_bitgen(vec_time, amp.shape[0], frq)
+        elif inf == 9:
+            # обучение с накоплением - шумовая помеха
+            vec_inf = self.inf_noisegen(vec_time, amp.shape[0])
+        elif inf == 10:
+            # обучение с накоплением - импульсная помеха
+            vec_inf = self.inf_pulsegen(vec_time, amp.shape[0], frq, shift_static, shift_dynamic)
+        elif inf == 11:
+            # обучение с накоплением - мерцающая помеха
+            vec_inf = self.inf_blinkgen(vec_time, amp.shape[0], frq, shift_static, shift_dynamic)
         return vec_inf
 
-    def modulation(self, mod, vec_mod0, vec_time):
-        # частота дискретизации (100 МГц)
-        vec_mod, frq_samp = [], 1 / (vec_time[1] - vec_time[0])
-        # выбор типа модуляции
+    def modulation(self, mod, vec_time, vec_inf):
+        vec_mod = []
+        # выбор модуляции радиосигнала
         if mod == 0:
             # без модуляции
-            vec_mod = vec_mod0 * 1
+            vec_mod = vec_inf * 1
         elif mod == 1:
             # фазовая (BPSK)
-            vec_mod = np.cos(np.dot(2 * np.pi * self.msg_carr, vec_time) + np.pi * (vec_mod0 - 1) + np.pi / 4)
+            vec_mod = self.mod_PM(vec_time, vec_inf)
         elif mod == 2:
-            # фазовая (BPSK) - накопление с переменной амплитудой
-            vec_mod = self.mod_randPM(vec_time, vec_mod0)
+            # обучение с накоплением - фазовая (BPSK)
+            vec_mod = self.mod_randPM(vec_time, vec_inf)
         return vec_mod
 
-    def inf_sin(self, len_amp, vec_time, frq_amp, shift_static, shift_dynamic):
+    def inf_meander(self, vec_time, len_amp, frq_amp, shift_static, shift_dynamic):
+        # импульсы амплитудой от 0 до 1
+        len_time = vec_time.shape[0]
+        vec_inf = np.ones(shape=[len_amp, len_time])
+        # круговые частоты и фазы
+        frq = 2 * math.pi * frq_amp
+        # цикл по сигналам
+        for i in range(len_amp):
+            # итоговая модуляция
+            vec_inf[i] = signal.square(frq * vec_time + shift_static + shift_dynamic) * 0.5 + 0.5
+            shift_dynamic = shift_dynamic * (-1)
+        return vec_inf
+
+    def inf_pulse(self, vec_time, len_amp, frq_amp, shift_static, shift_dynamic):
+        # короткие импульсы амплитудой от 0 до 1
+        len_time = vec_time.shape[0]
+        vec_inf = np.ones(shape=[len_amp, len_time])
+        # индикатор инверсии
+        shift_static = math.pi / 2
+        for i in range(len_amp):
+            vec_inf1 = self.inf_meander(vec_time, 1, frq_amp, 0, 0)
+            vec_inf2 = self.inf_meander(vec_time, 1, frq_amp*2, 0, 0)
+            vec_inf3 = self.inf_meander(vec_time, 1, frq_amp/2, shift_static, 0)
+            shift_static = shift_static * (-1)
+            # импульсы длительностью 1/4 периода через один
+            vec_inf[i] = vec_inf1 * vec_inf2 * vec_inf3
+        return vec_inf
+
+    def inf_sin(self, vec_time, len_amp, frq_amp, shift_static, shift_dynamic):
         # синусоида амплитудой от 0 до 1
         len_time = vec_time.shape[0]
         vec_inf = np.ones(shape=[len_amp, len_time])
@@ -190,35 +230,7 @@ class Genmod:
             shift_dynamic = shift_dynamic * (-1)
         return vec_inf
 
-    def inf_pulse(self, len_amp, vec_time, frq_amp, shift_static, shift_dynamic):
-        # импульсы амплитудой от 0 до 1
-        len_time = vec_time.shape[0]
-        vec_inf = np.ones(shape=[len_amp, len_time])
-        # круговые частоты и фазы
-        frq = 2 * math.pi * frq_amp
-        # цикл по сигналам
-        for i in range(len_amp):
-            # итоговая модуляция
-            vec_inf[i] = signal.square(frq * vec_time + shift_static + shift_dynamic) * 0.5 + 0.5
-            shift_dynamic = shift_dynamic * (-1)
-        return vec_inf
-
-    def inf_short(self, len_amp, vec_time, frq_amp, shift_static, shift_dynamic):
-        # короткие импульсы амплитудой от 0 до 1
-        len_time = vec_time.shape[0]
-        vec_inf = np.ones(shape=[len_amp, len_time])
-        # индикатор инверсии
-        shift_static = math.pi / 2
-        for i in range(len_amp):
-            vec_inf1 = self.inf_pulse(1, vec_time, frq_amp, 0, 0)
-            vec_inf2 = self.inf_pulse(1, vec_time, frq_amp*2, 0, 0)
-            vec_inf3 = self.inf_pulse(1, vec_time, frq_amp/2, shift_static, 0)
-            shift_static = shift_static * (-1)
-            # импульсы длительностью 1/4 периода через один
-            vec_inf[i] = vec_inf1 * vec_inf2 * vec_inf3
-        return vec_inf
-
-    def inf_bit(self, len_amp, vec_time, frq_amp):
+    def inf_bit(self, vec_time, len_amp, frq_amp):
         # поток бит амплитудой от 0 до 1
         len_time = vec_time.shape[0]
         vec_inf = np.ones(shape=[len_amp, len_time])
@@ -238,96 +250,92 @@ class Genmod:
         self.mod_code = mod_code
         return vec_inf
 
-    def inf_noisephs(self, len_amp, vec_time):
+    def inf_noisephs(self, vec_time, len_amp):
         # равномерное распределение от 0 до 1
         len_time = vec_time.shape[0]
         vec_inf = np.zeros(shape=[len_amp, len_time])
         vec_inf = vec_inf + np.random.rand(vec_inf.shape[0], vec_inf.shape[1]) * 2
         return vec_inf
 
-    def inf_1rand(self, len_amp, len_time):
+    def inf_rand(self, len_time, len_amp):
         # рандомные значения амплитуды помехи
-        # распределение Рэлея, стандарт. откл=1, строго > 0
-        if len_amp != 1:
-            print("Ошибка размерности, необходимо 1 амплитудное значение")
-            exit()
+        self.check_amp(len_amp, 1)
         vec_inf = np.zeros(shape=[len_amp, len_time])
         # цикл по сигналам
         for i in range(len_amp):
             # цикл по времени
             for j in range(len_time):
+                # распределение Рэлея, стандарт. откл=1, строго > 0
                 vec_inf_abs = np.random.rayleigh(scale=1)
                 vec_inf_arg = np.random.rand() * 2 * np.pi
                 vec_inf[i][j] = np.sin(vec_inf_arg) * vec_inf_abs
         return vec_inf
 
-    def inf_2rand(self, len_amp, len_time, is_switch):
+    def inf_2rand(self, len_time, len_amp):
         # рандомные значения амплитуд мерцающей помехи
-        # распределение Рэлея, стандарт. откл=0.2, строго > 0
-        if len_amp != 2:
-            print("Ошибка размерности, необходимы 2 амплитудных значения")
-            exit()
-        if is_switch == 0:
-            self.learn_size = 1
+        self.check_amp(len_amp, 2)
         vec_inf = np.ones(shape=[len_amp, len_time])
-        last_batch, now_batch = -1, -1
-        now_maxamp1, now_maxamp2 = 0, 0
         # цикл по времени
         for i in range(len_time):
-            # проверка пакета
-            now_batch = np.int(np.floor(i / self.learn_size))
-            # срабатывание переключателя модуляции
-            if now_batch != last_batch:
-                now_maxamp1 = abs(np.random.rayleigh(scale=0.5))
-                now_maxamp2 = abs(np.random.rayleigh(scale=0.5))
-            # формирование значений за текущий такт
-            vec_inf[0][i] = now_maxamp1
-            vec_inf[1][i] = now_maxamp2
-            last_batch = now_batch
+            # распределение Рэлея, стандарт. откл=0.2, строго > 0
+            vec_inf[0][i] = abs(np.random.rayleigh(scale=0.5))
+            vec_inf[1][i] = abs(np.random.rayleigh(scale=0.5))
         return vec_inf
 
-    def inf_2randmod(self, len_amp, vec_time, frq_amp, shift_static, shift_dynamic, is_switch):
+    def inf_bitgen(self, vec_time, len_amp, frq):
+        vec_inf = self.inf_bit(vec_time, len_amp, frq)
+        return vec_inf
+
+    def inf_noisegen(self, vec_time, len_amp):
+        vec_inf = self.inf_noisephs(vec_time, len_amp)
+        return vec_inf
+
+    def inf_pulsegen(self, vec_time, len_amp, frq, shift_static, shift_dynamic):
+        vec_inf = self.inf_pulse(vec_time, len_amp, frq, shift_static, shift_dynamic)
+        return vec_inf
+
+    def inf_blinkgen(self, vec_time, len_amp, frq_amp, shift_static, shift_dynamic):
         # рандомные значения амплитуд мерцающей помехи
         # распределение Рэлея, стандарт. откл=0.2, строго > 0
-        if len_amp != 2:
-            print("Ошибка размерности, необходимы 2 амплитудных значения")
-            exit()
-        if is_switch == 0:
-            self.learn_size = 1
+        self.check_amp(len_amp, 2)
         len_time = vec_time.shape[0]
         vec_inf = np.ones(shape=[len_amp, len_time])
-        last_batch, now_batch, now_maxamp = -1, -1, 0
+        last_seq, new_seq, new_amp = 0, 0, 0
         # цикл по времени
         for i in range(len_time):
             # проверка пакета
-            now_batch = np.int(np.floor(i / self.learn_size))
+            new_seq = np.int(np.floor(i / self.learn_size) + 1)
             # срабатывание переключателя модуляции
-            if now_batch != last_batch:
+            if new_seq != last_seq:
                 # определение случайных параметров
-                now_maxamp = np.abs(np.random.rayleigh(scale=0.6))
-                now_shift = np.random.uniform(-math.pi, math.pi)
-                now_frq = np.abs(np.random.normal(loc=frq_amp, scale=frq_amp/10))
+                new_amp = np.abs(np.random.rayleigh(scale=0.6))
+                new_shift = np.random.uniform(-math.pi, math.pi)
+                new_frq = np.abs(np.random.normal(loc=frq_amp, scale=frq_amp/10))
                 # формирование значений на текущий пакет
-                vec_batch = vec_time[i:i+self.learn_size]
-                res = self.inf_sin(len_amp, vec_batch, now_frq, now_shift, shift_dynamic)
-                vec_inf[:, i:i + self.learn_size] = res * now_maxamp
-            last_batch = now_batch
+                vec_seq = vec_time[i:i+self.learn_size]
+                res = self.inf_sin(len_amp, vec_seq, new_frq, new_shift, shift_dynamic)
+                vec_inf[:, i:i + self.learn_size] = res * new_amp
+            last_seq = new_seq
         return vec_inf
 
-    def mod_randPM(self, vec_time, vec_mod0):
+    def mod_PM(self, vec_time, vec_inf):
+        vec_mod = np.cos(np.dot(2 * np.pi * self.msg_carr, vec_time) + np.pi * (vec_inf - 1) + np.pi / 4)
+        return vec_mod
+
+    def mod_randPM(self, vec_time, vec_inf):
         # поток бит с произвольной амплитудой
         len_time = vec_time.shape[0]
-        vec_mod = np.cos(np.dot(2 * np.pi * self.msg_carr, vec_time) + np.pi * (vec_mod0 - 1) + np.pi / 4)
-        last_batch, now_batch, now_amp = -1, -1, 1
+        vec_mod = np.cos(np.dot(2 * np.pi * self.msg_carr, vec_time) + np.pi * (vec_inf - 1) + np.pi / 4)
+        last_seq, new_seq, new_amp = 0, 0, 1
         # цикл по времени
         for i in range(len_time):
             # проверка пакета
-            now_batch = np.int(np.floor(i / self.learn_size))
+            new_seq = np.int(np.floor(i / self.learn_size) + 1)
             # срабатывание переключателя модуляции
-            if now_batch != last_batch:
-                now_amp = np.random.uniform(0.5, 10)
-            vec_mod[0][i] = vec_mod[0][i] * now_amp
-            last_batch = now_batch
+            if new_seq != last_seq:
+                new_amp = np.random.uniform(0.5, 10)
+            vec_mod[0][i] = vec_mod[0][i] * new_amp
+            last_seq = new_seq
         return vec_mod
 
     def get_par(self, is_int):
@@ -340,6 +348,12 @@ class Genmod:
             # помеха
             amp, frq, mod, inf = self.int_amp, self.int_frq, self.int_mod, self.int_inf
         return [amp, frq, mod, inf]
+
+    def check_amp(self, len_amp, req_amp):
+        # проверка размерности амплитуд
+        if len_amp != req_amp:
+            print("Ошибка, размерность амплитуд не равна " + str(req_amp))
+            exit()
 
     def get_code(self):
         return self.mod_code
