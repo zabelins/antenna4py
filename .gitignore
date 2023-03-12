@@ -1,0 +1,6 @@
+# project files
+**/__pycache__
+/dir_data
+/dir_net
+.idea
+*.env
