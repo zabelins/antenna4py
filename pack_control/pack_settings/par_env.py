@@ -27,7 +27,7 @@ class Par_env:
         self.int_inf = 5
         # ПАРАМЕТРЫ МОДУЛЯЦИИ
         # длина кода (int), несущая частота (flt), фазовые сдвиги (flt)
-        self.msg_code = 100
+        self.msg_code = 500
         self.msg_carr = 2 * math.pow(10, 3)
         self.shift_dynamic = [math.pi / 4]
         self.shift_static = [0]

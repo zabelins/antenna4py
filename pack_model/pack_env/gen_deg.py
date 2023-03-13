@@ -133,8 +133,8 @@ class Gendeg:
                 # угол и смещение с равномерным распределением от -1 до 1
                 new_deg = np.random.uniform(-1, 1)
                 new_sft = np.random.uniform(-1, 1)
-            # линейное смещение угла до 5 град.
-            new_deg = new_deg + new_sft * 0.5/90
+            # линейное смещение угла до 10 град.
+            new_deg = new_deg + new_sft * 1/90
             # присвоение значений
             vec_mod[0][i] = new_deg
             last_seq = new_seq

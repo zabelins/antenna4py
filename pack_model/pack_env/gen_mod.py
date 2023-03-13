@@ -116,11 +116,11 @@ class Genmod:
         elif id_amp == 6:
             # время - выборка шумовой помехи с накоплением
             vec_inf = self.information(9, vec_time, amp, frq, 0, 0)
-            vec_mod = self.modulation(1, vec_time, vec_inf)
+            vec_mod = self.modulation(2, vec_time, vec_inf)
         elif id_amp == 7:
             # время - выборка импульсной помехи с накоплением
             vec_inf = self.information(10, vec_time, amp, frq, self.shift_static, self.shift_dynamic)
-            vec_mod = self.modulation(1, vec_time, vec_inf)
+            vec_mod = self.modulation(2, vec_time, vec_inf)
         elif id_amp == 8:
             # время - выборка мерцающей помехи с накоплением
             vec_inf = self.information(11, vec_time, amp, self.int_frq, self.shift_static, self.shift_dynamic)
@@ -333,7 +333,7 @@ class Genmod:
             new_seq = np.int(np.floor(i / self.learn_size) + 1)
             # срабатывание переключателя модуляции
             if new_seq != last_seq:
-                new_amp = np.random.uniform(0.5, 10)
+                new_amp = np.random.uniform(1, 100)
             vec_mod[0][i] = vec_mod[0][i] * new_amp
             last_seq = new_seq
         return vec_mod

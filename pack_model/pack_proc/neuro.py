@@ -34,14 +34,14 @@ class Neuro_alg:
         self.y_imag = []
         self.vec_outweight = []
         # параметры нормировки
-        self.x_real_mean = -1.6320659530815816e-08
-        self.x_real_dev = 1.5221823227732469e-05
-        self.x_imag_mean = 3.6453486736907804e-10
-        self.x_imag_dev = 9.884167364368162e-06
-        self.y_real_mean = 0.920803095251648
-        self.y_real_dev = 1.2463215864138035
-        self.y_imag_mean = 5.740861567877529e-05
-        self.y_imag_dev = 0.9363394731656979
+        self.x_real_mean = -6.936583902531577e-07
+        self.x_real_dev = 5.895636508536925e-05
+        self.x_imag_mean = 2.5648447580986522e-08
+        self.x_imag_dev = 5.6396658544314275e-05
+        self.y_real_mean = 0.9513155216941713
+        self.y_real_dev = 1.1448185294741398
+        self.y_imag_mean = -0.00036983829047969064
+        self.y_imag_dev = 0.82881380379252
 
     def set(self, init0, init1, init2):
         self.learn_size = np.array(init0[16])

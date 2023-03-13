@@ -31,7 +31,7 @@ class Parameter:
         self.mean_par = init[15]
         self.par_aprx = init[19]
         self.vec_col1 = ['#000000', '#d1281f', '#00008b', '#336600', '#996600']
-        self.vec_lst1 = ['-', '-', '-', '-', '-']
+        self.vec_lst1 = ['--', '-', '-', '-', '-']
         self.vec_lwd1 = [1.2, 1.2, 1.2, 1.2, 1.2]
         self.vec_mrk1 = ['o', 'v', 'D', 'S', 'P']
         self.vec_col2 = ['#000000', '#000000', '#000000', '#000000', '#000000']

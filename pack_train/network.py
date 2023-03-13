@@ -32,6 +32,7 @@ class Network:
         # вектора тестовой выборки
         self.x_test = []
         self.y_test = []
+        plt.rcParams['font.size'] = '12'
 
     def set(self, init0, init1, init2):
         self.learn_size = np.array(init0[16])
@@ -89,10 +90,6 @@ class Network:
             net_model = self.create_rnn(net_model)
         # вывод информации о сети
         print(net_model.summary())
-        # возможные значения гиперпараметров
-        activation = ['softmax', 'relu', 'tanh', 'sigmoid', 'linear']
-        neurons = [5, 10, 15, 25, 35, 50]
-        param_grid = dict(activation=activation, neurons=neurons)
         # ранняя остановка обучения
         es = EarlyStopping(monitor='val_loss', mode='min', patience=5)
         # запуск тренировки сети
@@ -160,8 +157,9 @@ class Network:
 
     def create_rnn(self, net_model):
         # создаём рекуррентную нейронную сеть (RNN)
-        net_model.add(LSTM(units=80, input_shape=(self.learn_size-1, 20)))    # return_sequences=True
-        net_model.add(Dense(units=20, activation='sigmoid'))
+        net_model.add(LSTM(units=64, return_sequences=True, input_shape=(self.learn_size-1, 32)))    # return_sequences=True
+        net_model.add(LSTM(units=64))
+        net_model.add(Dense(units=32, activation='sigmoid'))
         # компиляция НС с оптимизацией Adam
         net_model.compile(optimizer='adam', loss='mse', metrics=['mae']) # 'mse', 'mae', 'mape'
         return net_model
@@ -189,13 +187,13 @@ class Network:
 
     def show_graph(self, fit_results):
         # отрисовка графиков обучения
-        fig = plt.figure(figsize=(12, 5))
+        fig = plt.figure(figsize=(12.5, 5.5))
         ax_1 = fig.add_subplot(1, 2, 1)
         ax_2 = fig.add_subplot(1, 2, 2)
         ax_1.set(title='Ошибка обучения', xlabel='epoch', ylabel='loss')
         ax_2.set(title='Метрика обучения', xlabel='epoch', ylabel='mae')
-        ax_1.plot(fit_results.history['loss'])
-        ax_1.plot(fit_results.history['val_loss'])
+        ax_1.plot(fit_results.history['loss'], color='#000000', linestyle='-', lw=1.2)
+        ax_1.plot(fit_results.history['val_loss'], color='#00008b', linestyle='--', lw=1.2)
         ax_1.legend(['training set', 'test set'], loc='best')
         ax_2.plot(fit_results.history['mae'])
         ax_2.plot(fit_results.history['val_mae'])
@@ -226,7 +224,6 @@ class RBFLayer(Layer):
 
     def compute_output_shape(self, input_shape):
         return (input_shape[0], self.units)
-
 
 
 

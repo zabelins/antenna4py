@@ -11,9 +11,10 @@ class Sampling:
     def __init__(self):
         # фильтрация выборки
         self.is_filter = 0
+        self.is_mixing = 1
         self.is_swith = 1
         # параметры выборки
-        self.learn_size = []
+        self.learn_size = 0
         # данные для фильтрации
         self.x_complex = []
         self.y_complex = []
@@ -42,29 +43,18 @@ class Sampling:
         print("\t-")
 
     def calc_out(self, out_data):
-        # цикл склейки обучающей выборки по файлам
-        for file in range(len(out_data)):
-            if file == 0:
-                self.outsnir = out_data[file][2]
-                self.x_complex = out_data[file][3]
-                self.y_complex = out_data[file][4]
-            else:
-                # проверка размерности входов и выходов обучающей выборки
-                condit_1 = (self.x_complex.shape[1] == (out_data[file][3]).shape[1])
-                condit_2 = (self.y_complex.shape[1] == (out_data[file][4]).shape[1])
-                if condit_1 and condit_2:
-                    self.outsnir = np.concatenate((self.outsnir, out_data[file][2]), axis=0)
-                    self.x_complex = np.concatenate((self.x_complex, out_data[file][3]), axis=0)
-                    self.y_complex = np.concatenate((self.y_complex, out_data[file][4]), axis=0)
-                else:
-                    print("Ошибка размерности обучающей выборки")
+        # склейка выборки
+        if self.is_mixing == 0:
+            self.calc_unity(out_data)
+        else:
+            self.calc_unitymix(out_data)
         # результаты фильтрации
         print("Выборка до фильтрации:")
         print("\tx_complex.shape = ", self.x_complex.shape)
         print("\ty_complex.shape = ", self.y_complex.shape)
-        # цикл фильтрации
+        # фильтрация выборки
         self.calc_filter()
-        # разделение на амплитуды, синусы и косинусы
+        # разделение на комплексные составляющие
         self.calc_format()
         # нормировка векторов
         self.calc_norm()
@@ -94,6 +84,48 @@ class Sampling:
             print("\ty_test.shape = ", self.y_test.shape)
         else:
             print("Ошибка проверки типа векторов обучающей выборки")
+
+    def calc_unity(self, out_data):
+        # цикл склейки обучающей выборки по файлам
+        for file in range(len(out_data)):
+            if file == 0:
+                self.outsnir = out_data[file][2]
+                self.x_complex = out_data[file][3]
+                self.y_complex = out_data[file][4]
+            else:
+                # проверка размерности входов и выходов обучающей выборки
+                condit_1 = (self.x_complex.shape[1] == (out_data[file][3]).shape[1])
+                condit_2 = (self.y_complex.shape[1] == (out_data[file][4]).shape[1])
+                if condit_1 and condit_2:
+                    self.outsnir = np.concatenate((self.outsnir, out_data[file][2]), axis=0)
+                    self.x_complex = np.concatenate((self.x_complex, out_data[file][3]), axis=0)
+                    self.y_complex = np.concatenate((self.y_complex, out_data[file][4]), axis=0)
+                else:
+                    print("Ошибка размерности обучающей выборки")
+
+    def calc_unitymix(self, out_data):
+        # цикл склейки обучающей выборки по файлам
+        num_seq, learn_size = 0, 100
+        for file in range(len(out_data)):
+            # расчёт количества пакетов обучения
+            num_seq = round(num_seq + (out_data[file][3]).shape[0] / learn_size)
+        # цикл по пакетам
+        for seq in range(num_seq):
+            # выбираем по пакету из каждого файла
+            for file in range(len(out_data)):
+                # сдвиг
+                var = seq * learn_size
+                if seq == 0 and file == 0:
+                    # первичная инициализация
+                    self.outsnir = out_data[file][2][(0+var):(learn_size+var)]
+                    self.x_complex = out_data[file][3][(0+var):(learn_size+var)]
+                    self.y_complex = out_data[file][4][(0+var):(learn_size+var)]
+                else:
+                    # склейка массивов
+                    self.outsnir = np.concatenate((self.outsnir, out_data[file][2][(0+var):(learn_size+var)]), axis=0)
+                    self.x_complex = np.concatenate((self.x_complex, out_data[file][3][(0+var):(learn_size+var)]), axis=0)
+                    self.y_complex = np.concatenate((self.y_complex, out_data[file][4][(0+var):(learn_size+var)]), axis=0)
+        #print("self.x_complex.shape = ", self.x_complex.shape)
 
     def calc_filter(self):
         # фильтрация обучающей выборки по критерию

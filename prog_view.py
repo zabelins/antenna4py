@@ -247,17 +247,17 @@ class View:
     def show_compar_par(self):
         # сравнение параметрических графиков
         # первый расчёт модели
-        self.controller.mode_compar(7)
+        self.controller.mode_compar(9)
         self.sync_model()
         vec = [self.controller.get_vecpar()]
         # изменение параметра
         self.controller.model.obj_proc.alg_type = 1
         # второй расчёт модели
-        self.controller.mode_compar(7)
+        self.controller.mode_compar(9)
         self.sync_model()
         vec.append(self.controller.get_vecpar())
         # вывод графиков сравнения
-        self.obj_graph.draw_par(vec, 7)
+        self.obj_graph.draw_par(vec, 9)
 
     def info_ptn(self):
         # вывод информации о диаграмме направленности

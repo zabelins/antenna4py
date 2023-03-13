@@ -10,7 +10,7 @@ class Par_array:
         # МНОЖИТЕЛЬ РЕШЁТКИ
         # центральная частота (flt), число элементов (int), шаг решётки (flt)
         # распределение (0=нет,1=да), взаим. связь (0=нет), амплитуда шума (flt)
-        self.arr_frq = 9 * math.pow(10, 9)
+        self.arr_frq = 6 * math.pow(10, 9)
         self.arr_size = 16
         self.arr_step = 1
         self.arr_dist = 0

@@ -15,7 +15,7 @@ class Par_model:
         # диапазон (flt), шаг (flt), множитель (flt) / 1 ед = 1 мкс
         # по умолчанию 10, для обучения max=300..500
         # по умолчанию 0.05, для Калмана T=1, T/2=0.5, T/4=0.25
-        self.time_line = [0, 100]
+        self.time_line = [0, 500]
         self.time_step = 0.1
         self.time_coef = 1 * math.pow(10, -3)
         # СЕТКА ПАРАМЕТРОВ

@@ -11,7 +11,7 @@ class Par_train:
         self.net_nodes = [20, 80, 20]
         # ОБУЧЕНИЕ
         # пакет (int), эпохи (int)
-        self.learn_batch = 256
+        self.learn_batch = 1
         self.learn_epoch = 200
 
     def set(self, init):

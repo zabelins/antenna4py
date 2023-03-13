@@ -299,12 +299,12 @@ class Signals:
         max_y, min_y = y.max(), y.min()
         # коррекция верхней границы
         if max_y <= 0:
-            max_y = 0.001
+            max_y = 0.01
         else:
             max_y = max_y * 1.2
         # коррекция нижней границы
         if min_y >= 0:
-            min_y = -0.001
+            min_y = -0.01
         else:
             min_y = min_y * 1.2
         # определение границ графика
